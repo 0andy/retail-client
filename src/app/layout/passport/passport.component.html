@@ -1,16 +1,20 @@
 <div class="container">
-  
-  <div class="wrap">
-    <div class="top">
-      <div class="head">
-        <img class="logo" src="./assets/logo.png">
-        <span class="title">优效零售终端</span>
-      </div>
+  <div class="wrapper">
+    <div #cardBody class="abs-center" style="width:368px; margin-top: 44px;">
+      <nz-card [nzTitle]="nzTitle" [nzBordered]="false" class="ant-card__primary ant-card__title-img">
+        <ng-template #nzTitle>
+          <div class="top">
+            <div class="head">
+              <img class="logo" src="./assets/logo.png">
+              <span class="title">优效零售终端</span>
+            </div>
+          </div>
+        </ng-template>
+        <router-outlet></router-outlet>
+        <global-footer style="margin-top:24px;">
+          <i class="anticon anticon-copyright"></i> 2018 河北烟草
+        </global-footer>
+      </nz-card>
     </div>
-    <router-outlet></router-outlet>
-    <global-footer >
-      <i class="anticon anticon-copyright"></i> 2018
-      <a href="http://hechuangcd.com" target="_blank">成都和创科技</a>技术支持
-    </global-footer>
   </div>
 </div>
