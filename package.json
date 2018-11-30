@@ -1,6 +1,6 @@
 {
-  "name": "my-project",
-  "version": "0.0.0",
+  "name": "retail-client",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "npm run color-less && ng serve -o",

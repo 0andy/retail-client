@@ -18,11 +18,12 @@ import { UserLockComponent } from './passport/lock/lock.component';
 import { Exception403Component } from './exception/403.component';
 import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
+import { LayoutSimpleComponent } from 'app/layout/simple/simple.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: LayoutDefaultComponent,
+    component: LayoutSimpleComponent,
     canActivate: [SimpleGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
