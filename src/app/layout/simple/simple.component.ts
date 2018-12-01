@@ -64,8 +64,7 @@ export class LayoutSimpleComponent {
       'screen-lg': '(min-width: 992px) and (max-width: 1199px)',
       'screen-xl': '(min-width: 1200px)',
     };
-    bm
-      .observe([
+    bm.observe([
         '(min-width: 1200px)',
         '(min-width: 992px) and (max-width: 1199px)',
         '(min-width: 768px) and (max-width: 991px)',
@@ -82,7 +81,11 @@ export class LayoutSimpleComponent {
     // Mobile
     bm.observe('only screen and (max-width: 767.99px)').subscribe(state => {
       this.isMobile = state.matches;
-      if (this.isMobile) this.toggleCollapsedSidebar(true);
+      if (this.isMobile) {
+        this.toggleCollapsedSidebar(true);
+      } else {
+        this.toggleCollapsedSidebar();
+      }
     });
   }
 

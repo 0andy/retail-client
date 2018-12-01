@@ -127,7 +127,7 @@ export class StartupService {
     // ACL：设置权限为全量
     this.aclService.setFull(true);
 
-    this.settingService.setLayout('collapsed', true);
+    //this.settingService.setLayout('collapsed', true);
     // 初始化菜单
     this.menuService.add([
       {
@@ -137,17 +137,20 @@ export class StartupService {
           {
             text: '收银台',
             link: '/shop/cart',
-          icon: { type: 'icon', value: 'anticon anticon-shopping-cart' }
+            icon: { type: 'icon', value: 'anticon anticon-shopping-cart' },
+            shortcutRoot: true,
           },
           {
             text: '商品管理',
             link: '/product/index',
-            icon: { type: 'icon', value: 'anticon anticon-gift' }
+            icon: { type: 'icon', value: 'anticon anticon-gift' },
+            shortcutRoot: true,
           },
           {
             text: '会员管理',
             link: '/member/index',
-            icon: { type: 'icon', value: 'anticon anticon-idcard' }
+            icon: { type: 'icon', value: 'anticon anticon-idcard' },
+            shortcutRoot: true,
           },
           {
             text: '仓库管理',
@@ -155,11 +158,11 @@ export class StartupService {
             icon: { type: 'icon', value: 'anticon anticon-shop' },
             children: [
               {
-                text: '入库',
+                text: '商品入库',
                 link: '/warehouse/put'
               },
               {
-                text: '盘点',
+                text: '商品盘点',
                 link: '/warehouse/inventory'
               },
               {
@@ -167,7 +170,7 @@ export class StartupService {
                 link: '/warehouse/stock'
               },
               {
-                text: '出入库流水',
+                text: '仓库流水',
                 link: '/warehouse/water'
               }
             ]
@@ -176,7 +179,6 @@ export class StartupService {
             text: '系统管理',
             link: '/system',
             icon: { type: 'icon', value: 'anticon anticon-laptop' },
-            shortcutRoot: true,
             children: [
               {
                 text: '系统用户',
