@@ -84,7 +84,7 @@ export class LayoutSimpleComponent {
       if (this.isMobile) {
         this.toggleCollapsedSidebar(true);
       } else {
-        this.toggleCollapsedSidebar();
+        this.toggleCollapsedSidebar(true);
       }
     });
   }

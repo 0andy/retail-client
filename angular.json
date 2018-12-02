@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "my-project": {
+    "retail-client": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -17,14 +17,15 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/retail-client",
+            "outputPath": "app/retail",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/node_servers"
             ],
             "styles": [
               "src/styles.less"
@@ -71,14 +72,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "my-project:build"
+            "browserTarget": "retail-client:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "my-project:build:production"
+              "browserTarget": "retail-client:build:production"
             },
             "hmr": {
-              "browserTarget": "my-project:build:hmr",
+              "browserTarget": "retail-client:build:hmr",
               "hmr": true
             }
           }
@@ -86,7 +87,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "my-project:build"
+            "browserTarget": "retail-client:build"
           }
         },
         "test": {
@@ -122,7 +123,7 @@
         }
       }
     },
-    "my-project-e2e": {
+    "retail-client-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -131,11 +132,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "my-project:serve"
+            "devServerTarget": "myretail-client:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "my-project:serve:production"
+              "devServerTarget": "retail-client:serve:production"
             }
           }
         },
@@ -151,7 +152,7 @@
       }
     }
   },
-  "defaultProject": "my-project",
+  "defaultProject": "retail-client",
   "schematics": {
     "ng-alain:module": {
       "routing": true,

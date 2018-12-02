@@ -8,8 +8,8 @@
       "type": "nwjs",
       "request": "launch",
       "name": "Launch NWjs",
-      "nwjsVersion": "any",
-      "webRoot": "${workspaceRoot}/scripts/system.html",
+      "nwjsVersion": "0.14.7",
+      "webRoot": "${workspaceRoot}/app/retail/index.html",
       "reloadAfterAttached": false
     },
     {

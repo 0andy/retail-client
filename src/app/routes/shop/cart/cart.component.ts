@@ -9,13 +9,20 @@ import { _HttpClient } from '@delon/theme';
 export class CartComponent implements OnInit {
 
   systeminfo: any;
+  nserver: any;
 
   constructor(
     private http: _HttpClient
-  ) { }
+  ) {
+    this.nserver = nodeSysServer();
+   }
 
   ngOnInit() {
-   
+    this.systeminfo = this.nserver.getSystemInfo();
+  }
+
+  open(){
+    this.nserver.openbaidu();
   }
 
 }

@@ -1,0 +1,27 @@
+{
+    "name": "retail-client",
+    "main": "retail/index.html",
+    "description": "河北烟草优效零售终端",
+    "version": "0.0.2",
+    "domain": "retail",
+    "window": {
+        "title": "优效零售终端",
+        "icon": "retail/favicon.ico",
+        "toolbar": true,
+        "frame": true,
+        "width": 1024,
+        "height": 786,
+        "position": "center",
+        "min_width": 900,
+        "min_height": 500
+    },
+    "webkit": {
+        "plugin": true,
+        "java": false,
+        "page-cache": false
+    },
+    "build": {
+        "nwVersion": "0.14.7"
+    },
+    "chromium-args": "-allow-file-access-from-files"
+}
