@@ -17,6 +17,7 @@ import {
   LogoutOutline,
   MailOutline,
   MenuFoldOutline,
+  MenuOutline,
   MenuUnfoldOutline,
   PayCircleOutline,
   PrinterOutline,
@@ -28,7 +29,11 @@ import {
   TeamOutline,
   ToolOutline,
   UserOutline,
-  WeiboCircleOutline
+  ShoppingCartOutline,
+  GiftOutline,
+  IdcardOutline,
+  ShopOutline,
+  LaptopOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -45,6 +50,7 @@ export const ICONS_AUTO = [
   LogoutOutline,
   MailOutline,
   MenuFoldOutline,
+  MenuOutline,
   MenuUnfoldOutline,
   PayCircleOutline,
   PrinterOutline,
@@ -56,5 +62,9 @@ export const ICONS_AUTO = [
   TeamOutline,
   ToolOutline,
   UserOutline,
-  WeiboCircleOutline
+  ShoppingCartOutline,
+  GiftOutline,
+  IdcardOutline,
+  ShopOutline,
+  LaptopOutline,
 ];

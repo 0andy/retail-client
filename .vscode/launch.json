@@ -5,6 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "nwjs",
+      "request": "launch",
+      "name": "Launch NWjs",
+      "nwjsVersion": "0.14.7",
+      "webRoot": "${workspaceRoot}/app/retail/index.html",
+      "reloadAfterAttached": false
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",

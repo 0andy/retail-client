@@ -36,8 +36,8 @@ export class StartupService {
     ).pipe(
       // 接收其他拦截器后产生的异常消息
       catchError(([appData]) => {
-          resolve(null);
-          return [appData];
+        resolve(null);
+        return [appData];
       })
     ).subscribe(([appData]) => {
 
@@ -54,12 +54,12 @@ export class StartupService {
       // 设置页面标题的后缀
       this.titleService.suffix = res.app.name;
     },
-    () => { },
-    () => {
-      resolve(null);
-    });
+      () => { },
+      () => {
+        resolve(null);
+      });
   }
-  
+
   private viaMock(resolve: any, reject: any) {
     // const tokenData = this.tokenService.get();
     // if (!tokenData.token) {
@@ -109,6 +109,100 @@ export class StartupService {
     resolve({});
   }
 
+  private retailLoad(resolve: any, reject: any) {
+    const app: any = {
+      name: `优效零售`,
+      description: `优秀高效`
+    };
+    const user: any = {
+      name: 'Admin',
+      //avatar: '',
+      email: 'admin@qq.com',
+      token: '123456789'
+    };
+    // 应用信息：包括站点名、描述、年份
+    this.settingService.setApp(app);
+    // 用户信息：包括姓名、头像、邮箱地址
+    this.settingService.setUser(user);
+    // ACL：设置权限为全量
+    this.aclService.setFull(true);
+
+    //this.settingService.setLayout('collapsed', true);
+    // 初始化菜单
+    this.menuService.add([
+      {
+        text: '主导航',
+        group: true,
+        children: [
+          {
+            text: '收银台',
+            link: '/shop/cart',
+            icon: { type: 'icon', value: 'anticon anticon-shopping-cart' },
+            shortcutRoot: true,
+          },
+          {
+            text: '商品管理',
+            link: '/product/index',
+            icon: { type: 'icon', value: 'anticon anticon-gift' },
+            shortcutRoot: true,
+          },
+          {
+            text: '会员管理',
+            link: '/member/index',
+            icon: { type: 'icon', value: 'anticon anticon-idcard' },
+            shortcutRoot: true,
+          },
+          {
+            text: '仓库管理',
+            link: '/warehouse',
+            icon: { type: 'icon', value: 'anticon anticon-shop' },
+            children: [
+              {
+                text: '商品入库',
+                link: '/warehouse/put'
+              },
+              {
+                text: '商品盘点',
+                link: '/warehouse/inventory'
+              },
+              {
+                text: '实时库存',
+                link: '/warehouse/stock'
+              },
+              {
+                text: '仓库流水',
+                link: '/warehouse/water'
+              }
+            ]
+          },
+          {
+            text: '系统管理',
+            link: '/system',
+            icon: { type: 'icon', value: 'anticon anticon-laptop' },
+            children: [
+              {
+                text: '系统用户',
+                link: '/system/user'
+              },
+              {
+                text: '系统配置',
+                link: '/system/config'
+              },
+              {
+                text: '系统日志',
+                link: '/system/log'
+              }
+            ]
+          }
+        ]
+      }
+    ]);
+    // 设置页面标题的后缀
+    this.titleService.suffix = app.name;
+
+    resolve({});
+  }
+
   load(): Promise<any> {
     // only works with promises
     // https://github.com/angular/angular/issues/15088
@@ -116,7 +210,8 @@ export class StartupService {
       // http
       // this.viaHttp(resolve, reject);
       // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      this.viaMock(resolve, reject);
+      //this.viaMock(resolve, reject);
+      this.retailLoad(resolve, reject);
 
     });
   }

@@ -36,6 +36,20 @@ const HEADERCOMPONENTS = [
   HeaderUserComponent
 ];
 
+import { LayoutModule as CDKLayoutModule } from '@angular/cdk/layout';
+import { LayoutSimpleComponent } from './simple/simple.component';
+import { LayoutSimpleSidebarComponent } from './simple/sidebar/sidebar.component';
+import { LayoutSimpleHeaderComponent } from './simple/header/header.component';
+import { LayoutSimpleHeaderUserComponent } from './simple/header/components/user.component';
+import { LayoutSimpleHeaderSearchComponent } from './simple/header/components/search.component';
+const SIMPLE = [
+  LayoutSimpleSidebarComponent,
+  LayoutSimpleHeaderComponent,
+  LayoutSimpleHeaderUserComponent,
+  LayoutSimpleHeaderSearchComponent,
+  LayoutSimpleComponent
+];
+
 // passport
 import { LayoutPassportComponent } from './passport/passport.component';
 const PASSPORT = [
@@ -43,16 +57,18 @@ const PASSPORT = [
 ];
 
 @NgModule({
-  imports: [SharedModule],
+  imports: [SharedModule, CDKLayoutModule ],
   entryComponents: SETTINGDRAWER,
   declarations: [
     ...COMPONENTS,
     ...HEADERCOMPONENTS,
-    ...PASSPORT
+    ...PASSPORT,
+    ...SIMPLE
   ],
   exports: [
     ...COMPONENTS,
-    ...PASSPORT
+    ...PASSPORT,
+    ...SIMPLE
   ]
 })
 export class LayoutModule { }
