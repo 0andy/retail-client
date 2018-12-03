@@ -9,6 +9,7 @@ import { _HttpClient } from '@delon/theme';
 export class CartComponent implements OnInit {
 
   systeminfo: any;
+  tssysteminfo: any;
   nserver: any;
 
   constructor(
@@ -19,10 +20,18 @@ export class CartComponent implements OnInit {
 
   ngOnInit() {
     this.systeminfo = this.nserver.getSystemInfo();
+    var os = (<any>window).require('os');
+    this.tssysteminfo = os.platform();
   }
 
   open(){
     this.nserver.openbaidu();
+  }
+
+  opennw(){
+    nw.Window.open('https://www.mi.com/', {}, function (new_win) {
+      // do something with the newly created window
+  });
   }
 
 }

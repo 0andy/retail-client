@@ -25,7 +25,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/node_servers"
+              "src/nw_servers"
             ],
             "styles": [
               "src/styles.less"
