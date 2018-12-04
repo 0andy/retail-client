@@ -8,5 +8,19 @@
 <div>
   <h3>ts node api当前系统为：{{tssysteminfo}}</h3>
   <button nz-button nzType="primary" (click)="opennw()">ts v8 api新窗打开小米</button>
-  <button nz-button nzType="primary" (click)="getSqlitdate()">ts 获取sqlite数据 到控制台</button>
+  <button nz-button nzType="primary" (click)="getSqlitdate()">ts 获取sqlite数据</button>
+  <nz-table #basicTable [nzData]="data">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>info</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of basicTable.data">
+        <td>{{d.id}}</td>
+        <td>{{d.info}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
 </div>

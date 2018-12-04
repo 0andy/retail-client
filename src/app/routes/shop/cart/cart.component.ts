@@ -10,6 +10,7 @@ export class CartComponent implements OnInit {
 
   systeminfo: any;
   tssysteminfo: any;
+  data = [{ id: 10, info: '10 info' }, { id: 20, info: '20 info' }];
 
   constructor(
     private http: _HttpClient
@@ -27,25 +28,38 @@ export class CartComponent implements OnInit {
     });
   }
 
-  getSqlitdate() {
-    var sqlite3 = (<any>window).require('sqlite3').verbose();
-    var db = new sqlite3.Database(':memory:');
-
-    db.serialize(function () {
-      db.run("CREATE TABLE lorem (info TEXT)");
-
-      var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-      for (var i = 0; i < 10; i++) {
-        stmt.run("Ipsum " + i);
-      }
-      stmt.finalize();
-
-      db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
-        console.log(row.id + ": " + row.info);
+  getDate(){
+    return new Promise<any>((resolve, reject) => {
+      var sqlite3 = (<any>window).require('sqlite3').verbose();
+      var db = new sqlite3.Database(':memory:');
+      var arrData: any[] = [];
+  
+      db.serialize(function () {
+        db.run("CREATE TABLE lorem (info TEXT)");
+  
+        var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+        for (var i = 0; i < 10; i++) {
+          stmt.run("Ipsum " + i);
+        }
+        stmt.finalize();
+  
+        db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
+          arrData.push(row);
+          console.log(row.id + ": " + row.info);
+        }, function (){
+          console.log('end');
+          resolve(arrData);
+        });
       });
+      db.close();
     });
+  }
 
-    db.close();
+  getSqlitdate() {
+    this.getDate().then((res) =>{
+      console.table(res);
+      this.data = res;
+    });
   }
 
 }
