@@ -128,6 +128,8 @@ export class StartupService {
     this.aclService.setFull(true);
 
     //this.settingService.setLayout('collapsed', true);
+    //'light' : 'dark'
+    //this.settingService.setLayout('theme','light');
     // 初始化菜单
     this.menuService.add([
       {
