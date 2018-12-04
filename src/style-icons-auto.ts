@@ -4,6 +4,7 @@
 */
 
 import {
+  AlipayCircleOutline,
   AppstoreOutline,
   ArrowDownOutline,
   CloudOutline,
@@ -24,6 +25,7 @@ import {
   SearchOutline,
   SettingOutline,
   StarOutline,
+  TaobaoCircleOutline,
   TeamOutline,
   ToolOutline,
   UserOutline,
@@ -35,6 +37,7 @@ import {
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
+  AlipayCircleOutline,
   AppstoreOutline,
   ArrowDownOutline,
   CloudOutline,
@@ -55,6 +58,7 @@ export const ICONS_AUTO = [
   SearchOutline,
   SettingOutline,
   StarOutline,
+  TaobaoCircleOutline,
   TeamOutline,
   ToolOutline,
   UserOutline,
