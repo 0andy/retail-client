@@ -6,6 +6,7 @@ import { SystemUserComponent } from './user/user.component';
 import { SystemLogComponent } from './log/log.component';
 import { SystemConfigComponent } from './config/config.component';
 import { SystemRoutingModule } from './system-routing.module';
+import { ShopUserService } from 'app/services/system';
 
 const COMPONENT = [
     SystemUserComponent,
@@ -17,7 +18,7 @@ const COMPONENT_NOROUNT = [];
 
 @NgModule({
   imports: [CommonModule, SharedModule, SystemRoutingModule],
-  providers: [],
+  providers: [ ShopUserService ],
   declarations: [...COMPONENT, ...COMPONENT_NOROUNT],
   entryComponents: COMPONENT_NOROUNT,
 })

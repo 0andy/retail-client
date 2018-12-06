@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { ShopUserService } from 'app/services/system/shop-user.service';
 
 @Component({
   selector: 'system-user',
@@ -8,11 +8,13 @@ import { _HttpClient } from '@delon/theme';
 })
 export class SystemUserComponent implements OnInit {
 
-  constructor(
-    private http: _HttpClient
-  ) { }
+  constructor(private shopUserService: ShopUserService) { }
 
   ngOnInit() {
+  }
+
+  createTB(){
+    this.shopUserService.createTable();
   }
 
 }

@@ -11,6 +11,9 @@ import { DelonFormModule } from '@delon/form';
 // #region third libs
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { CountdownModule } from 'ngx-countdown';
+import { LengthLimitPipe } from '@shared/pipe/length-limit.pipe';
+import { KeyHighlightPipe } from '@shared/pipe/key-highlight.pipe';
+
 const THIRDMODULES = [
   NgZorroAntdModule,
   CountdownModule
@@ -18,7 +21,7 @@ const THIRDMODULES = [
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [];
+const COMPONENTS = [ LengthLimitPipe, KeyHighlightPipe ];
 const DIRECTIVES = [];
 // #endregion
 

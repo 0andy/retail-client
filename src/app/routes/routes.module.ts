@@ -14,6 +14,7 @@ import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
 
 import { CartComponent } from './shop/cart/cart.component';
+import { CommonServiceModule } from 'app/services/common/common-service.module';
 
 const COMPONENTS = [
   CartComponent,
@@ -31,7 +32,7 @@ const COMPONENTS = [
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
-  imports: [ SharedModule, RouteRoutingModule ],
+  imports: [ SharedModule, CommonServiceModule, RouteRoutingModule ],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
