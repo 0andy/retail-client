@@ -7,7 +7,7 @@ export class Sqlite3Service {
     sqlite3 = (<any>window).require('sqlite3').verbose();//调试模式
     //sqlite3 = (<any>window).require('sqlite3');
     db: any;
-    databaseFile = `model/retail.db`;
+    databaseFile = `retail.db`;
     //tableName: any;
     //options: any;
 
@@ -21,8 +21,10 @@ export class Sqlite3Service {
     connectDataBase() {
         let _self = this;
         return new Promise<ResultDto>((resolve, reject) => {
-            _self.db = new this.sqlite3.cached.Database(_self.databaseFile, function (err) {
+            //_self.db = new this.sqlite3.cached.Database(_self.databaseFile, function (err) {
+            _self.db = new this.sqlite3.Database(_self.databaseFile, function (err) {
                 if (err) {
+                    console.log(err);
                     reject(new ResultDto({ code: -1, date: err }));
                 } else {
                     resolve(new ResultDto({ code: 0 }));
@@ -49,7 +51,7 @@ export class Sqlite3Service {
      */
     createTable(sentence) {
         let _self = this;
-        return new Promise((resolve, reject) => {
+        return new Promise<ResultDto>((resolve, reject) => {
             _self.db.exec(sentence, function (err) {
                 if (err) {
                     reject(new ResultDto({ code: -1, date: err }));
@@ -79,16 +81,16 @@ export class Sqlite3Service {
     sql(sql: any, param: any, mode: 'all' | 'get' | 'run') {
         let _self = this;
         mode = mode == 'all' ? 'all' : mode == 'get' ? 'get' : 'run';
-        return new Promise((resolve, reject) => {
+        return new Promise<ResultDto>((resolve, reject) => {
             _self.db[mode](sql, param,
                 function (err, data) {    // data: Array, Object
                     if (err) {
-                        reject(new Error(err));
+                        reject(new ResultDto({ code: -1, date: err }));
                     } else {
                         if (data) {
-                            resolve(data);    // 返回数据查询成功的结果
+                            resolve(new ResultDto({ code: 0, date: data}));    // 返回数据查询成功的结果
                         } else {
-                            resolve('success');    // 提示 增 删 改 操作成功
+                            resolve(new ResultDto({ code: 0, msg: 'success'}));    // 提示 增 删 改 操作成功
                         };
                     };
                 }
@@ -113,7 +115,7 @@ export class Sqlite3Service {
             lastModificationTime datetime,
             lastModifierUserId varchar(36)
         );`;
-        return this.db.createTable(sentence);
+        return this.createTable(sentence);
     }
 
 }

@@ -17,7 +17,7 @@ export class ShopUserService {
     createTable(){
         this.sqlite3Service.connectDataBase().then((res) => {
             if(res.code == 0){
-                this.sqlite3Service.createTable((res) => {
+                this.sqlite3Service.createShopUserTable().then((res) => {
                     if(res.code == 0){
                         console.log('表创建成功');
                     } else {
