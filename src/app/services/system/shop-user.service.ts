@@ -25,7 +25,7 @@ export class ShopUserService {
                     } else {
                         console.log('表创建失败：' + res.data);
                     }
-                    this.sqlite3Service.close();
+                    //this.sqlite3Service.close();
                 });
             } else {
                 console.log('连接失败：' + res.data);
@@ -48,26 +48,39 @@ export class ShopUserService {
 
     getAll(keyWord: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<ShopUser>> {
         let _self = this;
-        if(!keyWord){
+        if (!keyWord) {
             keyWord = '';
         }
         keyWord = '%' + keyWord + '%';
         return new Promise<PagedResultDto<ShopUser>>((resolve, reject) => {
             _self.sqlite3Service.connectDataBase().then((dres) => {
-                if(dres.code == 0){
-                    _self.sqlite3Service.sql(`select count(*) from ${this.tableName} where account like ? and name like ?`, [keyWord,keyWord],'get').then((cres) => {
+                //console.log(dres);
+                if (dres.code == 0) {
+                    _self.sqlite3Service.sql(`select count(*) cnum from ${this.tableName} where account like ? or name like ?`, [keyWord, keyWord], 'get').then((cres) => {
+                        //console.log(cres);
                         let result = new PagedResultDto<ShopUser>();
-                        result.totalCount = cres.data;
-                        if(cres.code == 0){
-                            _self.sqlite3Service.sql(`select * from ${this.tableName} where account like ? and name like ?`, [keyWord,keyWord],'all').then((res) => {
-                                if(res.code == 0){
-                                    result.items = ShopUser.fromJSArray(res.data);
+                        if (cres.code == 0) {
+                            //alert(JSON.stringify(cres.data))
+                            result.totalCount = cres.data.cnum;
+                            _self.sqlite3Service.sql(`select * from ${this.tableName} where account like ? or name like ? limit ${maxResultCount} offset ${skipCount}`, [keyWord, keyWord], 'all').then((res) => {
+                                //console.log(res);
+                                //_self.sqlite3Service.close();
+                                if (res.code == 0) {
+                                    if (res.data) {
+                                        result.items = ShopUser.fromJSArray(res.data);
+                                    } else {
+                                        result.items = [];
+                                        result.totalCount = 0;
+                                    }
                                     resolve(result);
                                 } else {
+                                    console.log(res);
                                     reject(null);
                                 }
                             });
                         } else {
+                            //_self.sqlite3Service.close();
+                            console.log(cres);
                             reject(null);
                         }
                     });

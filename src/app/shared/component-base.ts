@@ -1,5 +1,6 @@
 import { Injector } from "@angular/core";
 import { ModalHelper } from "@delon/theme";
+import { NzMessageService } from "ng-zorro-antd";
 
 export abstract class AppComponentBase {
     query: any = {
@@ -12,8 +13,11 @@ export abstract class AppComponentBase {
         statusList: []
       };
       modalHelper: ModalHelper;
+      message: NzMessageService;
+      
       constructor(injector: Injector) {
         this.modalHelper = injector.get(ModalHelper);
+        this.message = injector.get(NzMessageService);
       }
 
 }

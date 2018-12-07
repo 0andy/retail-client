@@ -2,6 +2,7 @@ import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core
 import { ModalFormComponentBase } from '@shared/component-base/modal-form-component-base';
 import { Validators, FormControl } from '@angular/forms';
 import { ShopUser } from 'app/entities';
+import { ShopUserService } from 'app/services/system';
 
 @Component({
     selector: 'app-save-user',
@@ -14,7 +15,8 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
     roles = [{ value: 1, label: '店铺管理员' }, { value: 2, label: '收银员' }];
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private shopUserService: ShopUserService
     ) {
         super(injector);
     }
@@ -44,14 +46,28 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
     }
 
     fetchData(): void {
-       
+
     }
 
     protected submitExecute(finisheCallback: Function): void {
-       
+        this.shopUserService.save(this.user).finally(()=>{
+            this.saving = false;
+        }).then((res) => {
+            finisheCallback();
+            if (res.code == 0) {
+                this.message.success('保存数据成功！');
+                this.success(true);
+            } else {
+                this.message.error('保存数据失败！');
+                console.log(res.data);
+            }
+        });
     }
     protected setFormValues(entity: ShopUser): void {
-
+        this.setControlVal('account', entity.account);
+        this.setControlVal('name', entity.name);
+        this.setControlVal('role', entity.role);
+        this.setControlVal('isEnable', entity.isEnable);
     }
     protected getFormValues(): void {
         this.user.account = this.getControlVal('account');
