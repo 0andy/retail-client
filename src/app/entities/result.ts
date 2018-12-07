@@ -41,3 +41,8 @@ export class ResultDto{
         return result;
     }
 }
+
+export class PagedResultDto<T> {
+    totalCount: number;
+    items: T[];
+}

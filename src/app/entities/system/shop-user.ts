@@ -45,6 +45,17 @@ export class ShopUser {
         result.init(data);
         return result;
     }
+
+    static fromJSArray(dataArray: any[]): ShopUser[] {
+        let array = [];
+        dataArray.forEach(result => {
+            let item = new ShopUser();
+            item.init(result);
+            array.push(item);
+        });
+
+        return array;
+    }
 }
 
 

@@ -1,7 +1,57 @@
 <div class="alain-default__content-title">
-    <h1>
-      用户管理
-      <small>系统用户管理</small>
-    </h1>
+  <h1>
+    系统用户
+    <small>店铺管理员、收银员信息维护管理</small>
+  </h1>
+</div>
+<nz-card>
+
+  <div nz-row>
+    <div nz-col nzSpan="18" style="padding-right:10px;">
+      <nz-input-group nzSearch [nzSuffix]="suffixButton">
+        <input type="text" [(ngModel)]="keyWord" nz-input placeholder="用户登录账户、姓名">
+      </nz-input-group>
+      <ng-template #suffixButton>
+        <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData(true)" nzSearch>搜索</button>
+      </ng-template>
+    </div>
+    <div nz-col nzSpan="6" style="text-align:right;">
+      <button nz-button (click)="refresh()" nzShape="circle">
+        <i class="anticon anticon-reload"></i>
+      </button>
+      <button nz-button (click)="create()" nzShape="circle" nzType="primary">
+        <i class="anticon anticon-plus"></i>
+      </button>
+    </div>
   </div>
-  <button nz-button nzType="primary" (click)="createTB()">创建用户表</button>
+
+  <nz-table #ajaxTable nzShowSizeChanger [nzData]="dataList" [nzTotal]="totalItems" [(nzPageIndex)]="pageNumber"
+    [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()"
+    [nzFrontPagination]="false">
+    <thead>
+      <tr>
+        <th>登录账号</th>
+        <th>姓名</th>
+        <th>角色</th>
+        <th>启用</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of ajaxTable.data">
+        <td>{{item.account}}</td>
+        <td>{{item.name}}</td>
+        <td>{{item.roleName}}</td>
+        <td>
+          <nz-badge *ngIf="item.isEnable" [nzStatus]="'success'" [nzText]="'启用'"></nz-badge>
+          <nz-badge *ngIf="!item.isEnable" [nzStatus]="'default'" [nzText]="'禁用'"></nz-badge>
+        </td>
+        <td>
+          <a (click)="edit(item)">编辑</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)="delete(item)">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

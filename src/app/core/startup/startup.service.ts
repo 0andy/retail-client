@@ -133,7 +133,7 @@ export class StartupService {
     // 初始化菜单
     this.menuService.add([
       {
-        text: '主导航',
+        text: '优效零售终端',
         group: true,
         children: [
           {

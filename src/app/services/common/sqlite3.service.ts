@@ -11,6 +11,11 @@ export class Sqlite3Service {
     //tableName: any;
     //options: any;
 
+    get database() {
+        this.db = new this.sqlite3.cached.Database(this.databaseFile);
+        return this.db;
+    }
+
     constructor() {
         //this.databaseFile = options && options.databaseFile || `model/retail.db`;    // 数据库文件(文件路径+文件名)
         //this.tableName = options && options.tableName || `adsTable`;   // 表名
@@ -21,8 +26,8 @@ export class Sqlite3Service {
     connectDataBase() {
         let _self = this;
         return new Promise<ResultDto>((resolve, reject) => {
-            //_self.db = new this.sqlite3.cached.Database(_self.databaseFile, function (err) {
-            _self.db = new this.sqlite3.Database(_self.databaseFile, function (err) {
+            _self.db = new this.sqlite3.cached.Database(_self.databaseFile, function (err) {
+            //_self.db = new this.sqlite3.Database(_self.databaseFile, function (err) {
                 if (err) {
                     console.log(err);
                     reject(new ResultDto({ code: -1, date: err }));
@@ -98,6 +103,27 @@ export class Sqlite3Service {
         });
     }
 
+    execSql(sql: any, param: any, mode: 'all' | 'get' | 'run'): Promise<ResultDto>{
+        return new Promise<ResultDto>((resolve, reject) => {
+            this.connectDataBase().then((res) => {
+                if(res.code == 0){
+                    this.sql(sql, param, mode).then((sqlres) => {
+                        this.close();
+                        if(sqlres.code === 0){
+                            resolve(sqlres);
+                        } else {
+                            console.error('执行sql失败：' + sqlres.data);
+                            reject(sqlres);
+                        }
+                    });
+                } else{
+                    console.error('连接失败：' + res.data);
+                    reject(res);
+                }
+            }); 
+        });
+    }
+
     createShopUserTable() {
         //ShopUser
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
@@ -116,6 +142,12 @@ export class Sqlite3Service {
             lastModifierUserId varchar(36)
         );`;
         return this.createTable(sentence);
+    }
+
+    close(){
+        if(this.db){
+            this.db.close();
+        }
     }
 
 }
