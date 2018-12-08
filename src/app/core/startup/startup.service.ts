@@ -7,9 +7,10 @@ import { MenuService, SettingsService, TitleService, ALAIN_I18N_TOKEN } from '@d
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ACLService } from '@delon/acl';
 
-import { NzIconService } from 'ng-zorro-antd';
+import { NzIconService, NzModalService } from 'ng-zorro-antd';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
+import { wrapListenerWithDirtyAndDefault } from '@angular/core/src/render3/instructions';
 
 /**
  * 用于应用启动时
@@ -25,7 +26,8 @@ export class StartupService {
     private titleService: TitleService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
-    private injector: Injector
+    private injector: Injector,
+    private modalService: NzModalService
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
@@ -126,6 +128,7 @@ export class StartupService {
     //this.settingService.setUser(user);
     // ACL：设置权限为全量
     this.aclService.setFull(true);
+    this.settingService.setLayout('fixed', true);
 
     //this.settingService.setLayout('collapsed', true);
     //'light' : 'dark'
@@ -216,5 +219,22 @@ export class StartupService {
       this.retailLoad(resolve, reject);
 
     });
+  }
+
+  winInit() {
+     // 获取当前窗口的`Window`对象
+     var win = nw.Window.get();
+     let app = this;
+     win.on('close', function () {
+       app.modalService.confirm({
+         nzTitle: '你确定要退出该系统吗？',
+         nzContent: '',
+         nzOnOk: () => {
+           app.tokenService.clear();
+           this.hide(); // Pretend to be closed already
+           this.close(true); // then close it forcely
+         }
+       });
+     });  
   }
 }

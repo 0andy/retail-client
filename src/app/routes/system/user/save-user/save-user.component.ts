@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angular/core';
 import { ModalFormComponentBase } from '@shared/component-base/modal-form-component-base';
 import { Validators, FormControl } from '@angular/forms';
 import { ShopUser } from 'app/entities';
@@ -10,9 +10,9 @@ import { ShopUserService } from 'app/services/system';
     styles: []
 })
 export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> implements OnInit {
-    @Output() modalSelect: EventEmitter<any> = new EventEmitter<any>();
     user: ShopUser = new ShopUser();
     roles = [{ value: 1, label: '店铺管理员' }, { value: 2, label: '收银员' }];
+    @Input() id: string;
 
     constructor(
         injector: Injector,
@@ -46,7 +46,16 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
     }
 
     fetchData(): void {
-
+        if(this.id){
+            this.shopUserService.get(this.id).then((res) => {
+                if(res) {
+                    this.user = res;
+                    this.setFormValues(this.user);
+                } else {
+                    this.message.error('没有获取到该用户');
+                }
+            });
+        }
     }
 
     protected submitExecute(finisheCallback: Function): void {
@@ -68,6 +77,8 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
         this.setControlVal('name', entity.name);
         this.setControlVal('role', entity.role);
         this.setControlVal('isEnable', entity.isEnable);
+        this.setControlVal('password', entity.password);
+        this.setControlVal('confirmPassword', entity.password);
     }
     protected getFormValues(): void {
         this.user.account = this.getControlVal('account');

@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch NWjs",
       "nwjsVersion": "0.14.7",
-      "webRoot": "${workspaceRoot}/src",
+      "webRoot": "${workspaceRoot}/app",
       "reloadAfterAttached": false
     },
     {

@@ -46,6 +46,22 @@ export class ShopUserService {
         }
     }
 
+    get(id: string): Promise<ShopUser>{
+        return new Promise<ShopUser>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select * from ${this.tableName} where id=?`,[id],'get').then((res) => {
+                if(res.code == 0){
+                    if(res.data){
+                        resolve(ShopUser.fromJS(res.data));
+                    } else {
+                        reject(null);
+                    }
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
     getAll(keyWord: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<ShopUser>> {
         let _self = this;
         if (!keyWord) {
