@@ -1,3 +1,5 @@
+retail-client
+
 @angular/cdk
 MIT
 The MIT License

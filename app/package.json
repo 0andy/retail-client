@@ -6,7 +6,7 @@
     "domain": "retail",
     "window": {
         "title": "优效零售终端",
-        "icon": "retail/favicon.ico",
+        "icon": "retail/retail.ico",
         "toolbar": true,
         "frame": true,
         "width": 1024,
