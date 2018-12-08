@@ -44,8 +44,8 @@
             <td>{{item.name}}</td>
             <td>{{item.roleName}}</td>
             <td>
-              <nz-badge *ngIf="item.isEnable" [nzStatus]="'success'" [nzText]="'启用'"></nz-badge>
-              <nz-badge *ngIf="!item.isEnable" [nzStatus]="'default'" [nzText]="'禁用'"></nz-badge>
+              <nz-badge *ngIf="item.isEnable == 1" [nzStatus]="'success'" [nzText]="'启用'"></nz-badge>
+              <nz-badge *ngIf="item.isEnable == 0" [nzStatus]="'default'" [nzText]="'禁用'"></nz-badge>
             </td>
             <td>{{item.creationTime | date:"yyyy-MM-dd"}}</td>
             <td>

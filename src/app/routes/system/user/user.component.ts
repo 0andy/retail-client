@@ -25,23 +25,36 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
       finishedCallback();
     }).then((res) => {
       //console.log(res);
-      if(res){
+      if (res) {
         this.dataList = res.items;
         this.totalItems = res.totalCount;
-      } else{
+      } else {
         this.dataList = [];
         this.totalItems = 0;
       }
     });
   }
 
-  refreshData(){
+  refreshData() {
     this.pageNumber = 1;
     this.refresh();
   }
 
   protected delete(entity: ShopUser): void {
-    //throw new Error("Method not implemented.");
+    this.modalService.confirm({
+      nzTitle: '确定要删除该用户吗？',
+      nzContent: `<b>用户账号[${entity.account}]</b>`,
+      nzOnOk: () => {
+        this.shopUserService.delete(entity.id).then((res) => {
+          if (res.code == 0) {
+            this.message.success('删除成功');
+            this.refreshData();
+          } else {
+            this.message.error('删除失败');
+          }
+        });
+      }
+    });
   }
 
   create(): void {

@@ -23,7 +23,7 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
 
     ngOnInit() {
         this.validateForm = this.formBuilder.group({
-            account: ['', [Validators.required]],
+            account: ['', [Validators.required, Validators.minLength(5)]],
             name: ['', [Validators.required]],
             password: ['', [Validators.required]],
             confirmPassword: ['', [this.confirmationValidator]],
@@ -75,5 +75,11 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
         this.user.role = this.getControlVal('role');
         this.user.password = this.getControlVal('password');
         this.user.isEnable = this.getControlVal('isEnable');
+        if(this.user.id){
+            this.user.lastModifierUserId = this.settings.user['id'];
+        } else{
+            this.user.creatorUserId = this.settings.user['id'];
+        }
+        
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, ShopUser, PagedResultDto } from 'app/entities';
+import { ResultDto, ShopUser, PagedResultDto, ResultEntity } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
@@ -89,6 +89,32 @@ export class ShopUserService {
                 }
             });
         });
+    }
+
+    login(account: string, pwd: string): Promise<ResultEntity<ShopUser>> {
+        return new Promise<ResultEntity<ShopUser>>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select * from ${this.tableName} where account=? and password=? and isEnable=1`, [account, pwd], 'get').then((res) => {
+                let result = new ResultEntity<ShopUser>();
+                if (res.code == 0) {
+                    if (res.data) {
+                        result.code = 0;
+                        result.msg = '登录成功';
+                        result.data = ShopUser.fromJS(res.data);
+                    } else {
+                        result.code = 99;
+                        result.msg = '登录名或密码错误';
+                    }
+                } else {
+                    result.code = -1;
+                    result.msg = '登录异常，请联系管理员';
+                }
+                resolve(result);
+            });
+        });
+    }
+
+    delete(id: string): Promise<ResultDto> {
+        return this.sqlite3Service.execSql(`delete from ${this.tableName} where id=?`, [id], 'run');
     }
 
 }

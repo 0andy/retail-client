@@ -6,6 +6,7 @@
                 <input nz-input formControlName="account" [placeholder]="'登录账号'">
                 <nz-form-explain *ngIf="validateForm.get('account').dirty&&validateForm.get('account').errors">
                     <ng-container *ngIf="validateForm.get('account').hasError('required')">请输入登录账号</ng-container>
+                    <ng-container *ngIf="validateForm.get('account').hasError('minLength')">输入的字符串长度要大于5</ng-container>
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item>

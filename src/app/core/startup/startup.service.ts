@@ -114,16 +114,16 @@ export class StartupService {
       name: `优效零售`,
       description: `优秀高效`
     };
-    const user: any = {
-      name: 'Admin',
+    //const user: any = {
+      //name: 'Admin',
       //avatar: '',
-      email: 'admin@qq.com',
-      token: '123456789'
-    };
+      //email: 'admin@qq.com',
+      //token: '123456789'
+    //};
     // 应用信息：包括站点名、描述、年份
     this.settingService.setApp(app);
     // 用户信息：包括姓名、头像、邮箱地址
-    this.settingService.setUser(user);
+    //this.settingService.setUser(user);
     // ACL：设置权限为全量
     this.aclService.setFull(true);
 

@@ -1,4 +1,4 @@
-export class ResultDto{
+export class ResultDto {
     code: number;
     msg: string;
     data: any;
@@ -40,6 +40,12 @@ export class ResultDto{
         result.init(json);
         return result;
     }
+}
+
+export class ResultEntity<T> {
+    code: number;
+    msg: string;
+    data: T;
 }
 
 export class PagedResultDto<T> {

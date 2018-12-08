@@ -3,6 +3,7 @@ import {
   ViewEncapsulation,
   ElementRef,
   Renderer2,
+  Inject,
 } from '@angular/core';
 import {
   Router,
@@ -11,9 +12,10 @@ import {
   NavigationError,
 } from '@angular/router';
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { ScrollService, SettingsService, Menu } from '@delon/theme';
 import { updateHostClass } from '@delon/util';
+import { TokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 
 @Component({
   selector: 'layout-simple',
@@ -36,6 +38,8 @@ export class LayoutSimpleComponent {
     public settings: SettingsService,
     private el: ElementRef,
     private renderer: Renderer2,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
+    private modalService: NzModalService,
   ) {
     // scroll to top in change page
     router.events.subscribe(evt => {
@@ -54,6 +58,21 @@ export class LayoutSimpleComponent {
         scroll.scrollToTop();
         this.isFetching = false;
       }, 100);
+
+      // 获取当前窗口的`Window`对象
+      var win = nw.Window.get();
+      let app = this;
+      win.on('close', function () {
+        app.modalService.confirm({
+          nzTitle: '你确定要退出该系统吗？',
+          nzContent: '',
+          nzOnOk: () => {
+            app.tokenService.clear();
+            this.hide(); // Pretend to be closed already
+            this.close(true); // then close it forcely
+          }
+        });
+      });
     });
 
     // media
@@ -65,12 +84,12 @@ export class LayoutSimpleComponent {
       'screen-xl': '(min-width: 1200px)',
     };
     bm.observe([
-        '(min-width: 1200px)',
-        '(min-width: 992px) and (max-width: 1199px)',
-        '(min-width: 768px) and (max-width: 991px)',
-        '(min-width: 576px) and (max-width: 767px)',
-        '(max-width: 575px)',
-      ])
+      '(min-width: 1200px)',
+      '(min-width: 992px) and (max-width: 1199px)',
+      '(min-width: 768px) and (max-width: 991px)',
+      '(min-width: 576px) and (max-width: 767px)',
+      '(max-width: 575px)',
+    ])
       .subscribe(() =>
         this.setClass(
           Object.keys(query).find(
