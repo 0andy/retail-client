@@ -118,7 +118,11 @@ export class UserLoginComponent implements OnDestroy {
         this.tokenService.set(user);
         this.settingsService.setUser(user);
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
-        this.startupSrv.load().then(() => this.router.navigate(['/']));
+        this.startupSrv.load().then(() => {
+          //开启全屏
+          //nw.Window.get().enterFullscreen();
+          this.router.navigate(['/']);
+        });
       } else {
         this.error = res.msg;
         return;
