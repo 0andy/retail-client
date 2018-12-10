@@ -48,7 +48,7 @@ const GLOBAL_THIRD_MODULES = [
 // #region Startup Service
 import { StartupService } from '@core/startup/startup.service';
 export function StartupServiceFactory(startupService: StartupService): Function {
-  //startupService.winInit();
+  startupService.winInit();
   return () => startupService.load();
 }
 const APPINIT_PROVIDES = [

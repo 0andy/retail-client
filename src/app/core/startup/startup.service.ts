@@ -226,7 +226,10 @@ export class StartupService {
      var win = nw.Window.get();
      let app = this;
      win.on('close', function () {
-       app.modalService.confirm({
+      this.hide(); // Pretend to be closed already
+      app.tokenService.clear();//清除缓存 
+      this.close(true); // then close it forcely
+       /*app.modalService.confirm({
          nzTitle: '你确定要退出该系统吗？',
          nzContent: '',
          nzOnOk: () => {
@@ -234,7 +237,7 @@ export class StartupService {
            this.hide(); // Pretend to be closed already
            this.close(true); // then close it forcely
          }
-       });
+       });*/
      });  
   }
 }
