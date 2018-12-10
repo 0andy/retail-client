@@ -5,14 +5,13 @@
   </h1>
 </div>
 <nz-card>
-
-  <div nz-row>
+  <div nz-row class="mb-md">
     <div nz-col nzSpan="18" style="padding-right:10px;">
       <nz-input-group nzSearch [nzSuffix]="suffixButton">
         <input type="text" [(ngModel)]="keyWord" nz-input placeholder="用户登录账户、姓名">
       </nz-input-group>
       <ng-template #suffixButton>
-        <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData(true)" nzSearch>搜索</button>
+        <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData()" nzSearch>搜索</button>
       </ng-template>
     </div>
     <div nz-col nzSpan="6" style="text-align:right;">
@@ -24,34 +23,42 @@
       </button>
     </div>
   </div>
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-table #ajaxTable nzShowSizeChanger [nzData]="dataList" [nzTotal]="totalItems" [(nzPageIndex)]="pageNumber"
+        [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()"
+        [nzFrontPagination]="false">
+        <thead>
+          <tr>
+            <th>登录账号</th>
+            <th>姓名</th>
+            <th>角色</th>
+            <th>启用</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of ajaxTable.data">
+            <td>{{item.account}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.roleName}}</td>
+            <td>
+              <nz-badge *ngIf="item.isEnable == 1" [nzStatus]="'success'" [nzText]="'启用'"></nz-badge>
+              <nz-badge *ngIf="item.isEnable == 0" [nzStatus]="'default'" [nzText]="'禁用'"></nz-badge>
+            </td>
+            <td>{{item.creationTime | date:"yyyy-MM-dd"}}</td>
+            <td>
+              <span *ngIf="item.account != 'admin'">
+                <a (click)="edit(item)">编辑</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)="delete(item)">删除</a>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
 
-  <nz-table #ajaxTable nzShowSizeChanger [nzData]="dataList" [nzTotal]="totalItems" [(nzPageIndex)]="pageNumber"
-    [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()"
-    [nzFrontPagination]="false">
-    <thead>
-      <tr>
-        <th>登录账号</th>
-        <th>姓名</th>
-        <th>角色</th>
-        <th>启用</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of ajaxTable.data">
-        <td>{{item.account}}</td>
-        <td>{{item.name}}</td>
-        <td>{{item.roleName}}</td>
-        <td>
-          <nz-badge *ngIf="item.isEnable" [nzStatus]="'success'" [nzText]="'启用'"></nz-badge>
-          <nz-badge *ngIf="!item.isEnable" [nzStatus]="'default'" [nzText]="'禁用'"></nz-badge>
-        </td>
-        <td>
-          <a (click)="edit(item)">编辑</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <a (click)="delete(item)">删除</a>
-        </td>
-      </tr>
-    </tbody>
-  </nz-table>
+  </div>
 </nz-card>

@@ -30,7 +30,7 @@ export class Sqlite3Service {
             //_self.db = new this.sqlite3.Database(_self.databaseFile, function (err) {
                 if (err) {
                     console.log(err);
-                    reject(new ResultDto({ code: -1, date: err }));
+                    reject(new ResultDto({ code: -1, data: err }));
                 } else {
                     resolve(new ResultDto({ code: 0 }));
                 }
@@ -59,7 +59,7 @@ export class Sqlite3Service {
         return new Promise<ResultDto>((resolve, reject) => {
             _self.db.exec(sentence, function (err) {
                 if (err) {
-                    reject(new ResultDto({ code: -1, date: err }));
+                    reject(new ResultDto({ code: -1, data: err }));
                 } else {
                     resolve(new ResultDto({ code: 0, msg: '创建成功 或 已存在' }));
                 }
@@ -90,10 +90,10 @@ export class Sqlite3Service {
             _self.db[mode](sql, param,
                 function (err, data) {    // data: Array, Object
                     if (err) {
-                        reject(new ResultDto({ code: -1, date: err }));
+                        reject(new ResultDto({ code: -1, data: err }));
                     } else {
                         if (data) {
-                            resolve(new ResultDto({ code: 0, date: data}));    // 返回数据查询成功的结果
+                            resolve(new ResultDto({ code: 0, data: data}));    // 返回数据查询成功的结果
                         } else {
                             resolve(new ResultDto({ code: 0, msg: 'success'}));    // 提示 增 删 改 操作成功
                         };
@@ -108,7 +108,7 @@ export class Sqlite3Service {
             this.connectDataBase().then((res) => {
                 if(res.code == 0){
                     this.sql(sql, param, mode).then((sqlres) => {
-                        this.close();
+                        //this.close();
                         if(sqlres.code === 0){
                             resolve(sqlres);
                         } else {

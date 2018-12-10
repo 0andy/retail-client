@@ -1,7 +1,8 @@
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angular/core';
 import { ModalFormComponentBase } from '@shared/component-base/modal-form-component-base';
 import { Validators, FormControl } from '@angular/forms';
 import { ShopUser } from 'app/entities';
+import { ShopUserService } from 'app/services/system';
 
 @Component({
     selector: 'app-save-user',
@@ -9,19 +10,20 @@ import { ShopUser } from 'app/entities';
     styles: []
 })
 export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> implements OnInit {
-    @Output() modalSelect: EventEmitter<any> = new EventEmitter<any>();
     user: ShopUser = new ShopUser();
     roles = [{ value: 1, label: '店铺管理员' }, { value: 2, label: '收银员' }];
+    @Input() id: string;
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private shopUserService: ShopUserService
     ) {
         super(injector);
     }
 
     ngOnInit() {
         this.validateForm = this.formBuilder.group({
-            account: ['', [Validators.required]],
+            account: ['', [Validators.required, Validators.minLength(5)]],
             name: ['', [Validators.required]],
             password: ['', [Validators.required]],
             confirmPassword: ['', [this.confirmationValidator]],
@@ -44,14 +46,39 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
     }
 
     fetchData(): void {
-       
+        if(this.id){
+            this.shopUserService.get(this.id).then((res) => {
+                if(res) {
+                    this.user = res;
+                    this.setFormValues(this.user);
+                } else {
+                    this.message.error('没有获取到该用户');
+                }
+            });
+        }
     }
 
     protected submitExecute(finisheCallback: Function): void {
-       
+        this.shopUserService.save(this.user).finally(()=>{
+            this.saving = false;
+        }).then((res) => {
+            finisheCallback();
+            if (res.code == 0) {
+                this.message.success('保存数据成功！');
+                this.success(true);
+            } else {
+                this.message.error('保存数据失败！');
+                console.log(res.data);
+            }
+        });
     }
     protected setFormValues(entity: ShopUser): void {
-
+        this.setControlVal('account', entity.account);
+        this.setControlVal('name', entity.name);
+        this.setControlVal('role', entity.role);
+        this.setControlVal('isEnable', entity.isEnable);
+        this.setControlVal('password', entity.password);
+        this.setControlVal('confirmPassword', entity.password);
     }
     protected getFormValues(): void {
         this.user.account = this.getControlVal('account');
@@ -59,5 +86,11 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
         this.user.role = this.getControlVal('role');
         this.user.password = this.getControlVal('password');
         this.user.isEnable = this.getControlVal('isEnable');
+        if(this.user.id){
+            this.user.lastModifierUserId = this.settings.user['id'];
+        } else{
+            this.user.creatorUserId = this.settings.user['id'];
+        }
+        
     }
 }

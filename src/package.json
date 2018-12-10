@@ -1,12 +1,12 @@
 {
     "name": "retail-client",
-    "main": "retail/index.html",
+    "main": "index.html",
     "description": "河北烟草优效零售终端",
     "version": "0.0.2",
     "domain": "retail",
     "window": {
         "title": "优效零售终端",
-        "icon": "retail/retail.ico",
+        "icon": "favicon.ico",
         "toolbar": true,
         "frame": true,
         "width": 1024,

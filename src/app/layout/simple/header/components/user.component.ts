@@ -29,13 +29,15 @@ export class LayoutSimpleHeaderUserComponent implements OnInit {
 
   ngOnInit(): void {
     // mock
-    const token = this.tokenService.get() || {
+    /*const token = this.tokenService.get() || {
       token: 'nothing',
       name: 'Admin',
       avatar: './assets/logo-color.svg',
       email: 'cipchk@qq.com',
     };
-    this.tokenService.set(token);
+    this.tokenService.set(token);*/
+    console.log(this.settings.user);
+    console.log(this.tokenService.get());
   }
 
   logout() {

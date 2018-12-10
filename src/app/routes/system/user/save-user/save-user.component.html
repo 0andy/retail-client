@@ -5,7 +5,8 @@
             <nz-form-control nzHasFeedback>
                 <input nz-input formControlName="account" [placeholder]="'登录账号'">
                 <nz-form-explain *ngIf="validateForm.get('account').dirty&&validateForm.get('account').errors">
-                    <ng-container *ngIf="validateForm.get('account').hasError('required')">必填</ng-container>
+                    <ng-container *ngIf="validateForm.get('account').hasError('required')">请输入登录账号</ng-container>
+                    <ng-container *ngIf="validateForm.get('account').hasError('minLength')">输入的字符串长度要大于5</ng-container>
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item>
@@ -14,7 +15,7 @@
             <nz-form-control nzHasFeedback>
                 <input nz-input formControlName="name" [placeholder]="'用户名'">
                 <nz-form-explain *ngIf="validateForm.get('name').dirty&&validateForm.get('name').errors">
-                    <ng-container *ngIf="validateForm.get('name').hasError('required')">必填</ng-container>
+                    <ng-container *ngIf="validateForm.get('name').hasError('required')">请输入用户名</ng-container>
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item>
@@ -27,21 +28,21 @@
             </nz-form-control>
         </nz-form-item>
         <!-- 密码 -->
-        <nz-form-item>
+        <nz-form-item *ngIf="!id">
             <nz-form-control nzHasFeedback>
                 <input nz-input formControlName="password" [placeholder]="'密码'" type="password" autocomplete="current-password"
                     (ngModelChange)="updateConfirmValidator()">
                 <nz-form-explain *ngIf="validateForm.get('password').dirty&&validateForm.get('password').errors">
-                    <ng-container *ngIf="validateForm.get('password').hasError('required')">必填</ng-container>
+                    <ng-container *ngIf="validateForm.get('password').hasError('required')">请输入密码</ng-container>
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item>
         <!-- 确认密码 -->
-        <nz-form-item>
+        <nz-form-item *ngIf="!id">
             <nz-form-control nzHasFeedback>
                 <input nz-input formControlName="confirmPassword" [placeholder]="'确认密码'" type="password" autocomplete="new-password">
                 <nz-form-explain *ngIf="validateForm.get('confirmPassword').dirty&&validateForm.get('confirmPassword').errors">
-                    <ng-container *ngIf="validateForm.get('confirmPassword').hasError('required')">必填</ng-container>
+                    <ng-container *ngIf="validateForm.get('confirmPassword').hasError('required')">请输入确认密码</ng-container>
                     <ng-container *ngIf="validateForm.get('confirmPassword').hasError('confirm')">两次密码必须一致</ng-container>
                 </nz-form-explain>
             </nz-form-control>

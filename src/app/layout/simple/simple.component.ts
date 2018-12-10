@@ -3,6 +3,7 @@ import {
   ViewEncapsulation,
   ElementRef,
   Renderer2,
+  Inject,
 } from '@angular/core';
 import {
   Router,
@@ -11,9 +12,10 @@ import {
   NavigationError,
 } from '@angular/router';
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { ScrollService, SettingsService, Menu } from '@delon/theme';
 import { updateHostClass } from '@delon/util';
+import { TokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 
 @Component({
   selector: 'layout-simple',
@@ -35,7 +37,7 @@ export class LayoutSimpleComponent {
     private _message: NzMessageService,
     public settings: SettingsService,
     private el: ElementRef,
-    private renderer: Renderer2,
+    private renderer: Renderer2
   ) {
     // scroll to top in change page
     router.events.subscribe(evt => {
@@ -65,12 +67,12 @@ export class LayoutSimpleComponent {
       'screen-xl': '(min-width: 1200px)',
     };
     bm.observe([
-        '(min-width: 1200px)',
-        '(min-width: 992px) and (max-width: 1199px)',
-        '(min-width: 768px) and (max-width: 991px)',
-        '(min-width: 576px) and (max-width: 767px)',
-        '(max-width: 575px)',
-      ])
+      '(min-width: 1200px)',
+      '(min-width: 992px) and (max-width: 1199px)',
+      '(min-width: 768px) and (max-width: 991px)',
+      '(min-width: 576px) and (max-width: 767px)',
+      '(max-width: 575px)',
+    ])
       .subscribe(() =>
         this.setClass(
           Object.keys(query).find(

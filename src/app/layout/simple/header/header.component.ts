@@ -6,6 +6,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 @Component({
   selector: 'layout-simple-header',
   templateUrl: './header.component.html',
+  styleUrls: ['./header.component.less'],
   host: {
     '[class.layout-simple__head]': 'true',
   },
@@ -17,7 +18,9 @@ export class LayoutSimpleHeaderComponent {
     public settings: SettingsService,
     private router: Router,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-  ) {}
+  ) {
+
+  }
 
   toggleCollapsedSidebar() {
     this.settings.setLayout('collapsed', !this.settings.layout.collapsed);
