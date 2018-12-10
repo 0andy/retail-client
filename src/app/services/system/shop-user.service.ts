@@ -64,7 +64,7 @@ export class ShopUserService {
     }
 
     getAll(keyWord: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<ShopUser>> {
-        let _self = this;
+        const _self = this;
         if (!keyWord) {
             keyWord = '';
         }
@@ -75,7 +75,7 @@ export class ShopUserService {
                 if (dres.code == 0) {
                     _self.sqlite3Service.sql(`select count(*) cnum from ${this.tableName} where account like ? or name like ?`, [keyWord, keyWord], 'get').then((cres) => {
                         //console.log(cres);
-                        let result = new PagedResultDto<ShopUser>();
+                        const result = new PagedResultDto<ShopUser>();
                         if (cres.code == 0) {
                             //alert(JSON.stringify(cres.data))
                             result.totalCount = cres.data.cnum;
@@ -109,10 +109,10 @@ export class ShopUserService {
     }
 
     login(account: string, pwd: string): Promise<ResultEntity<ShopUser>> {
-        let md5pwd = this.nodeComService.md5(pwd);
+        const md5pwd = this.nodeComService.md5(pwd);
         return new Promise<ResultEntity<ShopUser>>((resolve, reject) => {
             this.sqlite3Service.execSql(`select * from ${this.tableName} where account=? and password=? and isEnable=1`, [account, md5pwd], 'get').then((res) => {
-                let result = new ResultEntity<ShopUser>();
+                const result = new ResultEntity<ShopUser>();
                 if (res.code == 0) {
                     if (res.data) {
                         result.code = 0;
