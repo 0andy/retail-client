@@ -13,6 +13,7 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { CountdownModule } from 'ngx-countdown';
 import { LengthLimitPipe } from '@shared/pipe/length-limit.pipe';
 import { KeyHighlightPipe } from '@shared/pipe/key-highlight.pipe';
+import { RetailNoticeIconComponent, RetailNoticeIconTabComponent } from '@shared/components';
 
 const THIRDMODULES = [
   NgZorroAntdModule,
@@ -21,7 +22,7 @@ const THIRDMODULES = [
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [ LengthLimitPipe, KeyHighlightPipe ];
+const COMPONENTS = [ LengthLimitPipe, KeyHighlightPipe, RetailNoticeIconComponent ];
 const DIRECTIVES = [];
 // #endregion
 
@@ -41,7 +42,8 @@ const DIRECTIVES = [];
   declarations: [
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES
+    ...DIRECTIVES,
+    RetailNoticeIconTabComponent
   ],
   exports: [
     CommonModule,

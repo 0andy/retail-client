@@ -8,7 +8,7 @@
   <ul class="alain-default__nav">
     <!-- Menu -->
     <li>
-      <div class="alain-default__nav-item hedColor" (click)="toggleCollapsedSidebar()">
+      <div class="alain-default__nav-item simple-header-color" (click)="toggleCollapsedSidebar()">
         <i nz-icon type="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
       </div>
     </li>
@@ -18,7 +18,7 @@
     -->
     <!-- Lock Page -->
     <li class="hidden-mobile">
-      <div class="alain-default__nav-item hedColor" [routerLink]="['/lock']">
+      <div class="alain-default__nav-item simple-header-color" [routerLink]="['/lock']">
         <i nz-icon type="lock"></i>
       </div>
     </li>
@@ -35,8 +35,8 @@
   <!-- <layout-simple-header-user></layout-simple-header-user>  -->
   <ul class="alain-default__nav">
     <!-- Notify -->
-    <li>
-      <header-notify></header-notify>
+    <li class="simple-header-color">
+      <header-notify class="simple-header-color"></header-notify>
     </li>
     <!-- App Icons -->
     <li class="hidden-mobile">
@@ -45,7 +45,7 @@
     <!-- Settings -->
     <li class="hidden-mobile">
       <nz-dropdown nzTrigger="click" nzPlacement="bottomRight">
-        <div class="alain-default__nav-item" nz-dropdown>
+        <div class="alain-default__nav-item simple-header-color" nz-dropdown>
           <i nz-icon type="setting"></i>
         </div>
         <div nz-menu style="width:200px;">
@@ -59,7 +59,7 @@
       </nz-dropdown>
     </li>
     <li class="hidden-mobile">
-      <header-user></header-user>
+      <layout-simple-header-user></layout-simple-header-user>
     </li>
   </ul>
 </div>

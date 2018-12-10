@@ -7,38 +7,31 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
   selector: 'layout-simple-header-user',
   template: `
   <nz-dropdown nzPlacement="bottomRight">
-    <div class="item account" nz-dropdown>
-      <nz-avatar [nzSrc]="settings.user.avatar" nzSize="small" class="avatar"></nz-avatar>
-      <span class="name">{{settings.user.name}}</span>
+    <div class="alain-default__nav-item d-flex align-items-center px-sm" style="color: rgba(0,0,0,.85)" nz-dropdown>
+      <nz-avatar [nzSrc]="settings.user.avatar" nzSize="small" class="mr-sm"></nz-avatar>
+      {{settings.user.name}}
     </div>
     <div nz-menu class="width-sm">
-      <div nz-menu-item [nzDisabled]="true"><i class="anticon anticon-user mr-sm"></i>个人中心</div>
-      <div nz-menu-item [nzDisabled]="true"><i class="anticon anticon-setting mr-sm"></i>设置</div>
+      <div nz-menu-item routerLink="/pro/account/center"><i nz-icon type="user" class="mr-sm"></i>
+        个人中心
+      </div>
+      <div nz-menu-item routerLink="/pro/account/settings"><i nz-icon type="setting" class="mr-sm"></i>
+        个人设置
+      </div>
       <li nz-menu-divider></li>
-      <div nz-menu-item (click)="logout()"><i class="anticon anticon-setting mr-sm"></i>退出登录</div>
+      <div nz-menu-item (click)="logout()"><i nz-icon type="logout" class="mr-sm"></i>
+        退出登录
+      </div>
     </div>
   </nz-dropdown>
   `,
 })
-export class LayoutSimpleHeaderUserComponent implements OnInit {
+export class LayoutSimpleHeaderUserComponent {
   constructor(
     public settings: SettingsService,
     private router: Router,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
   ) {}
-
-  ngOnInit(): void {
-    // mock
-    /*const token = this.tokenService.get() || {
-      token: 'nothing',
-      name: 'Admin',
-      avatar: './assets/logo-color.svg',
-      email: 'cipchk@qq.com',
-    };
-    this.tokenService.set(token);*/
-    console.log(this.settings.user);
-    console.log(this.tokenService.get());
-  }
 
   logout() {
     this.tokenService.clear();

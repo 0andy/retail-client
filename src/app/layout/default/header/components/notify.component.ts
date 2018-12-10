@@ -1,25 +1,24 @@
 import { Component } from '@angular/core';
 import * as distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { NzMessageService } from 'ng-zorro-antd';
-import { NoticeItem, NoticeIconList } from '@delon/abc';
+import { RetailNoticeItem, RetailNoticeIconList } from '@shared/components';
 
 /**
  * 菜单通知
  */
 @Component({
   selector: 'header-notify',
-  template: `
-  <notice-icon
+  template: `<retail-notice-icon
     [data]="data"
     [count]="count"
     [loading]="loading"
     (select)="select($event)"
     (clear)="clear($event)"
-    (popoverVisibleChange)="loadData()"></notice-icon>
+    (popoverVisibleChange)="loadData()"></retail-notice-icon>
   `,
 })
 export class HeaderNotifyComponent {
-  data: NoticeItem[] = [
+  data: RetailNoticeItem[] = [
     {
       title: '通知',
       list: [],
@@ -50,7 +49,7 @@ export class HeaderNotifyComponent {
 
   constructor(private msg: NzMessageService) {}
 
-  updateNoticeData(notices: NoticeIconList[]): NoticeItem[] {
+  updateNoticeData(notices: RetailNoticeIconList[]): RetailNoticeItem[] {
     const data = this.data.slice();
     data.forEach(i => (i.list = []));
 
