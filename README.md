@@ -3,5 +3,5 @@
 </p>
 
 <h1 align="center">
-Ng Alain + nwjs
+Ng Alain + nwjs + sqlite3
 </h1>
