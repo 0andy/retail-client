@@ -46,9 +46,9 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
     }
 
     fetchData(): void {
-        if(this.id){
+        if (this.id) {
             this.shopUserService.get(this.id).then((res) => {
-                if(res) {
+                if (res) {
                     this.user = res;
                     this.setFormValues(this.user);
                 } else {
@@ -59,7 +59,7 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
     }
 
     protected submitExecute(finisheCallback: Function): void {
-        this.shopUserService.save(this.user).finally(()=>{
+        this.shopUserService.save(this.user).finally(() => {
             this.saving = false;
         }).then((res) => {
             finisheCallback();
@@ -86,11 +86,11 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
         this.user.role = this.getControlVal('role');
         this.user.password = this.getControlVal('password');
         this.user.isEnable = this.getControlVal('isEnable');
-        if(this.user.id){
+        if (this.user.id) {
             this.user.lastModifierUserId = this.settings.user['id'];
-        } else{
+        } else {
             this.user.creatorUserId = this.settings.user['id'];
         }
-        
+
     }
 }

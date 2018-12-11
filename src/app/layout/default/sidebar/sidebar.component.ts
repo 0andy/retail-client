@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd';
-import { SettingsService } from '@delon/theme';
+import { SettingsService, ModalHelper } from '@delon/theme';
+import { ChangePasswordComponent } from 'app/layout/simple/change-password/change-password.component';
 
 @Component({
   selector: 'layout-sidebar',
@@ -10,5 +11,5 @@ export class SidebarComponent {
   constructor(
     public settings: SettingsService,
     public msgSrv: NzMessageService,
-  ) {}
+  ) { }
 }

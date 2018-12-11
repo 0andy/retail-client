@@ -16,7 +16,10 @@ import { HeaderUserComponent } from './default/header/components/user.component'
 import { SettingDrawerComponent } from './default/setting-drawer/setting-drawer.component';
 import { SettingDrawerItemComponent } from './default/setting-drawer/setting-drawer-item.component';
 
-const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
+const SETTINGDRAWER = [SettingDrawerComponent
+  , SettingDrawerItemComponent
+  , ChangePasswordComponent
+  , HeaderUserComponent];
 
 const COMPONENTS = [
   LayoutDefaultComponent,
@@ -42,12 +45,14 @@ import { LayoutSimpleSidebarComponent } from './simple/sidebar/sidebar.component
 import { LayoutSimpleHeaderComponent } from './simple/header/header.component';
 import { LayoutSimpleHeaderUserComponent } from './simple/header/components/user.component';
 import { LayoutSimpleHeaderSearchComponent } from './simple/header/components/search.component';
+import { ChangePasswordComponent } from './simple/change-password/change-password.component';
+
 const SIMPLE = [
   LayoutSimpleSidebarComponent,
   LayoutSimpleHeaderComponent,
   LayoutSimpleHeaderUserComponent,
   LayoutSimpleHeaderSearchComponent,
-  LayoutSimpleComponent
+  LayoutSimpleComponent,
 ];
 
 // passport
@@ -57,7 +62,7 @@ const PASSPORT = [
 ];
 
 @NgModule({
-  imports: [SharedModule, CDKLayoutModule ],
+  imports: [SharedModule, CDKLayoutModule],
   entryComponents: SETTINGDRAWER,
   declarations: [
     ...COMPONENTS,
