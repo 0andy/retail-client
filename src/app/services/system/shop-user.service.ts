@@ -46,11 +46,11 @@ export class ShopUserService {
         }
     }
 
-    get(id: string): Promise<ShopUser>{
+    get(id: string): Promise<ShopUser> {
         return new Promise<ShopUser>((resolve, reject) => {
-            this.sqlite3Service.execSql(`select * from ${this.tableName} where id=?`,[id],'get').then((res) => {
-                if(res.code == 0){
-                    if(res.data){
+            this.sqlite3Service.execSql(`select * from ${this.tableName} where id=?`, [id], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data) {
                         resolve(ShopUser.fromJS(res.data));
                     } else {
                         reject(null);
@@ -133,6 +133,9 @@ export class ShopUserService {
         return this.sqlite3Service.execSql(`delete from ${this.tableName} where id=?`, [id], 'run');
     }
 
+    updatePwd(id: string, newPwd: string): Promise<ResultDto> {
+        return this.sqlite3Service.execSql(`update ${this.tableName} set password =? where id=?`, [newPwd, id], 'run');
+    }
 }
 
 

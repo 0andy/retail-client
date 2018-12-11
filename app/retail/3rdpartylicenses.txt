@@ -1,6 +1,6 @@
 retail-client
 
-@ant-design/icons-angular
+@angular/common
 MIT
 
 tslib
@@ -298,9 +298,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-@angular/common
-MIT
-
 @angular/platform-browser
 MIT
 
@@ -328,6 +325,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+
+@ant-design/icons-angular
+MIT
 
 @delon/theme
 MIT

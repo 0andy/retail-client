@@ -5,7 +5,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 
 export abstract class ModalFormComponentBase<
   EntityDto
-> extends ModalComponentBase {
+  > extends ModalComponentBase {
   modalRef: NzModalRef;
   formBuilder: FormBuilder;
   validateForm: FormGroup;

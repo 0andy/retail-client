@@ -12,7 +12,7 @@ export class ShopUser {
     lastModifierUserId: string;
 
     get roleName() {
-        return this.role === 1? '店铺管理员' : '收银员';
+        return this.role === 1 ? '店铺管理员' : '收银员';
     }
 
     constructor(data?: any) {
@@ -55,6 +55,49 @@ export class ShopUser {
         });
 
         return array;
+    }
+}
+
+export class ChangePasswordDto {
+    orgPassword: string;
+    newPassword: string;
+    checkPassword: string;
+    constructor(data?) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orgPassword = data["orgPassword"];
+            this.newPassword = data["newPassword"];
+            this.checkPassword = data["checkPassword"];
+        }
+    }
+
+    static fromJS(data: any): ChangePasswordDto {
+        let result = new ChangePasswordDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orgPassword"] = this.orgPassword;
+        data["newPassword"] = this.newPassword;
+        data["checkPassword"] = this.checkPassword;
+        return data;
+    }
+
+    clone() {
+        const json = this.toJSON();
+        let result = new ChangePasswordDto();
+        result.init(json);
+        return result;
     }
 }
 

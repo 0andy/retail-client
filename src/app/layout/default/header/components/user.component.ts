@@ -1,7 +1,9 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Injector } from '@angular/core';
 import { Router } from '@angular/router';
-import { SettingsService } from '@delon/theme';
+import { SettingsService, ModalHelper } from '@delon/theme';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { ChangePasswordComponent } from 'app/layout/simple/change-password/change-password.component';
+import { AppComponentBase } from '@shared/component-base';
 
 @Component({
   selector: 'header-user',
@@ -15,8 +17,8 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
       <div nz-menu-item routerLink="/pro/account/center"><i nz-icon type="user" class="mr-sm"></i>
         个人中心
       </div>
-      <div nz-menu-item routerLink="/pro/account/settings"><i nz-icon type="setting" class="mr-sm"></i>
-        个人设置
+      <div nz-menu-item (click)="changePassword()"><i nz-icon type="setting" class="mr-sm"></i>
+        修改密码
       </div>
       <li nz-menu-divider></li>
       <div nz-menu-item (click)="logout()"><i nz-icon type="logout" class="mr-sm"></i>
@@ -27,11 +29,31 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
   `,
 })
 export class HeaderUserComponent {
+  modalHelper: ModalHelper;
+
   constructor(
     public settings: SettingsService,
     private router: Router,
+    injector: Injector,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-  ) {}
+  ) {
+    this.modalHelper = injector.get(ModalHelper);
+
+  }
+  changePassword(): void {
+    this.modalHelper
+      .open(ChangePasswordComponent, {}, 'md', {
+        nzMask: true,
+        nzMaskClosable: false,
+        nzClosable: true,
+        nzTitle: '修改密码',
+      })
+      .subscribe(isSave => {
+        if (isSave) {
+          // this.refresh();
+        }
+      });
+  }
 
   logout() {
     this.tokenService.clear();
