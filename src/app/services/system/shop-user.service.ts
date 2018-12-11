@@ -55,7 +55,7 @@ export class ShopUserService {
                         resolve(ShopUser.fromJS(res.data));
                     } else {
                         reject(null);
-                    }
+                    };
                 } else {
                     reject(null);
                 }
@@ -133,6 +133,11 @@ export class ShopUserService {
 
     delete(id: string): Promise<ResultDto> {
         return this.sqlite3Service.execSql(`delete from ${this.tableName} where id=?`, [id], 'run');
+    }
+
+    updateStatus(id: string, isEnable: boolean, userId: string): Promise<ResultDto> {
+        const lasttime = new Date();
+        return this.sqlite3Service.execSql(`update ${this.tableName} set isEnable=?, lastModificationTime=?, lastModifierUserId=? where id=?`, [isEnable, lasttime, userId, id], 'run');
     }
 
 }

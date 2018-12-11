@@ -56,6 +56,29 @@ export class ShopUser {
 
         return array;
     }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["account"] = this.account;
+        data["password"] = this.password;
+        data["role"] = this.role;
+        data["shopId"] = this.shopId;
+        data["isEnable"] = this.isEnable;
+        data["creationTime"] = this.creationTime;
+        data["creatorUserId"] = this.creatorUserId;
+        data["lastModificationTime"] = this.lastModificationTime;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        return data;
+    }
+
+    clone() {
+        const json = this.toJSON();
+        let result = new ShopUser();
+        result.init(json);
+        return result;
+    }
 }
 
 

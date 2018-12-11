@@ -85,6 +85,23 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
       });
   }
 
+  updateStatus(item: ShopUser): void {
+    this.modalService.confirm({
+      nzTitle: item.isEnable? '确定要禁用该用户吗？' : '确定要启用该用户吗？',
+      nzContent: `<b>用户账号[${item.account}]</b>`,
+      nzOnOk: () => {
+        this.shopUserService.updateStatus(item.id, !item.isEnable, this.settings.user['id']).then((res) => {
+          if (res.code == 0) {
+            this.message.success('禁用成功');
+            this.refreshData();
+          } else {
+            this.message.error('禁用失败');
+          }
+        });
+      }
+    });
+  }
+
   createTB() {
     //this.shopUserService.createTable();
   }
