@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
+import { Token } from '@angular/compiler';
+import { SettingsService } from '@delon/theme';
 
 
 @Injectable()
 export class NodeHttpClient {
 
     private http = (<any>window).require('http');
-    private hostname: string = 'localhost';
+    private hostname: string = '127.0.0.1';
     private port: number = 21021;
 
-    constructor() {
+    constructor(private settingsService: SettingsService) {
     }
 
     get(url: string, params?: { [key: string]: string }): Promise<any> {
@@ -28,11 +30,13 @@ export class NodeHttpClient {
             hostname: this.hostname,
             port: this.port,
             path: url_,
+            method: method,
             observe: "response",
             responseType: "blob",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "Authorization": 'Bearer ' + this.settingsService.user['token'],
             }
         };
         if (body) {
@@ -41,16 +45,22 @@ export class NodeHttpClient {
         }
 
         return new Promise<any>((resolve, reject) => {
-            this.http.request(options_, function (res) {  
-                console.log('STATUS: ' + res.statusCode);  
-                console.log('HEADERS: ' + JSON.stringify(res.headers));  
-                res.setEncoding('utf8');  
-                res.on('data', function (data) {  
-                    console.log('BODY: ' + data);  
-                });  
-            }).on('error', function (e) {  
-                console.log('problem with request: ' + e.message);  
-            });  
+            const req = this.http.request(options_, function (res) {
+                console.log('STATUS: ' + res.statusCode);
+                console.log('HEADERS: ' + JSON.stringify(res.headers));
+                res.setEncoding('utf8');
+                res.on('data', function (data) {
+                    console.log('BODY: ' + data);
+                    resolve(data);
+                });
+                res.on('end',function(chunk){
+                    console.log("body: " + chunk);
+                });
+            }).on('error', function (e) {
+                console.log('problem with request: ' + e.message);
+                reject(e)
+            });
+            req.end();
         });
     }
 

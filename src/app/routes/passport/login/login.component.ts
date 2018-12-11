@@ -107,7 +107,7 @@ export class UserLoginComponent implements OnDestroy {
         this.reuseTabService.clear();
         // 设置用户Token信息
         var user = {
-          token: '!@#123456^&*(123456',
+          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6Ijg5YmQ5Mjk3LWViZDgtMDE0NC1mMWJjLTM5ZThlNDI2NWM3ZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsInN1YiI6IjIiLCJqdGkiOiJiNDkyNjY1MS05NzcxLTQ0ZDEtOTYyNy00ZjE1ZGJjMWI2YTIiLCJpYXQiOjE1NDQ1MzYyMjcsIm5iZiI6MTU0NDUzNjIyNywiZXhwIjoxNTQ0NjIyNjI3LCJpc3MiOiJBYnBDb3JlQmFzaWMiLCJhdWQiOiJBYnBDb3JlQmFzaWMifQ.KhytbIoLWY-Nkp3TZVENjVSHQm_GqUcuAEq2mF8wti8',
           avatar: './assets/avatar.jpg',
           account: res.data.account,
           name: res.data.name,

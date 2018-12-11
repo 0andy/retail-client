@@ -1,6 +1,6 @@
 retail-client
 
-@angular/common
+ant-design-palettes
 MIT
 
 tslib
@@ -298,6 +298,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
+@angular/common
+MIT
+
 @angular/platform-browser
 MIT
 
@@ -353,9 +356,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-
-ant-design-palettes
-MIT
 
 tinycolor2
 MIT
