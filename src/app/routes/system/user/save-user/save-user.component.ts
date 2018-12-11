@@ -64,10 +64,10 @@ export class SaveShopUserComponent extends ModalFormComponentBase<ShopUser> impl
         }).then((res) => {
             finisheCallback();
             if (res.code == 0) {
-                this.message.success('保存数据成功！');
+                this.message.success('保存数据成功');
                 this.success(true);
             } else {
-                this.message.error('保存数据失败！');
+                this.message.error('保存数据失败');
                 console.log(res.data);
             }
         });

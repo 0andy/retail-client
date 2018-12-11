@@ -20,7 +20,7 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
   }
 
   protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-    console.log(request);
+    //console.log(request);
     this.shopUserService.getAll(this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
       finishedCallback();
     }).then((res) => {
