@@ -4,7 +4,7 @@
     <small>店铺管理员、收银员信息维护管理</small>
   </h1>
 </div>
-<nz-card>
+<!-- <nz-card> -->
   <div nz-row class="mb-md">
     <div nz-col nzSpan="18" style="padding-right:10px;">
       <nz-input-group nzSearch [nzSuffix]="suffixButton">
@@ -52,7 +52,8 @@
               <span *ngIf="item.account != 'admin'">
                 <a (click)="edit(item)">编辑</a>
                 <nz-divider nzType="vertical"></nz-divider>
-                <a (click)="delete(item)">删除</a>
+                <a (click)="updateStatus(item)">{{item.isEnable? '禁用' : '启用'}}</a>
+                <!-- <a (click)="delete(item)">删除</a> -->
               </span>
             </td>
           </tr>
@@ -61,4 +62,4 @@
     </div>
 
   </div>
-</nz-card>
+<!-- </nz-card> -->

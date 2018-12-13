@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { MemberService } from 'app/services/member/member.service';
 
 @Component({
   selector: 'member-index',
@@ -8,11 +8,11 @@ import { _HttpClient } from '@delon/theme';
 })
 export class MemberComponent implements OnInit {
 
-  constructor(
-    private http: _HttpClient
-  ) { }
+  constructor(private memberService: MemberService) { }
 
   ngOnInit() {
+    alert(100)
+    this.memberService.getAll('0','10');
   }
 
 }
