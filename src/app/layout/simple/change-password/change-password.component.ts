@@ -3,11 +3,12 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { ModalFormComponentBase } from '@shared/component-base/modal-form-component-base';
 import { ChangePasswordDto, ShopUser } from 'app/entities';
 import { ShopUserService } from 'app/services/system';
+import { NodeCommonService } from 'app/services/common';
 
 @Component({
     selector: 'app-change-password-modal',
     templateUrl: './change-password.component.html',
-    providers: [ShopUserService]
+    providers: [ShopUserService, NodeCommonService]
 })
 export class ChangePasswordComponent extends ModalFormComponentBase<ChangePasswordDto> implements OnInit {
     id: string;
@@ -22,7 +23,8 @@ export class ChangePasswordComponent extends ModalFormComponentBase<ChangePasswo
 
     constructor(
         injector: Injector,
-        private shopUserService: ShopUserService
+        private shopUserService: ShopUserService,
+        private nodeComService: NodeCommonService
     ) {
         super(injector);
         this.id = this.settings.user['id'];
@@ -64,7 +66,7 @@ export class ChangePasswordComponent extends ModalFormComponentBase<ChangePasswo
         this.shopUserService.get(this.id).finally(() => {
             finisheCallback();
         }).then((res) => {
-            if (this.changePassword.orgPassword === res.password) {
+            if (this.nodeComService.md5(this.changePassword.orgPassword) === res.password) {
                 this.shopUserService.updatePwd(this.id, this.changePassword.newPassword).finally(() => {
                 }).then((r) => {
                     if (r.code === 0) {

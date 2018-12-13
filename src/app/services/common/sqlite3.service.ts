@@ -27,7 +27,7 @@ export class Sqlite3Service {
         let _self = this;
         return new Promise<ResultDto>((resolve, reject) => {
             _self.db = new this.sqlite3.cached.Database(_self.databaseFile, function (err) {
-            //_self.db = new this.sqlite3.Database(_self.databaseFile, function (err) {
+                //_self.db = new this.sqlite3.Database(_self.databaseFile, function (err) {
                 if (err) {
                     console.log(err);
                     reject(new ResultDto({ code: -1, data: err }));
@@ -93,9 +93,9 @@ export class Sqlite3Service {
                         reject(new ResultDto({ code: -1, data: err }));
                     } else {
                         if (data) {
-                            resolve(new ResultDto({ code: 0, data: data}));    // 返回数据查询成功的结果
+                            resolve(new ResultDto({ code: 0, data: data }));    // 返回数据查询成功的结果
                         } else {
-                            resolve(new ResultDto({ code: 0, msg: 'success'}));    // 提示 增 删 改 操作成功
+                            resolve(new ResultDto({ code: 0, msg: 'success' }));    // 提示 增 删 改 操作成功
                         };
                     };
                 }
@@ -103,24 +103,24 @@ export class Sqlite3Service {
         });
     }
 
-    execSql(sql: any, param: any, mode: 'all' | 'get' | 'run'): Promise<ResultDto>{
+    execSql(sql: any, param: any, mode: 'all' | 'get' | 'run'): Promise<ResultDto> {
         return new Promise<ResultDto>((resolve, reject) => {
             this.connectDataBase().then((res) => {
-                if(res.code == 0){
+                if (res.code == 0) {
                     this.sql(sql, param, mode).then((sqlres) => {
                         //this.close();
-                        if(sqlres.code === 0){
+                        if (sqlres.code === 0) {
                             resolve(sqlres);
                         } else {
                             console.error('执行sql失败：' + sqlres.data);
                             reject(sqlres);
                         }
                     });
-                } else{
+                } else {
                     console.error('连接失败：' + res.data);
                     reject(res);
                 }
-            }); 
+            });
         });
     }
 
@@ -144,8 +144,51 @@ export class Sqlite3Service {
         return this.createTable(sentence);
     }
 
-    close(){
-        if(this.db){
+    createCategoryTable() {
+        //Category
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        let sentence = `
+        create table if not exists category(
+            id int PRIMARY KEY not null,
+            name varchar(200) not null,
+            seq int not null,
+            creationTime datetime not null
+        );`;
+        return this.createTable(sentence);
+    }
+
+    createProductTable() {
+        //Product
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        let sentence = `
+        create table if not exists retailProduct(
+            id varchar(36) PRIMARY KEY not null,
+            shopId varchar(36) not null,
+            barCode nvarchar(50),
+            name nvarchar(200) not null,
+            categoryId int not null,
+            grade int,
+            retailPrice decimal(18,2),
+            purchasePrice decimal(18,2),
+            sellPrice decimal(18,2),
+            isEnableMember int,
+            memberPrice decimal(18,2),
+            unit nvarchar(50),
+            pinYinCode nvarchar(0),
+            lable nvarchar(0),
+            stock int,
+            isEnable int,
+            desc nvarchar(500),
+            creationTime DateTime not null,
+            creatorUserId varchar(36),
+            lastModificationTime DateTime,
+            lastModifierUserId varchar(36)
+            );`;
+        return this.createTable(sentence);
+    }
+
+    close() {
+        if (this.db) {
             this.db.close();
         }
     }

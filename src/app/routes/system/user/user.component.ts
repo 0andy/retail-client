@@ -24,7 +24,7 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
     this.shopUserService.getAll(this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
       finishedCallback();
     }).then((res) => {
-      //console.log(res);
+      console.log(res);
       if (res) {
         this.dataList = res.items;
         this.totalItems = res.totalCount;

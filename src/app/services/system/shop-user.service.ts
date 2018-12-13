@@ -136,6 +136,7 @@ export class ShopUserService {
     }
 
     updatePwd(id: string, newPwd: string): Promise<ResultDto> {
+        newPwd = this.nodeComService.md5(newPwd);
         return this.sqlite3Service.execSql(`update ${this.tableName} set password =? where id=?`, [newPwd, id], 'run');
     }
 }
