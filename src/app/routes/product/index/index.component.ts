@@ -20,6 +20,7 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   activedNode: NzTreeNode;
   search: any = {};
   tempNode: string = 'root';
+  keyWord: string;
   constructor(
     injector: Injector
     , private categoryService: CategoryService
@@ -37,11 +38,27 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
     this.categoryService.createTable();
   }
 
+  updateStatus(item: RetailProduct): void {
+    this.modalService.confirm({
+      nzTitle: item.isEnable ? '确定要禁用该商品吗?' : '确定要启用该商品吗?',
+      nzContent: `<b>商品名称[${item.name}]</b>`,
+      nzOnOk: () => {
+        this.productService.updateStatus(item.id, !item.isEnable, this.settings.user['id']).then((res) => {
+          if (res.code == 0) {
+            this.message.success('操作成功');
+            this.refresh();
+          } else {
+            this.message.error('操作失败');
+          }
+        });
+      }
+    });
+  }
+
   protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-    this.productService.getAll(this.tempNode, request.skipCount, request.maxResultCount).finally(() => {
+    this.productService.getAll(this.tempNode, this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
       finishedCallback();
     }).then((res) => {
-      console.log(res);
       if (res) {
         this.dataList = res.items;
         this.totalItems = res.totalCount;
@@ -62,33 +79,14 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   }
 
   protected delete(entity: RetailProduct): void {
-    // this.modalService.confirm({
-    //   nzTitle: '确定要删除该用户吗？',
-    //   nzContent: `<b>用户账号[${entity.account}]</b>`,
-    //   nzOnOk: () => {
-    //     this.shopUserService.delete(entity.id).then((res) => {
-    //       if (res.code == 0) {
-    //         this.message.success('删除成功');
-    //         this.refreshData();
-    //       } else {
-    //         this.message.error('删除失败');
-    //       }
-    //     });
-    //   }
-    // });
   }
 
   createProduct() {
     this.createModal.show();
   }
 
-  createProduct2() {
-    this.router.navigate(['/product/product-detail'])
-  }
-
   goDetail(id: string) {
-    // this.router.navigate(['routes/product/product-detail', id])
-    this.router.navigate(['product/product-detail'])
+    this.router.navigate(['product/product-detail', id]);
   }
 
   /*商品类型数*/
@@ -121,6 +119,7 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
     this.activedNode = data.node;
     this.tempNode = data.node.key;
     this.treeCom.nzTreeService.setSelectedNodeList(this.activedNode);
+    this.keyWord = null;
     this.refreshData();
   }
 

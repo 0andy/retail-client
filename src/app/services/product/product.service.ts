@@ -27,21 +27,21 @@ export class ProductService {
         });
     }
 
-    getAll(key: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
+    getAll(key: string, keyWord: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
         const _self = this;
-        // if (!keyWord) {
-        //     keyWord = '';
-        // }
-        // keyWord = '%' + keyWord + '%';
+        if (!keyWord) {
+            keyWord = '';
+        }
+        keyWord = '%' + keyWord + '%';
         return new Promise<PagedResultDto<RetailProduct>>((resolve, reject) => {
             _self.sqlite3Service.connectDataBase().then((dres) => {
                 if (dres.code == 0) {
                     if (key != 'root') {
-                        _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName} where categoryId =?`, [key], 'get').then((cres) => {
+                        _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName} r inner join category c on r.categoryId = c.id where categoryId =? and (r.name like ? or r.barCode like ?)`, [key, keyWord, keyWord], 'get').then((cres) => {
                             const result = new PagedResultDto<RetailProduct>();
                             if (cres.code == 0) {
                                 result.totalCount = cres.data.cnum;
-                                _self.sqlite3Service.sql(`select * from ${this.tableName} where categoryId =? limit ${maxResultCount} offset ${skipCount}`, [key], 'all').then((res) => {
+                                _self.sqlite3Service.sql(`select r.id, r.barCode, r.name,c.name categoryName,r.unit,r.isEnable from ${this.tableName} r inner join category c on r.categoryId = c.id where categoryId =? and (r.name like ? or r.barCode like ?) limit ${maxResultCount} offset ${skipCount}`, [key, keyWord, keyWord], 'all').then((res) => {
                                     if (res.code == 0) {
                                         if (res.data) {
                                             result.items = RetailProduct.fromJSArray(res.data);
@@ -61,11 +61,11 @@ export class ProductService {
                             }
                         });
                     } else {
-                        _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName}`, [], 'get').then((cres) => {
+                        _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName} r inner join category c on r.categoryId = c.id  where r.name like ? or r.barCode like ?`, [keyWord, keyWord], 'get').then((cres) => {
                             const result = new PagedResultDto<RetailProduct>();
                             if (cres.code == 0) {
                                 result.totalCount = cres.data.cnum;
-                                _self.sqlite3Service.sql(`select * from ${this.tableName} limit ${maxResultCount} offset ${skipCount}`, [], 'all').then((res) => {
+                                _self.sqlite3Service.sql(`select r.id,r.barCode, r.name,c.name categoryName,r.unit,r.isEnable from ${this.tableName} r inner join category c on r.categoryId = c.id where r.name like ? or r.barCode like ? limit ${maxResultCount} offset ${skipCount}`, [keyWord, keyWord], 'all').then((res) => {
                                     if (res.code == 0) {
                                         if (res.data) {
                                             result.items = RetailProduct.fromJSArray(res.data);
@@ -108,35 +108,70 @@ export class ProductService {
         });
     }
 
+    getProductByBarCoe(barCode: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
+        const _self = this;
+        return new Promise<PagedResultDto<RetailProduct>>((resolve, reject) => {
+            _self.sqlite3Service.connectDataBase().then((dres) => {
+                if (dres.code == 0) {
+                    _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName} r inner join category c on r.categoryId = c.id where barCode =?`, [barCode], 'get').then((cres) => {
+                        const result = new PagedResultDto<RetailProduct>();
+                        if (cres.code == 0) {
+                            result.totalCount = cres.data.cnum;
+                            _self.sqlite3Service.sql(`select r.id,r.barCode, r.name,c.name categoryName,r.unit,r.isEnable from ${this.tableName} r inner join category c on r.categoryId = c.id where r.barCode =? limit ${maxResultCount} offset ${skipCount}`, [barCode], 'all').then((res) => {
+                                if (res.code == 0) {
+                                    if (res.data) {
+                                        result.items = RetailProduct.fromJSArray(res.data);
+                                    } else {
+                                        result.items = [];
+                                        result.totalCount = 0;
+                                    }
+                                    resolve(result);
+                                } else {
+                                    console.log(res);
+                                    reject(null);
+                                }
+                            });
+                        } else {
+                            console.log(cres);
+                            reject(null);
+                        }
+                    });
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
     save(product: RetailProduct): Promise<ResultDto> {
         if (product.id) {//更新
             product.lastModificationTime = new Date();
             return this.sqlite3Service.execSql(`update ${this.tableName} set barCode=?, name=?, categoryId=?,
-            grade=?, retailPrice=?, purchasePrice=?,
+            grade=?, purchasePrice=?,
             sellPrice=?, isEnableMember=?, memberPrice=?,
-            unit=?, pinYinCode=?, lable=?,
-            stock=?, desc=?, isEnable=?,
-            lastModificationTime=?, lastModifierUserId=?, where id=?`,
+            unit=?, pinYinCode=?,
+            stock=?, desc=?,
+            lastModificationTime=?, lastModifierUserId=? where id=?`,
                 [product.barCode, product.name, product.categoryId
-                    , product.grade, product.retailPrice, product.purchasePrice, product.sellPrice
+                    , product.grade, product.purchasePrice, product.sellPrice
                     , product.isEnableMember, product.memberPrice, product.unit
-                    , product.pinYinCode, product.lable, product.stock, product.desc
-                    , product.isEnable, product.lastModificationTime
+                    , product.pinYinCode, product.stock, product.desc
+                    , product.lastModificationTime
                     , product.lastModifierUserId, product.id], 'run');
         } else {//新增
             product.creationTime = new Date();
             product.id = this.nodeComService.guidV1();
             return this.sqlite3Service.execSql(`insert into ${this.tableName} 
             (id,shopId,barCode,name,categoryId
-                ,grade,retailPrice,purchasePrice
+                ,grade,purchasePrice
                 ,sellPrice,isEnableMember,memberPrice
-                ,unit,pinYinCode,lable,stock,isEnable
+                ,unit,pinYinCode,stock,isEnable
                 ,desc,creationTime,creatorUserId
-                ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [product.id, product.shopId, product.barCode, product.name, product.categoryId
-                    , product.grade, product.retailPrice, product.purchasePrice, product.sellPrice
+                    , product.grade, product.purchasePrice, product.sellPrice
                     , product.isEnableMember, product.memberPrice, product.unit
-                    , product.pinYinCode, product.lable, product.stock, product.isEnable, product.desc
+                    , product.pinYinCode, product.stock, true, product.desc
                     , product.creationTime, product.creatorUserId], 'run');
         }
     }
@@ -159,8 +194,9 @@ export class ProductService {
         });
     }
 
-    changeProductStatus(status: boolean, id: string): Promise<ResultDto> {
-        return this.sqlite3Service.execSql(`update ${this.tableName} set isEnable =? where id=?`, [!status, id], 'run');
+    updateStatus(id: string, isEnable: boolean, userId: string): Promise<ResultDto> {
+        const lasttime = new Date();
+        return this.sqlite3Service.execSql(`update ${this.tableName} set isEnable=?, lastModificationTime=?, lastModifierUserId=? where id=?`, [isEnable, lasttime, userId, id], 'run');
     }
 }
 

@@ -87,15 +87,14 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
 
   updateStatus(item: ShopUser): void {
     this.modalService.confirm({
-      nzTitle: item.isEnable? '确定要禁用该用户吗？' : '确定要启用该用户吗？',
+      nzTitle: item.isEnable ? '确定要禁用该用户吗？' : '确定要启用该用户吗？',
       nzContent: `<b>用户账号[${item.account}]</b>`,
       nzOnOk: () => {
         this.shopUserService.updateStatus(item.id, !item.isEnable, this.settings.user['id']).then((res) => {
           if (res.code == 0) {
-            this.message.success('禁用成功');
-            this.refreshData();
+            this.message.success('操作成功');
           } else {
-            this.message.error('禁用失败');
+            this.message.error('操作失败');
           }
         });
       }
