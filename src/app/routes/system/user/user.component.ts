@@ -12,11 +12,13 @@ import { ShopUserService } from 'app/services/system/shop-user.service';
 export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
 
   keyWord: string;
+  accessToken: string;
 
   constructor(injector: Injector,
     private shopUserService: ShopUserService
   ) {
     super(injector);
+    this.accessToken = this.settings.user['token'];
   }
 
   protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
@@ -106,4 +108,10 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
     //this.shopUserService.createTable();
   }
 
+  getAccessToken() {
+    this.shopUserService.getAccessToken().then((res) => {
+      console.log(res);
+      this.accessToken =  res.data.accessToken;
+    });
+  }
 }
