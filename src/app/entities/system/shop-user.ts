@@ -110,20 +110,4 @@ export class ChangePasswordDto {
         return result;
     }
 
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["orgPassword"] = this.orgPassword;
-        data["newPassword"] = this.newPassword;
-        data["checkPassword"] = this.checkPassword;
-        return data;
-    }
-
-    clone() {
-        const json = this.toJSON();
-        let result = new ChangePasswordDto();
-        result.init(json);
-        return result;
-    }
 }
-
-

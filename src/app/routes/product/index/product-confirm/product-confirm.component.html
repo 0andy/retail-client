@@ -1,0 +1,48 @@
+<nz-modal [(nzVisible)]="isVisible" nzMaskClosable="false" nzTitle="新增商品" [nzContent]="modalContent" (nzOnCancel)="handleCancel($event)" style="width: 520px;" [nzFooter]="modalFooter">
+    <ng-template #modalContent>
+        <form nz-form [formGroup]="validateForm">
+            <nz-form-item nz-row>
+                <nz-form-label nz-col [nzSm]="4" nzRequired>商品条码</nz-form-label>
+                <nz-form-control [nzSm]="20" nzHasFeedback>
+                    <input nz-input formControlName="barCode" [placeholder]="'请输入商品条码'">
+                    <nz-form-explain *ngIf="validateForm.get('barCode').dirty&&validateForm.get('barCode').errors">
+                        <ng-container *ngIf="validateForm.get('barCode').hasError('pattern')">请输入正确的商品条码</ng-container>
+                        <ng-container *ngIf="validateForm.get('barCode').hasError('maxlength')">字符长度小于等于50</ng-container>
+                    </nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+        <ng-template *ngIf="dataList" #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+        <nz-table *ngIf="dataList" #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzTotal]="totalItems" [nzShowTotal]="totalTemplate" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()"
+            (nzPageSizeChange)="refresh()">
+            <thead>
+                <tr>
+                    <th>条码</th>
+                    <th>商品名称</th>
+                    <th>商品类型</th>
+                    <th>单位</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of nzTable.data">
+                    <td>{{data.barCode}}</td>
+                    <td>{{data.name}}</td>
+                    <td>{{data.categoryName}}</td>
+                    <td>{{data.unit}}</td>
+                    <td>
+                        <a (click)="goDetail(data.id)">编辑</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="updateStatus(data)" [ngClass]="{ 'true': data.isEnable== true , 'false': data.isEnable==false}">{{data.isEnable? '禁用' : '启用'}}</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </ng-template>
+    <ng-template #modalFooter>
+        <button nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
+            取消
+        </button>
+        <button nz-button type="button" (click)="search()" nzType="primary" [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">确定</button>
+    </ng-template>
+</nz-modal>

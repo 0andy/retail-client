@@ -117,10 +117,10 @@ export class StartupService {
       description: `优秀高效`
     };
     //const user: any = {
-      //name: 'Admin',
-      //avatar: '',
-      //email: 'admin@qq.com',
-      //token: '123456789'
+    //name: 'Admin',
+    //avatar: '',
+    //email: 'admin@qq.com',
+    //token: '123456789'
     //};
     // 应用信息：包括站点名、描述、年份
     this.settingService.setApp(app);
@@ -222,22 +222,22 @@ export class StartupService {
   }
 
   winInit() {
-     // 获取当前窗口的`Window`对象
-     var win = nw.Window.get();
-     let app = this;
-     win.on('close', function () {
+    // 获取当前窗口的`Window`对象
+    var win = nw.Window.get();
+    let app = this;
+    win.on('close', function () {
       this.hide(); // Pretend to be closed already
       app.tokenService.clear();//清除缓存 
       this.close(true); // then close it forcely
-       /*app.modalService.confirm({
-         nzTitle: '你确定要退出该系统吗？',
-         nzContent: '',
-         nzOnOk: () => {
-           app.tokenService.clear();
-           this.hide(); // Pretend to be closed already
-           this.close(true); // then close it forcely
-         }
-       });*/
-     });  
+      /*app.modalService.confirm({
+        nzTitle: '你确定要退出该系统吗？',
+        nzContent: '',
+        nzOnOk: () => {
+          app.tokenService.clear();
+          this.hide(); // Pretend to be closed already
+          this.close(true); // then close it forcely
+        }
+      });*/
+    });
   }
 }
