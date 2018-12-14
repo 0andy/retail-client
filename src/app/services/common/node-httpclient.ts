@@ -33,7 +33,7 @@ export class NodeHttpClient {
                 this.authenticate().then((res) => {
                     if(res.code == 0){
                         this.settingsService.user['token'] = res.data.accessToken;
-                        this.request(url_, method, res.data.accessToken).then((res2) => {
+                        this.request(url_, method, body, res.data.accessToken).then((res2) => {
                             resolve(res2);
                         });
                     } else {
@@ -42,7 +42,7 @@ export class NodeHttpClient {
                 });
             }); 
         } else {
-            return this.request(url_, method, token);
+            return this.request(url_, method, body, token);
         }
     }
 
