@@ -190,7 +190,7 @@ export class StartupService {
                 link: '/system/user'
               },
               {
-                text: '系统配置',
+                text: '系统设置',
                 link: '/system/config'
               },
               {

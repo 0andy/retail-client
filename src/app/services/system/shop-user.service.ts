@@ -21,23 +21,6 @@ export class ShopUserService {
         //this._sqlite3Service = sqlite3Service;
     }
 
-    createTable() {
-        this.sqlite3Service.connectDataBase().then((res) => {
-            if (res.code == 0) {
-                this.sqlite3Service.createShopUserTable().then((res) => {
-                    if (res.code == 0) {
-                        console.log('表创建成功');
-                    } else {
-                        console.log('表创建失败：' + res.data);
-                    }
-                    //this.sqlite3Service.close();
-                });
-            } else {
-                console.log('连接失败：' + res.data);
-            }
-        });
-    }
-
     save(user: ShopUser): Promise<ResultDto> {
         if (user.id) {//更新
             user.lastModificationTime = new Date();
