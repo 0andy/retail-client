@@ -37,7 +37,7 @@ export class UserLoginComponent implements OnDestroy {
     @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
     private startupSrv: StartupService,
     //public http: _HttpClient,
-    private shopUserService: ShopUserService,
+    private shopUserService: ShopUserService
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(5)]],

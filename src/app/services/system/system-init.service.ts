@@ -21,7 +21,7 @@ export class SystemInitService {
     createShopUserTable() {
         //ShopUser
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
-        let sentence = `
+        return `
         create table if not exists shopUsers(
             id varchar(36) PRIMARY KEY not null,
             account nvarchar(50) not null,
@@ -35,26 +35,26 @@ export class SystemInitService {
             lastModificationTime datetime,
             lastModifierUserId varchar(36)
         );`;
-        return this.sqlite3Service.createTable(sentence);
+        //return this.sqlite3Service.createTable(sentence);
     }
 
     createCategoryTable() {
         //Category
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
-        let sentence = `
+        return `
         create table if not exists category(
             id int PRIMARY KEY not null,
             name varchar(200) not null,
             seq int not null,
             creationTime datetime not null
         );`;
-        return this.sqlite3Service.createTable(sentence);
+        //return this.sqlite3Service.createTable(sentence);
     }
 
     createProductTable() {
         //Product
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
-        let sentence = `
+        return `
         create table if not exists retailProduct(
             id varchar(36) PRIMARY KEY not null,
             shopId varchar(36) not null,
@@ -78,7 +78,58 @@ export class SystemInitService {
             lastModificationTime DateTime,
             lastModifierUserId varchar(36)
             );`;
-        return this.sqlite3Service.createTable(sentence);
+        //return this.sqlite3Service.createTable(sentence);
+    }
+
+    dropAllTables() {
+        return new Promise<ResultDto>((resolve, reject) => {
+            this.sqlite3Service.connectDataBase().then((res) => {
+                if (res.code != 0) {
+                    reject(res);
+                } else {
+                    const sentence = `drop table if exists shopUsers;
+                    drop table if exists retailProduct;
+                    drop table if exists category;`;
+                    this.sqlite3Service.createOrDeleteTable(sentence).then((res) => {
+                        if (res.code != 0) {
+                            reject(res);
+                        } else {
+                            res.msg = '删除数据表成功';
+                            console.log('删除数据表成功');
+                            resolve(res);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    //初始化数据
+    initData(): Promise<ResultDto> {
+        return new Promise<ResultDto>((resolve, reject) => {
+            const result = new ResultDto();
+            this.sqlite3Service.connectDataBase().then((res) => {
+                if (res.code != 0) {
+                    reject(res);
+                } else {
+                    const id = this.nodeComService.guidV1();
+                    const cdate = new Date();
+                    this.sqlite3Service.sql(`insert into shopUsers values(?,'admin'
+                        ,'bd53c281ee42a19fae233acdffadec9c','店铺管理员',1,'',1,?,null,null,null)`, [id, cdate], 'run')
+                        .then((res) => {
+                            if (res.code != 0) {
+                                reject(res);
+                            } else {
+                                result.code = 0;
+                                result.msg = '插入数据成功';
+                                console.log('插入数据成功');
+                                resolve(result);
+                            }
+                        });
+
+                }
+            });
+        });
     }
     //创建所有表
     createTables(): Promise<ResultDto> {
@@ -88,43 +139,20 @@ export class SystemInitService {
                 if (res.code != 0) {
                     reject(res);
                 } else {
-                    try {
-                        const id = this.nodeComService.guidV1();
-                        const cdate = new Date();
-                        this.sqlite3Service.sql(`insert into shopUsers values(?,'admin','店铺管理员','bd53c281ee42a19fae233acdffadec9c',1,'',1,?,null,null,null)`,[id, cdate],'run');
-                        
-                        result.code = 0;
-                        resolve(result);
-                    } catch (e) {
-                        result.code = -1;
-                        result.msg = '创建数据库异常';
-                        result.data = e;
-                        reject(e);
-                    }
-                }
-            });
-        });
-    }
-    //初始化数据
-    initData(): Promise<ResultDto> {
-        return new Promise<ResultDto>((resolve, reject) => {
-            const result = new ResultDto();
-            this.sqlite3Service.connectDataBase().then((res) => {
-                if (res.code != 0) {
-                    reject(res);
-                } else {
-                    try {
-                        this.createShopUserTable();
-                        this.createCategoryTable();
-                        this.createProductTable();
-                        result.code = 0;
-                        resolve(result);
-                    } catch (e) {
-                        result.code = -1;
-                        result.msg = '创建数据库异常';
-                        result.data = e;
-                        reject(e);
-                    }
+                    let sql = this.createShopUserTable();
+                    sql = sql + this.createCategoryTable();
+                    sql = sql + this.createProductTable();
+
+                    this.sqlite3Service.createOrDeleteTable(sql).then((res) => {
+                        if (res.code == 0) {
+                            result.code = 0;
+                            result.msg = '创建数据表成功';
+                            console.log('创建数据表成功');
+                            resolve(result);
+                        } else {
+                            reject(res);
+                        }
+                    });
                 }
             });
         });
@@ -138,8 +166,8 @@ export class SystemInitService {
                 this.fs.exists(this.sqlite3Service.databaseFile, (exis) => {
                     this.percent = 20;
                     if (exis) {//存在就删除
-                        this.sqlite3Service.close();
-                        this.fs.unlink(this.sqlite3Service.databaseFile, (err) => {
+                        //this.sqlite3Service.close();
+                        /*this.fs.unlink(this.sqlite3Service.databaseFile, (err) => {
                             this.percent = 30;
                             if (err) {
                                 resin.code = -1;
@@ -152,7 +180,11 @@ export class SystemInitService {
                                 resin.code = 0;
                                 resolve(resin);
                             }
+                        });*/
+                        this.dropAllTables().then((res) => {
+                            resolve(res);
                         });
+
                     } else {
                         console.log('数据库不存在');
                         resin.code = 0;
@@ -160,7 +192,7 @@ export class SystemInitService {
                     }
                 })
             })).then((res) => {
-                if(res.code != 0){
+                if (res.code != 0) {
                     reject(res);
                 } else {
                     this.createTables().then((res) => {

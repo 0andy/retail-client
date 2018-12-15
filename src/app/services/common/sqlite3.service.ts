@@ -54,14 +54,14 @@ export class Sqlite3Service {
         );`;
      this.createTable(sentence);
      */
-    createTable(sentence) {
+    createOrDeleteTable(sentence) {
         let _self = this;
         return new Promise<ResultDto>((resolve, reject) => {
             _self.db.exec(sentence, function (err) {
                 if (err) {
                     reject(new ResultDto({ code: -1, data: err }));
                 } else {
-                    resolve(new ResultDto({ code: 0, msg: '创建成功 或 已存在' }));
+                    resolve(new ResultDto({ code: 0, msg: '操作成功' }));
                 }
             });
         });
