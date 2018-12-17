@@ -52,7 +52,8 @@
               <span *ngIf="item.account != 'admin'">
                 <a (click)="edit(item)">编辑</a>
                 <nz-divider nzType="vertical"></nz-divider>
-                <a (click)="updateStatus(item)">{{item.isEnable? '禁用' : '启用'}}</a>
+                <a (click)="updateStatus(item)" *ngIf="item.isEnable" style="color:#ff4d4f" >禁用</a>
+                <a (click)="updateStatus(item)" *ngIf="!item.isEnable" >启用</a>
                 <!-- <a (click)="delete(item)">删除</a> -->
               </span>
             </td>
@@ -60,6 +61,9 @@
         </tbody>
       </nz-table>
     </div>
-
   </div>
+  <button nz-button (click)="getAccessToken()" nzType="primary" >
+    获取AccessToken
+  </button>
+  <div>AccessToken:{{accessToken}}</div>
 <!-- </nz-card> -->

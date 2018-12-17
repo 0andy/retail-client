@@ -1,7 +1,6 @@
 import { Injector, Inject } from "@angular/core";
 import { ModalHelper, SettingsService } from "@delon/theme";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
-import { TokenService, DA_SERVICE_TOKEN } from "@delon/auth";
 
 export abstract class AppComponentBase {
   query: any = {

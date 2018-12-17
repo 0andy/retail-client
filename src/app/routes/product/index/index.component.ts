@@ -34,10 +34,6 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
     this.getTreeAsync();
   }
 
-  createTable() {
-    this.categoryService.createTable();
-  }
-
   updateStatus(item: RetailProduct): void {
     this.modalService.confirm({
       nzTitle: item.isEnable ? '确定要禁用该商品吗?' : '确定要启用该商品吗?',

@@ -1,7 +1,23 @@
 <div class="alain-default__content-title">
-    <h1>
-      系统配置
-      <small>支付配置、打印配置等</small>
-    </h1>
+  <h1>
+    系统设置
+    <small>支付配置、打印配置等</small>
+  </h1>
+</div>
+<div nz-row class="mb-md" >
+  <div nz-col nzSpan="24">
+      <nz-alert
+      nzType="warning"
+      nzMessage="系统初始化将删除当前所有数据，重新从云端下载初始化数据，初始化中请确保网络连接通畅，且不能关闭程序"
+      nzShowIcon>
+    </nz-alert>
   </div>
-  
+</div>
+<div nz-row class="mb-md">
+  <div nz-col nzSpan="10" *ngIf="percent > 0" style=" padding-right:20px;" >
+      <nz-progress  [nzPercent]="percent" [nzStatus]="status"></nz-progress>
+  </div>
+  <div nz-col nzSpan="14">
+    <button nz-button nzType="primary" (click)="systyemInit()" [nzLoading]="loading">{{initText}}</button>
+  </div>
+</div>

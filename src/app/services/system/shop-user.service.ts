@@ -3,6 +3,8 @@ import { ResultDto, ShopUser, PagedResultDto, ResultEntity } from 'app/entities'
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
+import { NodeHttpClient } from '../common';
+import { SettingsService } from '@delon/theme';
 
 @Injectable()
 export class ShopUserService {
@@ -11,26 +13,12 @@ export class ShopUserService {
     //private _sqlite3Service: Sqlite3Service;
     tableName = 'shopUsers';
 
-    constructor(private nodeComService: NodeCommonService, private sqlite3Service: Sqlite3Service) {
+    constructor(private nodeComService: NodeCommonService, 
+        private sqlite3Service: Sqlite3Service, 
+        private nodeHttpClient: NodeHttpClient, 
+        private settingsService: SettingsService) {
         //this._nodeComService = nodeComService;
         //this._sqlite3Service = sqlite3Service;
-    }
-
-    createTable() {
-        this.sqlite3Service.connectDataBase().then((res) => {
-            if (res.code == 0) {
-                this.sqlite3Service.createShopUserTable().then((res) => {
-                    if (res.code == 0) {
-                        console.log('表创建成功');
-                    } else {
-                        console.log('表创建失败：' + res.data);
-                    }
-                    //this.sqlite3Service.close();
-                });
-            } else {
-                console.log('连接失败：' + res.data);
-            }
-        });
     }
 
     save(user: ShopUser): Promise<ResultDto> {
@@ -143,6 +131,10 @@ export class ShopUserService {
     updatePwd(id: string, newPwd: string): Promise<ResultDto> {
         newPwd = this.nodeComService.md5(newPwd);
         return this.sqlite3Service.execSql(`update ${this.tableName} set password =? where id=?`, [newPwd, id], 'run');
+    }
+
+    getAccessToken(): Promise<ResultDto> {
+        return this.nodeHttpClient.authenticate();
     }
 }
 

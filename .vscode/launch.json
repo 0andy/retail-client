@@ -7,10 +7,17 @@
     {
       "type": "nwjs",
       "request": "launch",
-      "name": "Launch NWjs",
+      "name": "Launch NWJS",
       "nwjsVersion": "0.14.7",
-      "webRoot": "${workspaceRoot}/app",
-      "reloadAfterAttached": false
+      "webRoot": "${workspaceRoot}/src"
+    },
+    {
+      "type": "nwjs",
+      "request": "attach",
+      "name": "Attach to Chrome",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/src",
+      "nwjsVersion": "0.14.7"
     },
     {
       "type": "chrome",
