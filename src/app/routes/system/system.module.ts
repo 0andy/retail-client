@@ -23,7 +23,7 @@ const COMPONENT_NOROUNT = [
 @NgModule({
   imports: [CommonModule, SharedModule, SystemRoutingModule],
   providers: [ 
-    ShopUserService 
+    ShopUserService
   ],
   declarations: [...COMPONENT, ...COMPONENT_NOROUNT],
   entryComponents: COMPONENT_NOROUNT,

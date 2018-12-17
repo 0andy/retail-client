@@ -11,22 +11,6 @@ export class ProductService {
     constructor(private nodeComService: NodeCommonService, private sqlite3Service: Sqlite3Service) {
     }
 
-    createTable() {
-        this.sqlite3Service.connectDataBase().then((res) => {
-            if (res.code == 0) {
-                this.sqlite3Service.createProductTable().then((res) => {
-                    if (res.code == 0) {
-                        console.log('表创建成功');
-                    } else {
-                        console.log('表创建失败：' + res.data);
-                    }
-                });
-            } else {
-                console.log('连接失败：' + res.data);
-            }
-        });
-    }
-
     getAll(key: string, keyWord: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
         const _self = this;
         if (!keyWord) {

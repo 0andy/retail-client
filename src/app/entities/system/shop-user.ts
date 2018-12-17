@@ -11,6 +11,8 @@ export class ShopUser {
     lastModificationTime: Date;
     lastModifierUserId: string;
 
+    token: string;
+
     get roleName() {
         return this.role === 1 ? '店铺管理员' : '收银员';
     }

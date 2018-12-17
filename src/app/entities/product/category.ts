@@ -26,6 +26,16 @@ export class Category {
         result.init(data);
         return result;
     }
+
+    static fromJSArray(dataArray: any[]): Category[] {
+        let array = [];
+        dataArray.forEach(result => {
+            let item = new Category();
+            item.init(result);
+            array.push(item);
+        });
+        return array;
+    }
 }
 
 export class TreeNode {

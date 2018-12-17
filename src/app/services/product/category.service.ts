@@ -10,22 +10,6 @@ export class CategoryService {
     constructor(private nodeComService: NodeCommonService, private sqlite3Service: Sqlite3Service) {
     }
 
-    createTable() {
-        this.sqlite3Service.connectDataBase().then((res) => {
-            if (res.code == 0) {
-                this.sqlite3Service.createCategoryTable().then((res) => {
-                    if (res.code == 0) {
-                        console.log('表创建成功');
-                    } else {
-                        console.log('表创建失败：' + res.data);
-                    }
-                });
-            } else {
-                console.log('连接失败：' + res.data);
-            }
-        });
-    }
-
     getCategoryTree(): Promise<TreeNode[]> {
         return new Promise<TreeNode[]>((resolve, reject) => {
             this.sqlite3Service.execSql(`select name title, id key from ${this.tableName} order by seq`, [], 'all').then((res) => {

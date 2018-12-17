@@ -54,14 +54,14 @@ export class Sqlite3Service {
         );`;
      this.createTable(sentence);
      */
-    createTable(sentence) {
+    createOrDeleteTable(sentence) {
         let _self = this;
         return new Promise<ResultDto>((resolve, reject) => {
             _self.db.exec(sentence, function (err) {
                 if (err) {
                     reject(new ResultDto({ code: -1, data: err }));
                 } else {
-                    resolve(new ResultDto({ code: 0, msg: '创建成功 或 已存在' }));
+                    resolve(new ResultDto({ code: 0, msg: '操作成功' }));
                 }
             });
         });
@@ -122,69 +122,6 @@ export class Sqlite3Service {
                 }
             });
         });
-    }
-
-    createShopUserTable() {
-        //ShopUser
-        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
-        let sentence = `
-        create table if not exists shopUsers(
-            id varchar(36) PRIMARY KEY not null,
-            account nvarchar(50) not null,
-            password varchar(200) not null,
-            name varchar(50),
-            role int not null,
-            shopId varchar(36),
-            isEnable int,
-            creationTime datetime,
-            creatorUserId varchar(36),
-            lastModificationTime datetime,
-            lastModifierUserId varchar(36)
-        );`;
-        return this.createTable(sentence);
-    }
-
-    createCategoryTable() {
-        //Category
-        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
-        let sentence = `
-        create table if not exists category(
-            id int PRIMARY KEY not null,
-            name varchar(200) not null,
-            seq int not null,
-            creationTime datetime not null
-        );`;
-        return this.createTable(sentence);
-    }
-
-    createProductTable() {
-        //Product
-        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
-        let sentence = `
-        create table if not exists retailProduct(
-            id varchar(36) PRIMARY KEY not null,
-            shopId varchar(36) not null,
-            barCode nvarchar(50),
-            name nvarchar(200) not null,
-            categoryId int not null,
-            grade int,
-            retailPrice decimal(18,2),
-            purchasePrice decimal(18,2),
-            sellPrice decimal(18,2),
-            isEnableMember int,
-            memberPrice decimal(18,2),
-            unit nvarchar(50),
-            pinYinCode nvarchar(0),
-            lable nvarchar(0),
-            stock int,
-            isEnable int,
-            desc nvarchar(500),
-            creationTime DateTime not null,
-            creatorUserId varchar(36),
-            lastModificationTime DateTime,
-            lastModifierUserId varchar(36)
-            );`;
-        return this.createTable(sentence);
     }
 
     close() {
