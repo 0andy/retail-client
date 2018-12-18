@@ -16,32 +16,41 @@ export class PullService {
     }
 
     pullCategory(): Promise<ResultDto> {
+        const _self = this;
         return new Promise<ResultDto>((resolve, reject) => {
-            this.nodeHttpClient.get('/api/services/app/ProductTag/GetAll').then((res) => {
+            this.nodeHttpClient.get('/api/services/app/ProductTag/GetSynProductTagAsync').then((res) => {
+                console.log(res);
                 if (res.code != 0) {
                     reject(res);
                 } else {
                     const categoryList = Category.fromJSArray(res.data);
-                    let sql = '';
-                    for (let item of categoryList) {
-                        sql = sql + `insert into category values(${item.id}, '${item.name}', ${item.seq}, ${item.creationTime});`;
-                    }
-                    if (sql !== '') {
-                        this.sqlite3Service.execSql(sql, [], 'run').then((res) => {
-                            if (res.code != 0) {
-                                reject(res);
-                            } else {
-                                const result = new ResultDto();
-                                result.code = 0;
-                                result.msg = '下拉商品分类成功';
-                                resolve(result);
-                            }
-                        });
-                    } else {
+                    if(categoryList.length == 0){
                         const result = new ResultDto();
                         result.code = 0;
                         result.msg = '没有商品分类数据';
                         resolve(result);
+                    } else {
+                        this.sqlite3Service.connectDataBase().then((conn) => {
+                            if(conn.code != 0) {
+                                reject(res);
+                            } else {
+                                const promises = categoryList.map(function(item) {
+                                    return _self.sqlite3Service.sql(`insert into category values(${item.id}, '${item.name}', ${item.seq}, '${item.creationTimeStr}');`,[], 'run');
+                                });
+                                Promise.all(promises).then((pro) => {
+                                        const result = new ResultDto();
+                                        result.code = 0;
+                                        result.msg = '拉取商品分类成功';
+                                        resolve(result);
+                                }).catch((cat) => {
+                                    const result = new ResultDto();
+                                    result.code = -1;
+                                    result.msg = '拉取商品分类失败';
+                                    result.data = cat;
+                                    reject(result);
+                                });
+                            }
+                        });
                     }
                 }
             });
