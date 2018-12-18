@@ -3,6 +3,7 @@ export class Category {
     name: string;
     seq: number;
     creationTime: Date;
+    creationTimeStr: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -18,6 +19,7 @@ export class Category {
             this.name = data["name"];
             this.seq = data["seq"];
             this.creationTime = data["creationTime"];
+            this.creationTimeStr = data["creationTimeStr"];
         }
     }
 

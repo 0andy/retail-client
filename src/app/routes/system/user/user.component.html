@@ -15,10 +15,10 @@
       </ng-template>
     </div>
     <div nz-col nzSpan="6" style="text-align:right;">
-      <button nz-button (click)="refresh()" nzShape="circle">
+      <button nz-button (click)="refresh()" nzShape="circle" nz-tooltip nzPlacement="top" nzTitle="刷新" >
         <i class="anticon anticon-reload"></i>
       </button>
-      <button nz-button (click)="create()" nzShape="circle" nzType="primary">
+      <button nz-button (click)="create()" nzShape="circle" nzType="primary" nz-tooltip nzPlacement="top" nzTitle="新增" >
         <i class="anticon anticon-plus"></i>
       </button>
     </div>
@@ -62,8 +62,8 @@
       </nz-table>
     </div>
   </div>
-  <button nz-button (click)="getAccessToken()" nzType="primary" >
+  <!-- <button nz-button (click)="getAccessToken()" nzType="primary" >
     获取AccessToken
   </button>
-  <div>AccessToken:{{accessToken}}</div>
+  <div>AccessToken:{{accessToken}}</div> -->
 <!-- </nz-card> -->
