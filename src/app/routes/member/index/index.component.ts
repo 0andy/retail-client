@@ -26,6 +26,7 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
     console.log(this.keyWord);
 
     this.memberService.getAll(this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
+      console.log('进去之前');
       finishedCallback();
     }).then((res) => {
       if (res) {
@@ -53,7 +54,7 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
   }
 
   refreshData() {
-    this.keyWord = null;
+    // this.keyWord = null;
     this.pageNumber = 1;
     this.refresh();
   }

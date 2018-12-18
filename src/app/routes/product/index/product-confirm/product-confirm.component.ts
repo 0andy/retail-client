@@ -28,7 +28,7 @@ export class ProductConfirmComponent extends PagedListingComponentBase<RetailPro
 
     ngOnInit() {
         this.validateForm = this.fb.group({
-            barCode: [null, [Validators.compose([Validators.pattern(/^\+?[1-9][0-9]*$/), Validators.maxLength(50)])]],
+            barCode: [null, [Validators.compose([Validators.pattern(/^\+?[1-9][0-9]*$/), Validators.maxLength(50), Validators.required])]],
         });
     }
 

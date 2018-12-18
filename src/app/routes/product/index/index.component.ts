@@ -69,6 +69,7 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   }
 
   refreshData() {
+    // this.keyWord = null;
     this.pageNumber = 1;
     this.refresh();
   }

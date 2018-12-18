@@ -38,10 +38,10 @@ export class MemberService {
         });
     }
 
-    getIntegralListByIdAsync(id: string, skipCount: number, maxResultCount: number) {
-        return this.nodeHttpClient.get('/api/services/app/IntegralDetail/GetPagedIntegralListByIdAsync', { MemberId: id, SkipCount: skipCount, MaxResultCount: maxResultCount }).then((res) => {
+    createMemberAsync(member: any) {
+        return this.nodeHttpClient.post('/api/services/app/Member/CreateOrUpdateMemberAsync', member).then((res) => {
             if (res.data) {
-                return PagedResultDtoOfMember.fromJS(res.data);
+                return Member.fromJS(res.data);
             } else {
                 return null;
             }

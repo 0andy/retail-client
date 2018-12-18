@@ -6,6 +6,7 @@
                 <nz-form-control [nzSm]="20" nzHasFeedback>
                     <input nz-input formControlName="barCode" [placeholder]="'请输入商品条码'">
                     <nz-form-explain *ngIf="validateForm.get('barCode').dirty&&validateForm.get('barCode').errors">
+                        <ng-container *ngIf="validateForm.get('barCode').hasError('required')">请输入商品条码</ng-container>
                         <ng-container *ngIf="validateForm.get('barCode').hasError('pattern')">请输入正确的商品条码</ng-container>
                         <ng-container *ngIf="validateForm.get('barCode').hasError('maxlength')">字符长度小于等于50</ng-container>
                     </nz-form-explain>
