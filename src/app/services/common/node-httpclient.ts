@@ -15,7 +15,7 @@ export class NodeHttpClient {
     constructor(private settingsService: SettingsService) {
     }
 
-    get(url: string, params?: { [key: string]: string }): Promise<ResultDto> {
+    get(url: string, params?: { [key: string]: any }): Promise<ResultDto> {
         return this.requestByToken(url + this._formatUrl(params), "get", null);
     }
 
@@ -26,12 +26,12 @@ export class NodeHttpClient {
         return this.requestByToken(url, "post", body);
     }
 
-    requestByToken(url_: string, method: string, body?: any):  Promise<ResultDto> {
+    requestByToken(url_: string, method: string, body?: any): Promise<ResultDto> {
         let token = this.settingsService.user['token'];
-        if(!token) {
+        if (!token) {
             return new Promise<ResultDto>((resolve, reject) => {
                 this.authenticate().then((res) => {
-                    if(res.code == 0){
+                    if (res.code == 0) {
                         this.settingsService.user['token'] = res.data.accessToken;
                         this.request(url_, method, body, res.data.accessToken).then((res2) => {
                             resolve(res2);
@@ -40,7 +40,7 @@ export class NodeHttpClient {
                         reject(res);
                     }
                 });
-            }); 
+            });
         } else {
             return this.request(url_, method, body, token);
         }
@@ -58,16 +58,16 @@ export class NodeHttpClient {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "Authorization": token? 'Bearer ' + token : '',
+                "Authorization": token ? 'Bearer ' + token : '',
             }
         };
-        
+
         return new Promise<ResultDto>((resolve, reject) => {
             const resdto = new ResultDto();
             const req = this.http.request(options_, function (res) {
                 console.log('STATUS: ' + res.statusCode);
                 console.log('HEADERS: ' + JSON.stringify(res.headers));
-                if (res.statusCode != 200){
+                if (res.statusCode != 200) {
                     resdto.code = res.statusCode;
                     resdto.msg = '提交异常';
                     reject(resdto);
@@ -94,7 +94,7 @@ export class NodeHttpClient {
                     }
                 });
             }).on('error', function (e) {
-                 console.error('error: ' + e.message);
+                console.error('error: ' + e.message);
                 resdto.code = -1;
                 resdto.msg = e.message;
                 resdto.data = e;
@@ -102,7 +102,7 @@ export class NodeHttpClient {
             });
             if (body) {
                 req.write(JSON.stringify(body));
-            }    
+            }
             req.end();
         });
     }
@@ -148,7 +148,7 @@ export class NodeHttpClient {
             const req = this.http.request(options_, function (res) {
                 console.log('STATUS: ' + res.statusCode);
                 console.log('HEADERS: ' + JSON.stringify(res.headers));
-                if (res.statusCode != 200){
+                if (res.statusCode != 200) {
                     resdto.code = res.statusCode;
                     resdto.msg = '提交数据异常';
                     reject(resdto);

@@ -81,6 +81,26 @@ export class SystemInitService {
         //return this.sqlite3Service.createTable(sentence);
     }
 
+    createMemberTable() {
+        //Member
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        return `
+    create table if not exists member(
+        id varchar(36) PRIMARY KEY not null,
+        phone nvarchar(20) not null,
+        nickName nvarchar(50),
+        openId nvarchar(50),
+        headImgUrl nvarchar(500),
+        userType int,
+        bindStatus int,
+        bindTime DateTime,
+        unBindTime DateTime,
+        integral int,
+        creationTime DateTime
+        );`;
+        //return this.sqlite3Service.createTable(sentence);
+    }
+
     dropAllTables() {
         return new Promise<ResultDto>((resolve, reject) => {
             this.sqlite3Service.connectDataBase().then((res) => {
@@ -89,7 +109,9 @@ export class SystemInitService {
                 } else {
                     const sentence = `drop table if exists shopUsers;
                     drop table if exists retailProduct;
-                    drop table if exists category;`;
+                    drop table if exists category;
+                    drop table if exists member;
+                    `;
                     this.sqlite3Service.createOrDeleteTable(sentence).then((res) => {
                         if (res.code != 0) {
                             reject(res);
@@ -142,7 +164,7 @@ export class SystemInitService {
                     let sql = this.createShopUserTable();
                     sql = sql + this.createCategoryTable();
                     sql = sql + this.createProductTable();
-
+                    sql = sql + this.createMemberTable();
                     this.sqlite3Service.createOrDeleteTable(sql).then((res) => {
                         if (res.code == 0) {
                             result.code = 0;

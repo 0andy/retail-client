@@ -1,7 +1,63 @@
 <div class="alain-default__content-title">
     <h1>
-      会员管理
-      <small>添加修改会员</small>
+        会员管理
+        <small>添加修改会员</small>
     </h1>
-  </div>
-  
+</div>
+<div nz-col nzSpan="24" style="background-color: white">
+    <form nz-form (ngSubmit)="refreshData()" style="background-color: white" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="14" class="mb-md">
+                <nz-form-item class="d-flex">
+                    <nz-form-label>会员姓名/电话号码</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <input nz-input [(ngModel)]="keyWord" name="keyWord" placeholder="请输入会员姓名或电话号码" nzSize="default">
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="10" class="mb-md" [class.text-right]="'true'">
+                <nz-form-item class="d-flex">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="submit" nzType="primary" [nzLoading]="isTableLoading">查询</button>
+                        <button nz-button type="reset" (click)="refreshData()" class="mx-sm">重置</button>
+                        <button nz-button type="button" (click)="createMember()" nzType="primary">
+              <i class="anticon anticon-plus"></i>
+              <span>新建</span>
+            </button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzTotal]="totalItems" [nzShowTotal]="totalTemplate" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()"
+        (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th>会员姓名</th>
+                <th>性别</th>
+                <th>电话号码</th>
+                <th>用户类型</th>
+                <th>绑定状态</th>
+                <th>绑定时间</th>
+                <th>积分</th>
+                <!-- <th>操作</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of nzTable.data">
+                <td>{{data.name}}</td>
+                <td>{{data.sex == 1?'先生':'女士'}}</td>
+                <td>{{data.phone}}</td>
+                <td>{{data.userTypeName}}</td>
+                <td>{{data.bindStatusName}}</td>
+                <td>{{data.bindTime | _date}}</td>
+                <td>{{data.integral}}</td>
+                <!-- <td>
+                    <a (click)="goDetail(data.id)">查看详情</a>
+                </td> -->
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+<app-member-confirm #createModal></app-member-confirm>

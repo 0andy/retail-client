@@ -1,7 +1,6 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { ProductService, CategoryService } from 'app/services/product';
-import { Validators, FormGroup, FormBuilder } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SelectGroup, RetailProduct } from 'app/entities';
 import { FormComponentBase } from '@shared/component-base/form-component-base';
@@ -12,7 +11,7 @@ import { FormComponentBase } from '@shared/component-base/form-component-base';
     styleUrls: ['product-detail.component.less'],
 })
 
-export class ProductDetailComponent extends FormComponentBase<RetailProduct> implements OnInit {
+export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
     id: string;
     cardTitle: string;
     product: RetailProduct = new RetailProduct();
@@ -24,8 +23,6 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct> imp
     isConfirmLoading = false;
     productTypes: SelectGroup[] = [];
     tempGrade?: number;
-    lableList: string[] = [];
-    lablesText: string;
     barCode: string;
     constructor(
         injector: Injector

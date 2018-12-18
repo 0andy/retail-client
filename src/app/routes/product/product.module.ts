@@ -10,7 +10,7 @@ import { ProductConfirmComponent } from './index/product-confirm/product-confirm
 const COMPONENT = [
   ProductComponent,
   ProductDetailComponent,
-  ProductConfirmComponent
+  ProductConfirmComponent,
 ];
 
 const COMPONENT_NOROUNT = [];

@@ -1,0 +1,52 @@
+<!-- <nz-card [nzBordered]="false" *ngIf="member">
+    <div nz-row nzGutter="16">
+        <div nz-col nzXs="24" nzMd="3" *ngIf="member.headImgUrl">
+            <nz-card [nzBordered]="false" class="ant-card__img">
+                <img class="img ng-star-inserted" src="{{member.headImgUrl}}">
+            </nz-card>
+        </div>
+        <div nz-col nzXs="24" nzSm="18">
+            <desc-list size="small" col="3" class="mb-md">
+                <desc-list-item term="会员名称">{{member.name}}</desc-list-item>
+                <desc-list-item term="性别">{{member.sex == 1?'男':'女'}}</desc-list-item>
+                <desc-list-item *ngIf="member.phone" term="电话号码">{{member.phone}}</desc-list-item>
+                <desc-list-item term="积分总额">{{member.integral}}</desc-list-item>
+                <desc-list-item term="用户类型">{{member.userTypeName}}</desc-list-item>
+                <desc-list-item term="绑定状态">{{member.bindStatusName}}</desc-list-item>
+                <desc-list-item *ngIf="member.bindTime" term="绑定时间">{{member.bindTime| _date}}</desc-list-item>
+                <desc-list-item *ngIf="member.unBindTime" term="解绑时间">{{member.unBindTime| _date}}</desc-list-item>
+            </desc-list>
+        </div>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{query.total}} 条</ng-template>
+    <nz-table #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzTotal]="totalItems" [nzShowTotal]="totalTemplate" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()"
+        (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th>会员姓名</th>
+                <th>店铺来源</th>
+                <th>积分类型</th>
+                <th>初始积分</th>
+                <th>发生积分</th>
+                <th>结束积分</th>
+                <th>时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of nzTable.data">
+                <td>{{member.name}}</td>
+                <td>{{data.shopName}}</td>
+                <td>{{data.typeName}}</td>
+                <td>{{data.initialIntegral}}</td>
+                <td>{{data.integral}}</td>
+                <td>{{data.finalIntegral}}</td>
+                <td>{{data.creationTime | _date}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</nz-card>
+<footer-toolbar>
+    <button nz-button [nzType]="'default'" (click)="return()">
+        {{l("返回")}}
+    </button>
+</footer-toolbar> -->

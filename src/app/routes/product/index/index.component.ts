@@ -18,7 +18,6 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   nodes = [];
   dropdown: NzDropdownContextComponent;
   activedNode: NzTreeNode;
-  search: any = {};
   tempNode: string = 'root';
   keyWord: string;
   constructor(

@@ -12,7 +12,7 @@ import { PagedListingComponentBase, PagedRequestDto } from '@shared/component-ba
     templateUrl: 'product-confirm.component.html',
     styleUrls: ['product-confirm.component.less']
 })
-export class ProductConfirmComponent extends PagedListingComponentBase<RetailProduct> implements OnInit {
+export class ProductConfirmComponent extends PagedListingComponentBase<RetailProduct>{
     isVisible = false;
     barCode: string;
     validateForm: FormGroup;
