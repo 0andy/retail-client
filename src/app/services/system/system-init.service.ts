@@ -140,6 +140,12 @@ export class SystemInitService {
                         result.msg = '初始化数据成功';
                         resolve(result);
                     }
+                })
+                .catch((cat) => {
+                    result.code = -1;
+                    result.msg = '初始化数据异常';
+                    result.data = cat;
+                    reject(result);
                 });
         });
     }
@@ -160,6 +166,12 @@ export class SystemInitService {
                     } else {
                         reject(res);
                     }
+                })
+                .catch((cat) => {
+                    result.code = -1;
+                    result.msg = '创建数据库异常';
+                    result.data = cat;
+                    reject(result);
                 });
         });
     }
@@ -178,6 +190,12 @@ export class SystemInitService {
                         result.msg = '初始化成功';
                         resolve(result);
                     }
+                })
+                .catch((cat) => {
+                    result.code = -1;
+                    result.msg = '初始化异常';
+                    result.data = cat;
+                    reject(result);
                 });
         });
     }
