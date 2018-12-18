@@ -1,12 +1,13 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { SystemInitService } from 'app/services/system';
 import { AppComponentBase } from '@shared/component-base';
+import { PullService } from 'app/services/syn';
 
 @Component({
   selector: 'system-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.less'],
-  providers: [SystemInitService]
+  providers: [ PullService, SystemInitService]
 })
 export class SystemConfigComponent extends AppComponentBase implements OnInit {
 
