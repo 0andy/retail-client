@@ -90,6 +90,7 @@ export class NodeHttpClient {
                     } else {
                         resdto.code = res.statusCode;
                         resdto.msg = '提交失败';
+                        resdto.data = res;
                         reject(resdto);
                     }
                 });
@@ -132,7 +133,9 @@ export class NodeHttpClient {
         let url_ = "/api/TokenAuth/Authenticate";
         url_ = url_.replace(/[?&]$/, "");
 
-        const body = { userNameOrEmailAddress: 'retail', password: 'qaz_retail123!@#', rememberClient: true, shopId: '001' };
+        const sId = this.settingsService.user['shopId']
+
+        const body = { userNameOrEmailAddress: 'retail', password: 'qaz_retail123!@#', rememberClient: true, shopId: sId };
         let options_: any = {
             hostname: this.hostname,
             port: this.port,

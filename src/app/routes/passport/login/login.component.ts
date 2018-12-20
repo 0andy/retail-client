@@ -115,6 +115,7 @@ export class UserLoginComponent implements OnDestroy {
           name: res.data.name,
           role: res.data.role,
           id: res.data.id,
+          shopId: res.data.shopId,
           time: + new Date(),
         };
         //获取token
