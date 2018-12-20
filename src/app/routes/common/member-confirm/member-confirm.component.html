@@ -1,19 +1,30 @@
 <nz-modal [(nzVisible)]="isVisible" nzMaskClosable="false" nzTitle="{{title}}" [nzContent]="modalContent" (nzOnCancel)="handleCancel($event)" nzWidth="720px" [nzFooter]="modalFooter">
     <ng-template #modalContent>
-        <form nz-form [formGroup]="validateForm" (ngSubmit)="refreshData()">
+        <div *ngIf="!isShowForm" nz-row class="mb-md">
+            <div nz-col nzSpan="24" style="padding-right:10px;">
+                <nz-input-group nzSearch [nzSuffix]="suffixButton">
+                    <input type="text" (keyup)="onKey($event)" [(ngModel)]="searchPhone" nz-input placeholder="手机号码">
+                </nz-input-group>
+                <ng-template #suffixButton>
+                    <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData()" nzSearch>搜索</button>
+                </ng-template>
+            </div>
+        </div>
+        <form *ngIf="isShowForm" nz-form [formGroup]="validateForm">
+            <!-- <form *ngIf="isShowForm" nz-form [formGroup]="validateForm" (ngSubmit)="refreshData()"> -->
             <nz-form-item nz-row>
-                <nz-form-label nz-col [nzSm]="4" nzRequired>电话号码</nz-form-label>
+                <nz-form-label nz-col [nzSm]="4" nzRequired>手机号码</nz-form-label>
                 <nz-form-control [nzSm]="20" nzHasFeedback>
-                    <input nz-input formControlName="phone" [placeholder]="'请输入电话号码'">
+                    <input nz-input formControlName="phone" [placeholder]="'请输入手机号码'">
                     <nz-form-explain *ngIf="validateForm.get('phone').dirty&&validateForm.get('phone').errors">
-                        <ng-container *ngIf="validateForm.get('phone').hasError('required')">请输入电话号码</ng-container>
-                        <ng-container *ngIf="validateForm.get('phone').hasError('pattern')">请输入正确的电话号码</ng-container>
-                        <ng-container *ngIf="validateForm.get('phone').hasError('minlength')">字符长度大于等于3</ng-container>
-                        <ng-container *ngIf="validateForm.get('phone').hasError('maxlength')">字符长度小于等于50</ng-container>
+                        <!-- <ng-container *ngIf="validateForm.get('phone').hasError('required')">请输入电话号码</ng-container> -->
+                        <ng-container *ngIf="validateForm.get('phone').hasError('pattern')">请输入正确的手机号码</ng-container>
+                        <!-- <ng-container *ngIf="validateForm.get('phone').hasError('maxlength')">字符长度等于11位</ng-container> -->
                     </nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
-            <nz-form-item *ngIf="totalItems == 0" nz-row>
+            <nz-form-item nz-row>
+                <!-- <nz-form-item *ngIf="isShowForm == true" nz-row> -->
                 <nz-form-label nz-col [nzSm]="4">姓名</nz-form-label>
                 <nz-form-control [nzSm]="20" nzHasFeedback>
                     <input nz-input formControlName="name" [placeholder]="'请输入会员姓名'">
@@ -22,7 +33,8 @@
                     </nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
-            <nz-form-item *ngIf="totalItems == 0" nz-row style="margin-bottom: 0px;">
+            <nz-form-item nz-row style="margin-bottom: 0px;">
+                <!-- <nz-form-item *ngIf="isShowForm == true" nz-row style="margin-bottom: 0px;"> -->
                 <nz-form-label nz-col [nzSm]="4">性别</nz-form-label>
                 <nz-form-control nz-col [nzSm]="20">
                     <nz-radio-group formControlName="sex" class="mb-md">
@@ -33,13 +45,17 @@
                 </nz-form-control>
             </nz-form-item>
         </form>
-        <nz-alert *ngIf="dataList" nzType="info" nzMessage="该手机号码已注册会员" nzShowIcon></nz-alert>
-        <ng-template *ngIf="dataList" #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
-        <nz-table *ngIf="dataList" #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzTotal]="totalItems" [nzShowTotal]="totalTemplate" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()"
-            (nzPageSizeChange)="refresh()">
+        <nz-alert *ngIf="totalItems>0 && searchPhone && searchPhone.length == 11" nzType="info" nzMessage="该手机号码已注册会员" nzShowIcon></nz-alert>
+        <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+        <ng-template #noResult let-total>
+            <a *ngIf="searchPhone && searchPhone.length > 3" (click)="createForm()">手机号码"{{searchPhone}}"不存在，点击新增</a>
+            <p *ngIf="!searchPhone || (searchPhone && searchPhone.length <= 3 )">请输入至少4个字符查询</p>
+        </ng-template>
+        <nz-table *ngIf="!isShowForm" #nzTable [nzNoResult]="noResult" [nzData]="dataList" [nzFrontPagination]="false" [nzTotal]="totalItems" [nzShowTotal]="totalTemplate" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true"
+            (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
             <thead>
                 <tr>
-                    <th>电话号码</th>
+                    <th>手机号码</th>
                     <th>会员姓名</th>
                     <th>性别</th>
                     <th>积分</th>
@@ -58,9 +74,9 @@
         </nz-table>
     </ng-template>
     <ng-template #modalFooter>
-        <button *ngIf="!dataList" nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
+        <button *ngIf="isShowForm" nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
             取消
         </button>
-        <button *ngIf="!dataList" nz-button type="button" (click)="commit()" nzType="primary" [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">{{btnSave}}</button>
+        <button *ngIf="isShowForm" nz-button type="button" (click)="commit()" nzType="primary" [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">{{btnSave}}</button>
     </ng-template>
 </nz-modal>

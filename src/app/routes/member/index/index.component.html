@@ -1,7 +1,7 @@
 <div class="alain-default__content-title">
     <h1>
         会员管理
-        <small>添加修改会员</small>
+        <small>查看添加会员</small>
     </h1>
 </div>
 <!-- <div nz-col nzSpan="24" style="background-color: white"> -->
@@ -33,7 +33,7 @@
     <div nz-row class="mb-md">
         <div nz-col nzSpan="18" style="padding-right:10px;">
             <nz-input-group nzSearch [nzSuffix]="suffixButton">
-                <input type="text" [(ngModel)]="keyWord" nz-input placeholder="会员姓名、电话号码">
+                <input type="text" [(ngModel)]="keyWord" nz-input placeholder="会员姓名、手机号码">
             </nz-input-group>
             <ng-template #suffixButton>
                 <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData()" nzSearch>搜索</button>
@@ -55,7 +55,7 @@
             <tr>
                 <th>会员姓名</th>
                 <th>性别</th>
-                <th>电话号码</th>
+                <th>手机号码</th>
                 <th>用户类型</th>
                 <th>绑定状态</th>
                 <th>绑定时间</th>
@@ -79,4 +79,4 @@
         </tbody>
     </nz-table>
 </div>
-<app-member-confirm #createModal></app-member-confirm>
+<app-member-confirm #createModal (modalSelect)="getMemberData()"></app-member-confirm>

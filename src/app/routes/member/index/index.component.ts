@@ -23,10 +23,8 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
   }
 
   protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-    console.log(this.keyWord);
-
     this.memberService.getAll(this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
-      console.log('进去之前');
+      console.log('首页数据刷新');
       finishedCallback();
     }).then((res) => {
       if (res) {
@@ -35,16 +33,6 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
       } else {
         this.dataList = [];
         this.totalItems = 0;
-      }
-    });
-  }
-
-  getIsExistByPhoneAsync() {
-    this.memberService.getIsExistByPhoneAsync(this.phone).then(result => {
-      // this.isExist = result;
-      console.log(result);
-      if (!result) {
-        //todo
       }
     });
   }
@@ -64,6 +52,13 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
 
   createMember() {
     this.createModal.show();
+  }
+
+  /**
+   * 模态框返回
+   */
+  getMemberData() {
+    this.refreshData();
   }
 
   goDetail(id: string) {

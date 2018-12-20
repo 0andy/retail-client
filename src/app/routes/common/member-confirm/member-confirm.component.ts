@@ -1,9 +1,11 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto } from '@shared/component-base/paged-listing-component-base';
 import { Member } from 'app/entities';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MemberService } from 'app/services/member';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-member-confirm',
@@ -11,14 +13,18 @@ import { Router } from '@angular/router';
     styleUrls: ['member-confirm.component.less']
 })
 export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
+    @Output() modalSelect: EventEmitter<any> = new EventEmitter<any>();
     isVisible = false;
     // phone: string;
     validateForm: FormGroup;
     isConfirmLoading = false;
     title: string;
     btnSave: string;
+    isShowForm: boolean = false;
     member: Member = new Member();
+    searchPhone: string;
     sexTypes: any = [{ text: '男', value: 1 }, { text: '女', value: 0 }];
+    private searchText$ = new Subject<string>();
     constructor(
         private memberService: MemberService
         , private router: Router
@@ -30,27 +36,62 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
 
     ngOnInit() {
         this.validateForm = this.fb.group({
-            phone: [null, [Validators.compose([Validators.required, Validators.pattern(/^\+?[0-9][0-9]*$/), Validators.maxLength(50), Validators.minLength(3)])]],
+            phone: [null, [Validators.compose([Validators.required
+                // , Validators.pattern(/^\+?[0-9][0-9]*$/)
+                // , Validators.maxLength(11)
+                // , Validators.minLength(4)
+                , Validators.pattern(/^[1][0-9]{10}$/)
+            ])]],
             name: ['', [Validators.maxLength(50)]],
             sex: ['']
         });
+        this.searchText$.pipe(
+            debounceTime(800),
+            distinctUntilChanged()).subscribe(term => {
+                this.refreshData();
+            });
+    }
+
+    onKey(event: any) {
+        // if (this.search.filter.length >= 1)
+        //     this.endTime = event.timeStamp;
+        // setTimeout(() => {
+        //     if (this.endTime - event.timeStamp == 0) {
+        //         this.refreshData();
+        //     }
+        // }, 0.5e3);
+        // if (this.validateForm.valid) {
+        //     this.member.phone = null;
+        //     this.member.phone = this.getControlVal('phone');
+        //     if (this.member.phone.length >= 4) {
+        //         console.log(this.member.phone);
+        //         this.searchText$.next(this.member.phone);
+        //     }
+        if (this.searchPhone.length > 3) {
+            this.member.phone = this.getControlVal('phone');
+            console.log('[searchPhone]' + this.searchPhone);
+            this.searchText$.next(this.searchPhone);
+        }
     }
 
     show() {
-        this.validateForm.get('phone').enable();
-        this.title = '新增会员';
-        this.btnSave = '确定';
-        this.setControlVal('phone', null);
+        // this.validateForm.get('phone').enable();
         this.isVisible = true;
-        this.dataList = null;
-        this.totalItems = -1;
+        this.setDefault();
+        this.searchPhone = null;
+        this.isTableLoading = false;
+        this.isShowForm = false;
+        this.title = '会员搜索';
+        this.btnSave = '确定';
+        this.dataList = [];
+        // this.totalItems = -1;
     }
 
     handleCancel = (e) => {
         this.isVisible = false;
     }
 
-    setFormValues(phone: string): void {
+    setFormValues(): void {
         this.setControlVal('phone', this.member.phone);
     }
 
@@ -90,45 +131,75 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
     }
 
     protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-        console.log(this.member);
-
-        this.memberService.getAll(this.member.phone, request.skipCount, request.maxResultCount).finally(() => {
+        this.memberService.getAll(this.searchPhone, request.skipCount, request.maxResultCount).finally(() => {
+            // this.memberService.getAll(this.member.phone, request.skipCount, request.maxResultCount).finally(() => {
             finishedCallback();
-            this.isConfirmLoading = false;
+            // this.isConfirmLoading = false;
         }).then((res) => {
             if (res.totalCount) {
                 this.dataList = res.items;
                 this.totalItems = res.totalCount;
             } else {
-                this.dataList = null;
-                this.setControlVal('sex', 1);
+                this.dataList = [];
                 this.totalItems = 0;
-                this.btnSave = '保存';
-                this.validateForm.get('phone').disable();
             }
         });
     }
 
+    createForm() {
+        this.isShowForm = true;
+        // this.validateForm.get('phone').disable();
+        // this.setControlVal('sex', 1);
+        this.btnSave = '保存';
+        this.title = '会员新增';
+        if (this.searchPhone) {
+            this.setControlVal('phone', this.searchPhone);
+        }
+    }
+
     commit(): void {
-        if (this.totalItems == -1) {
-            this.member.phone = this.getControlVal('phone');
+        // if (this.totalItems == -1) {
+        //     this.member.phone = this.getControlVal('phone');
+        //     this.isConfirmLoading = true;
+        //     this.getDataPage(this.pageNumber);
+        // } else {
+        //     this.getFormValues();
+        //     this.memberService.getIsExistByPhoneAsync(this.member.phone).then((res) => {
+        //         this.isConfirmLoading = true;
+        //         console.log(res);
+
+        //         if (!res) {
+        //             this.memberService.createMemberAsync(this.member).then((data) => {
+        //                 if (data) {
+        //                     this.message.success('保存会员成功');
+        //                     this.isVisible = false;
+        //                     this.modalSelect.emit();
+        //                 } else {
+        //                     this.message.error('保存数据失败');
+        //                 }
+        //             });
+        //         } else {
+        //             this.message.error('该手机号码已注册');
+        //         }
+        //     });
+        // }
+        this.getFormValues();
+        if (this.validateForm.valid) {
             this.isConfirmLoading = true;
-            this.getDataPage(this.pageNumber);
-        } else {
-            this.getFormValues();
             this.memberService.getIsExistByPhoneAsync(this.member.phone).then((res) => {
-                this.isConfirmLoading = true;
+                this.isConfirmLoading = false;
+                console.log(res);
                 if (!res) {
                     this.memberService.createMemberAsync(this.member).then((data) => {
                         if (data) {
                             this.message.success('保存会员成功');
                             this.isVisible = false;
-                            this.setNull();
-                            this.refreshData();
+                            this.modalSelect.emit();
+                            console.log(data);
                         } else {
                             this.message.error('保存数据失败');
                         }
-                    })
+                    });
                 } else {
                     this.message.error('该手机号码已注册');
                 }
