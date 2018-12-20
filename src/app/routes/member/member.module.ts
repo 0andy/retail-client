@@ -4,12 +4,10 @@ import { SharedModule } from '@shared/shared.module';
 import { MemberRoutingModule } from './member-routing.module';
 import { MemberComponent } from './index/index.component';
 import { MemberService } from 'app/services/member/member.service';
-import { MemberDetailComponent } from './index/member-detail/member-detail.component';
 import { MemberConfirmModule } from '../common/member-confirm/member-confirm.module';
 
 const COMPONENT = [
   MemberComponent,
-  MemberDetailComponent
 ];
 
 const COMPONENT_NOROUNT = [];

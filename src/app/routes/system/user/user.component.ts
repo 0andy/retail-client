@@ -26,7 +26,7 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
     this.shopUserService.getAll(this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
       finishedCallback();
     }).then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res) {
         this.dataList = res.items;
         this.totalItems = res.totalCount;
@@ -110,7 +110,7 @@ export class SystemUserComponent extends PagedListingComponentBase<ShopUser> {
   getAccessToken() {
     this.shopUserService.getAccessToken().then((res) => {
       console.log(res);
-      this.accessToken =  res.data.accessToken;
+      this.accessToken = res.data.accessToken;
     });
   }
 }
