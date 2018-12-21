@@ -83,13 +83,69 @@ export class SystemInitService {
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
-    dropShopTable() {
-        const sentence = `drop table if exists shop;`;
+    
+    createWarehouseWaterTable() {
+        //WarehouseWater
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists warehouseWater(
+            id varchar(36) PRIMARY KEY not null,
+            shopId varchar(36) not null,
+            productId varchar(36) not null,
+            barCode nvarchar(50) not null,
+            type int,
+            refNo nvarchar(50),
+            initial decimal(18,2),
+            stock decimal(18,2),
+            final decimal(18,2),
+            desc nvarchar(200),
+            creationTime DateTime not null
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
+    createPutFormTable() {
+        //PutForm
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists putForm(
+            id varchar(36) PRIMARY KEY not null,
+            shopId varchar(36) not null,
+            formNo nvarchar(50) not null,
+            type int,
+            deliverer nvarchar(50),
+            putTime DataTime,
+            refOrderNo nvarchar(50),
+            remark nvarchar(200),
+            userAccount nvarchar(50),
+            creationTime DateTime not null,
+            creatorUserId varchar(36),
+            approvalTime DateTime,
+            approvalUserId varchar(36),
+            status int no null
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
+    createPutDetailTable() {
+        //PutDetail
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists putDetail(
+            id varchar(36) PRIMARY KEY not null,
+            putFormId varchar(36) not null,
+            productId varchar(36) not null,
+            barCode nvarchar(50) not null,
+            purchasePrice decimal(0,0),
+            orderNum decimal(18,2),
+            num decimal(18,2),
+            remark nvarchar(200),
+            creationTime DateTime  );`;
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
     createShopTable() {
-        //Product
+        // Shop
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
         const sentence = `
         create table if not exists shop(
@@ -122,7 +178,11 @@ export class SystemInitService {
                         } else {
                             const sentence = `drop table if exists shopUsers;
                             drop table if exists retailProduct;
-                            drop table if exists category;`;
+                            drop table if exists category;
+                            drop table if exists warehouseWater;
+                            drop table if exists putForm;
+                            drop table if exists putDetail;
+                            `;
                             this.sqlite3Service.createOrDeleteTable(sentence).then((res) => {
                                 if (res.code != 0) {
                                     reject(res);
@@ -143,6 +203,11 @@ export class SystemInitService {
             })
 
         });
+    }
+
+    dropShopTable() {
+        const sentence = `drop table if exists shop;`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
     addShopAdmin() {
@@ -203,6 +268,10 @@ export class SystemInitService {
                 .then(() => { return this.createShopUserTable(); })
                 .then(() => { return this.createCategoryTable(); })
                 .then(() => { return this.createProductTable(); })
+                .then(() => { return this.createWarehouseWaterTable(); })
+                .then(() => { return this.createPutFormTable(); })
+                .then(() => { return this.createPutDetailTable(); })
+
                 .then((res) => {
                     if (res.code == 0) {
                         result.code = 0;
@@ -253,7 +322,3 @@ export class SystemInitService {
             .then(() => { return this.pullService.pullShop(licenseKey); });
     }
 }
-
-
-
-

@@ -4,7 +4,7 @@ import { CategoryService, ProductService } from 'app/services/product';
 import { RetailProduct } from 'app/entities';
 import { NzTreeNode, NzDropdownContextComponent, NzTreeComponent, NzFormatEmitEvent, NzDropdownService } from 'ng-zorro-antd';
 import { PagedRequestDto, PagedListingComponentBase } from '@shared/component-base/paged-listing-component-base';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ProductConfirmComponent } from './product-confirm/product-confirm.component';
 
 @Component({
@@ -20,16 +20,30 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   activedNode: NzTreeNode;
   tempNode: string = 'root';
   keyWord: string;
+  pageType: string;
+  hTitle: string;
+  smallTitle: string;
+
   constructor(
     injector: Injector
     , private categoryService: CategoryService
     , private productService: ProductService
     , private router: Router
+    , private actRouter: ActivatedRoute
   ) {
     super(injector);
+    this.pageType = this.actRouter.snapshot.params['pageType'];
+    console.log(this.pageType);
   }
 
   ngOnInit() {
+    if (this.pageType) {
+      this.hTitle = '实时库存';
+      this.smallTitle = '仓库商品实时库存查询';
+    } else {
+      this.hTitle = '商品管理';
+      this.smallTitle = '商品入库管理';
+    }
     this.getTreeAsync();
   }
 

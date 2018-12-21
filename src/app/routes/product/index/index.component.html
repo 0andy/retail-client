@@ -1,7 +1,7 @@
 <div class="alain-default__content-title" style="margin-bottom:0px;">
     <h1>
-        商品管理
-        <small>添加修改商品</small>
+        {{hTitle}}
+        <small>{{smallTitle}}</small>
     </h1>
 </div>
 <div nz-row class="mb-md" style="margin-top:10px;">
@@ -44,7 +44,7 @@
                 <button nz-button (click)="refreshData()" nzShape="circle" nz-tooltip nzPlacement="top" nzTitle="刷新">
                     <i class="anticon anticon-reload"></i>
                 </button>
-                <button nz-button (click)="createProduct()" nzShape="circle" nzType="primary" nz-tooltip nzPlacement="top" nzTitle="新增">
+                <button nz-button *ngIf="!pageType" (click)="createProduct()" nzShape="circle" nzType="primary" nz-tooltip nzPlacement="top" nzTitle="新增">
                     <i class="anticon anticon-plus"></i>
                 </button>
             </div>
@@ -60,7 +60,8 @@
                             <th>商品名称</th>
                             <th>商品类型</th>
                             <th>单位</th>
-                            <th>操作</th>
+                            <th *ngIf="pageType">库存</th>
+                            <th *ngIf="!pageType">操作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,7 +70,8 @@
                             <td>{{data.name}}</td>
                             <td>{{data.categoryName}}</td>
                             <td>{{data.unit}}</td>
-                            <td>
+                            <td *ngIf="pageType">{{data.stock}}</td>
+                            <td *ngIf="!pageType">
                                 <a (click)="goDetail(data.id)">编辑</a>
                                 <nz-divider nzType="vertical"></nz-divider>
                                 <a (click)="updateStatus(data)" [ngClass]="{ 'true': data.isEnable== true }">{{data.isEnable?

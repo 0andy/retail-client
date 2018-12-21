@@ -5,6 +5,7 @@ import { ProductDetailComponent } from './index/product-detail/product-detail.co
 
 const routes: Routes = [
   { path: 'index', component: ProductComponent },
+  { path: 'index/:pageType', component: ProductComponent },
   {
     path: 'product-detail/:isCreated/:barCode',
     component: ProductDetailComponent,

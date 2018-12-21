@@ -172,7 +172,8 @@ export class StartupService {
               },
               {
                 text: '实时库存',
-                link: '/warehouse/stock'
+                // link: '/warehouse/stock'
+                link: '/product/index/:stock',
               },
               {
                 text: '仓库流水',
