@@ -66,7 +66,7 @@ export class NodeHttpClient {
             const resdto = new ResultDto();
             const req = this.http.request(options_, function (res) {
                 console.log('STATUS: ' + res.statusCode);
-                console.log('HEADERS: ' + JSON.stringify(res.headers));
+                //console.log('HEADERS: ' + JSON.stringify(res.headers));
                 if (res.statusCode != 200) {
                     resdto.code = res.statusCode;
                     resdto.msg = '提交异常';
@@ -133,9 +133,9 @@ export class NodeHttpClient {
         let url_ = "/api/TokenAuth/Authenticate";
         url_ = url_.replace(/[?&]$/, "");
 
-        const sId = this.settingsService.user['shopId']
-
-        const body = { userNameOrEmailAddress: 'retail', password: 'qaz_retail123!@#', rememberClient: true, shopId: sId };
+        const sid = this.settingsService.user['shopId']
+        //console.log(sid);
+        const body = { userNameOrEmailAddress: 'retail', password: 'qaz_retail123!@#', rememberClient: true, shopId: sid };
         let options_: any = {
             hostname: this.hostname,
             port: this.port,
