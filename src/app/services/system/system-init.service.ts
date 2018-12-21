@@ -139,7 +139,29 @@ export class SystemInitService {
             orderNum decimal(18,2),
             num decimal(18,2),
             remark nvarchar(200),
-            creationTime DateTime
+            creationTime DateTime  );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
+    createShopTable() {
+        // Shop
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists shop(
+            id varchar(36) PRIMARY KEY not null,
+            name nvarchar(100),
+            retailId varchar(36),
+            retailName nvarchar(50),
+            licenseKey nvarchar(50),
+            authorizationCode nvarchar(100),
+            aaddress nvarchar(200),
+            qRCode nvarchar(500),
+            longitude float,
+            latitude float,
+            creationTime DateTime,
+            creatorUserId varchar(36),
+            lastModificationTime DateTime,
+            lastModifierUserId varchar(36)
             );`;
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
@@ -158,7 +180,8 @@ export class SystemInitService {
                             drop table if exists category;
                             drop table if exists warehouseWater;
                             drop table if exists putForm;
-                            drop table if exists putDetail;`;
+                            drop table if exists putDetail;
+                            `;
                             this.sqlite3Service.createOrDeleteTable(sentence).then((res) => {
                                 if (res.code != 0) {
                                     reject(res);
@@ -182,10 +205,19 @@ export class SystemInitService {
     }
 
     addShopAdmin() {
-        const id = this.nodeComService.guidV1();
-        const cdate = new Date();
-        return this.sqlite3Service.sql(`insert into shopUsers values(?,'admin'
-            ,'bd53c281ee42a19fae233acdffadec9c','店铺管理员',1,'',1,?,null,null,null)`, [id, cdate], 'run');
+        return this.sqlite3Service.sql(`select id from shop`, [], 'get').then((res) => {
+            if (res.code != 0) {
+                return new Promise<ResultDto>((resolve, reject) => {
+                    reject(res);
+                });
+            } else {
+                const id = this.nodeComService.guidV1();
+                const cdate = new Date();
+                const shopId = res.data.id;
+                return this.sqlite3Service.sql(`insert into shopUsers values(?,'admin'
+                ,'bd53c281ee42a19fae233acdffadec9c','店铺管理员',1,?,1,?,null,null,null)`, [id, shopId, cdate], 'run');
+            }
+        });
     }
 
     //初始化数据
@@ -224,6 +256,7 @@ export class SystemInitService {
                 .then(() => { return this.createWarehouseWaterTable(); })
                 .then(() => { return this.createPutFormTable(); })
                 .then(() => { return this.createPutDetailTable(); })
+
                 .then((res) => {
                     if (res.code == 0) {
                         result.code = 0;
@@ -266,8 +299,10 @@ export class SystemInitService {
                 });
         });
     }
+
+    initShop(licenseKey: string): Promise<ResultDto> {
+        return this.sqlite3Service.connectDataBase()
+            .then(() => { return this.createShopTable(); })
+            .then(() => { return this.pullService.pullShop(licenseKey); });
+    }
 }
-
-
-
-

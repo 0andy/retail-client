@@ -47,4 +47,12 @@ export class SystemConfigComponent extends AppComponentBase implements OnInit {
     });
   }
 
+  ShopInit() {
+    this.systemInitService.initShop('112233').then((res) => {
+      console.log(res);
+    }).catch((res) => {
+      console.log(res);
+    });
+  }
+
 }
