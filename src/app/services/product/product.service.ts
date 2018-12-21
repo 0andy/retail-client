@@ -155,7 +155,7 @@ export class ProductService {
                 [product.id, product.shopId, product.barCode, product.name, product.categoryId
                     , product.grade, product.purchasePrice, product.sellPrice
                     , product.isEnableMember, product.memberPrice, product.unit
-                    , product.pinYinCode, product.stock, true, product.desc
+                    , product.pinYinCode, 0, true, product.desc
                     , product.creationTime, product.creatorUserId], 'run');
         }
     }

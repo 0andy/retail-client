@@ -77,6 +77,7 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
     }
 
     fetchData(): void {
+        this.validateForm.get('stock').enable();
         if (this.id) {
             this.cardTitle = '编辑商品';
             this.productService.get(this.id).then((res) => {
@@ -95,6 +96,7 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
             }
             this.setControlVal('grade', 1);
             this.setControlVal('barCode', this.barCode);
+            this.setControlVal('stock', 0);
             this.setControlVal('isEnableMember', 0);
         }
     }
