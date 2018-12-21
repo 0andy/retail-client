@@ -9,12 +9,25 @@ export class MemberService {
     }
 
     getAll(keyWord: string, skipCount: number, maxResultCount: number) {
-        return this.nodeHttpClient.get('/api/services/app/Member/GetPagedMemberListAsync', { Filter: keyWord, SkipCount: skipCount, MaxResultCount: maxResultCount }).then((res) => {
+        /*return this.nodeHttpClient.get('/api/services/app/Member/GetPagedMemberListAsync', { Filter: keyWord, SkipCount: skipCount, MaxResultCount: maxResultCount }).then((res) => {
             if (res.data) {
                 return PagedResultDtoOfMember.fromJS(res.data);
             } else {
                 return null;
             }
+        });*/
+        return new Promise<PagedResultDtoOfMember>((resolve, reject) => {
+            this.nodeHttpClient.get('/api/services/app/Member/GetPagedMemberListAsync', { Filter: keyWord, SkipCount: skipCount, MaxResultCount: maxResultCount }).then((res) => {
+                if(res.code != 0){
+                    console.error(res);              
+                    reject(null);
+                }
+                if (res.data) {
+                    resolve(PagedResultDtoOfMember.fromJS(res.data));
+                } else {
+                    resolve(null);
+                }
+            })
         });
     }
 

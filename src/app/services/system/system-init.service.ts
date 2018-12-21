@@ -271,7 +271,6 @@ export class SystemInitService {
                 .then(() => { return this.createWarehouseWaterTable(); })
                 .then(() => { return this.createPutFormTable(); })
                 .then(() => { return this.createPutDetailTable(); })
-
                 .then((res) => {
                     if (res.code == 0) {
                         result.code = 0;

@@ -98,6 +98,7 @@ export class PullService {
     }
 
     pullPoduct(skipCount = 0) {
+        console.log('skipCount:' + skipCount);
         const _self = this;
         this.getPoduct(skipCount).then((rse) => {
             if (rse.code != 0) {
