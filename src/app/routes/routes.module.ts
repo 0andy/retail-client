@@ -15,6 +15,7 @@ import { Exception500Component } from './exception/500.component';
 
 import { CartComponent } from './shop/cart/cart.component';
 import { CommonServiceModule } from 'app/services/common/common-service.module';
+import { AuthenticationComponent } from './passport/authentication/authentication.component';
 
 const COMPONENTS = [
   CartComponent,
@@ -27,9 +28,12 @@ const COMPONENTS = [
   UserLockComponent,
   Exception403Component,
   Exception404Component,
-  Exception500Component
+  Exception500Component,
+  AuthenticationComponent
 ];
-const COMPONENTS_NOROUNT = [];
+const COMPONENTS_NOROUNT = [
+  AuthenticationComponent
+];
 
 @NgModule({
   imports: [ SharedModule, CommonServiceModule, RouteRoutingModule ],

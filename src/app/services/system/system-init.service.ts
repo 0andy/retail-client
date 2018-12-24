@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, ShopUser, PagedResultDto, ResultEntity } from 'app/entities';
+import { ResultDto } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
-import { Observable } from "rxjs";
-import { NodeHttpClient } from '../common';
-import { SettingsService } from '@delon/theme';
 import { PullService } from '../syn';
 
 @Injectable()
 export class SystemInitService {
 
     fs = (<any>window).require("fs");
-    percent: number;
 
     constructor(private nodeComService: NodeCommonService,
         private sqlite3Service: Sqlite3Service,
-        private nodeHttpClient: NodeHttpClient,
-        private settingsService: SettingsService,
         private pullService: PullService) {
     }
 
@@ -170,7 +164,6 @@ export class SystemInitService {
     dropAllTables() {
         return new Promise<ResultDto>((resolve, reject) => {
             this.fs.exists(this.sqlite3Service.databaseFile, (exis) => {
-                this.percent = 20;
                 if (exis) {//存在就删除表
                     this.sqlite3Service.connectDataBase().then((res) => {
                         if (res.code != 0) {
