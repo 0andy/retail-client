@@ -110,9 +110,9 @@
                 <nz-form-label nz-col [nzSm]="4">商品库存</nz-form-label>
                 <nz-form-control [nzSm]="20" nzHasFeedback>
                     <input nz-input formControlName="stock" [placeholder]="'请输入商品库存'">
-                    <nz-form-explain *ngIf="validateForm.get('stock').dirty&&validateForm.get('stock').errors">
+                    <!-- <nz-form-explain *ngIf="validateForm.get('stock').dirty&&validateForm.get('stock').errors">
                         <ng-container *ngIf="validateForm.get('stock').hasError('pattern')">请输入正确的数字</ng-container>
-                    </nz-form-explain>
+                    </nz-form-explain> -->
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item nz-row>
@@ -129,6 +129,6 @@
 </form>
 <footer-toolbar errorCollect>
     <button nz-button [nzType]="'default'" type="button" (click)="return()">返回</button>
-    <button nz-button [nzType]="'primary'" type="button" (click)="submit()" [nzLoading]="isConfirmLoading" [disabled]="!validateForm.valid">保存</button>
+    <button nz-button [nzType]="'primary'" type="button" (click)="submit()" [nzLoading]="saving" [disabled]="!validateForm.valid">保存</button>
 </footer-toolbar>
 <!-- </nz-card> -->

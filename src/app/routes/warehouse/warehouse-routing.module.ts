@@ -5,9 +5,12 @@ import { WarehousePutComponent } from './put/put.component';
 import { WarehouseStockComponent } from './stock/stock.component';
 import { WarehouseWaterComponent } from './water/water.component';
 import { WarehouseInventoryComponent } from './inventory/inventory.component';
+import { PutDetailComponent } from './put/put-detail/put-detail.component';
 
 const routes: Routes = [
   { path: 'put', component: WarehousePutComponent },
+  { path: 'put-detail', component: PutDetailComponent },
+  { path: 'put-detail/:id', component: PutDetailComponent },
   { path: 'stock', component: WarehouseStockComponent },
   { path: 'water', component: WarehouseWaterComponent },
   { path: 'inventory', component: WarehouseInventoryComponent },
@@ -17,4 +20,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class WarehouseRoutingModule {}
+export class WarehouseRoutingModule { }

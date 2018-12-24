@@ -20,7 +20,6 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
         , { text: '四类烟', value: 4 }, { text: '五类烟', value: 5 }
     ];
     isActionTypes: any[] = [{ text: '启用', value: 1 }, { text: '禁用', value: 0 }];
-    isConfirmLoading = false;
     productTypes: SelectGroup[] = [];
     tempGrade?: number;
     barCode: string;
@@ -48,7 +47,8 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
             desc: ['', [Validators.maxLength(500)]],
             isEnableMember: ['', [Validators.required]],
             grade: [''],
-            stock: ['', [Validators.pattern(/^([1-9]\d*|[0]{1,1})$/)]]
+            // stock: ['', [Validators.pattern(/^([1-9]\d*|[0]{1,1})$/)]]
+            stock: ['']
         });
         // this.fetchData();
         this.getProductTypes();
@@ -77,7 +77,7 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
     }
 
     fetchData(): void {
-        this.validateForm.get('stock').enable();
+        this.validateForm.get('stock').disable();
         if (this.id) {
             this.cardTitle = '编辑商品';
             this.productService.get(this.id).then((res) => {
@@ -140,18 +140,46 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
         if (this.product.categoryId != 1) {
             this.product.grade = null;
         }
-        this.product.shopId = 'b4a7da60-fc2c-11e8-920d-47440f03e2d6'//Todo
-        this.productService.save(this.product).finally(() => {
-        }).then((res) => {
-            finisheCallback();
-            if (res.code == 0) {
-                this.message.success('保存数据成功');
-                this.return();
+        this.product.shopId = this.settings.user['shopId'];
+        if (this.validateForm.valid) {
+            if (!this.id) {
+                this.productService.getIsExistByBarCodeAsync(this.product.barCode).then((res) => {
+                    if (!res) {
+                        this.productService.save(this.product).then((res) => {
+                            finisheCallback();
+                            if (res.code == 0) {
+                                this.message.success('保存数据成功');
+                                this.return();
+                            } else {
+                                this.message.error('保存数据失败');
+                                console.log(res.data);
+                            }
+                        });
+                    } else {
+                        this.saving = false;
+                        this.message.error('该商品条码已存在');
+                    }
+                });
             } else {
-                this.message.error('保存数据失败');
-                console.log(res.data);
+                this.productService.getCurrentIdIsExistByBarCodeAsync(this.product.barCode, this.id).then((res) => {
+                    if (!res) {
+                        this.productService.save(this.product).then((res) => {
+                            finisheCallback();
+                            if (res.code == 0) {
+                                this.message.success('保存数据成功');
+                                this.return();
+                            } else {
+                                this.message.error('保存数据失败');
+                                console.log(res.data);
+                            }
+                        });
+                    } else {
+                        this.saving = false;
+                        this.message.error('该商品条码已存在');
+                    }
+                });
             }
-        });
+        }
     }
 
     return() {

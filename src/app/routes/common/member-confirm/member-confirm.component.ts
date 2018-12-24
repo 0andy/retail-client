@@ -188,14 +188,12 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
             this.isConfirmLoading = true;
             this.memberService.getIsExistByPhoneAsync(this.member.phone).then((res) => {
                 this.isConfirmLoading = false;
-                console.log(res);
                 if (!res) {
                     this.memberService.createMemberAsync(this.member).then((data) => {
                         if (data) {
                             this.message.success('保存会员成功');
                             this.isVisible = false;
                             this.modalSelect.emit();
-                            console.log(data);
                         } else {
                             this.message.error('保存数据失败');
                         }

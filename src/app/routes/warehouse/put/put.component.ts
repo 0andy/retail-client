@@ -49,10 +49,10 @@ export class WarehousePutComponent extends PagedListingComponentBase<PutForm>{
   }
 
   createPutFrom() {
-
+    this.router.navigate(['warehouse/put-detail']);
   }
 
   goDetail(id: string) {
-    this.router.navigate(['product/product-detail', id]);
+    this.router.navigate(['warehouse/put-detail', id]);
   }
 }

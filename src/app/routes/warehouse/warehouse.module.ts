@@ -8,12 +8,14 @@ import { WarehouseWaterComponent } from './water/water.component';
 import { WarehouseRoutingModule } from './warehouse-routing.module';
 import { WarehouseInventoryComponent } from './inventory/inventory.component';
 import { putFormService } from 'app/services/warehouse';
+import { PutDetailComponent } from './put/put-detail/put-detail.component';
 
 const COMPONENT = [
   WarehousePutComponent,
   WarehouseStockComponent,
   WarehouseWaterComponent,
-  WarehouseInventoryComponent
+  WarehouseInventoryComponent,
+  PutDetailComponent
 ];
 
 const COMPONENT_NOROUNT = [];

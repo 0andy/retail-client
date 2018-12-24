@@ -33,7 +33,6 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   ) {
     super(injector);
     this.pageType = this.actRouter.snapshot.params['pageType'];
-    console.log(this.pageType);
   }
 
   ngOnInit() {
@@ -65,17 +64,32 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
   }
 
   protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-    this.productService.getAll(this.tempNode, this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
-      finishedCallback();
-    }).then((res) => {
-      if (res) {
-        this.dataList = res.items;
-        this.totalItems = res.totalCount;
-      } else {
-        this.dataList = [];
-        this.totalItems = 0;
-      }
-    });
+    if (this.pageType) {
+      this.productService.getAllWithStatus(this.tempNode, this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
+        finishedCallback();
+      }).then((res) => {
+        if (res) {
+          this.dataList = res.items;
+          this.totalItems = res.totalCount;
+        } else {
+          this.dataList = [];
+          this.totalItems = 0;
+        }
+      });
+    }
+    else {
+      this.productService.getAll(this.tempNode, this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
+        finishedCallback();
+      }).then((res) => {
+        if (res) {
+          this.dataList = res.items;
+          this.totalItems = res.totalCount;
+        } else {
+          this.dataList = [];
+          this.totalItems = 0;
+        }
+      });
+    }
   }
 
   refresh(): void {

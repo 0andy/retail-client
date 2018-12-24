@@ -76,6 +76,71 @@ export class ProductService {
         });
     }
 
+    getAllWithStatus(key: string, keyWord: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
+        const _self = this;
+        if (!keyWord) {
+            keyWord = '';
+        }
+        keyWord = '%' + keyWord + '%';
+        return new Promise<PagedResultDto<RetailProduct>>((resolve, reject) => {
+            _self.sqlite3Service.connectDataBase().then((dres) => {
+                if (dres.code == 0) {
+                    if (key != 'root') {
+                        _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName} r inner join category c on r.categoryId = c.id where categoryId =? and (r.name like ? or r.barCode like ?) and r.isEnable = 1`, [key, keyWord, keyWord], 'get').then((cres) => {
+                            const result = new PagedResultDto<RetailProduct>();
+                            if (cres.code == 0) {
+                                result.totalCount = cres.data.cnum;
+                                _self.sqlite3Service.sql(`select r.id, r.barCode, r.name,c.name categoryName,r.unit,r.isEnable, r.stock from ${this.tableName} r inner join category c on r.categoryId = c.id where categoryId =? and (r.name like ? or r.barCode like ?)  and r.isEnable = 1 limit ${maxResultCount} offset ${skipCount}`, [key, keyWord, keyWord], 'all').then((res) => {
+                                    if (res.code == 0) {
+                                        if (res.data) {
+                                            result.items = RetailProduct.fromJSArray(res.data);
+                                        } else {
+                                            result.items = [];
+                                            result.totalCount = 0;
+                                        }
+                                        resolve(result);
+                                    } else {
+                                        console.log(res);
+                                        reject(null);
+                                    }
+                                });
+                            } else {
+                                console.log(cres);
+                                reject(null);
+                            }
+                        });
+                    } else {
+                        _self.sqlite3Service.sql(`select count(1) cnum from ${this.tableName} r inner join category c on r.categoryId = c.id  where r.isEnable = 1 and (r.name like ? or r.barCode like ?)`, [keyWord, keyWord], 'get').then((cres) => {
+                            const result = new PagedResultDto<RetailProduct>();
+                            if (cres.code == 0) {
+                                result.totalCount = cres.data.cnum;
+                                _self.sqlite3Service.sql(`select r.id,r.barCode, r.name,c.name categoryName,r.unit,r.isEnable, r.stock from ${this.tableName} r inner join category c on r.categoryId = c.id where r.isEnable = 1 and (r.name like ? or r.barCode like ?) limit ${maxResultCount} offset ${skipCount}`, [keyWord, keyWord], 'all').then((res) => {
+                                    if (res.code == 0) {
+                                        if (res.data) {
+                                            result.items = RetailProduct.fromJSArray(res.data);
+                                        } else {
+                                            result.items = [];
+                                            result.totalCount = 0;
+                                        }
+                                        resolve(result);
+                                    } else {
+                                        console.log(res);
+                                        reject(null);
+                                    }
+                                });
+                            } else {
+                                console.log(cres);
+                                reject(null);
+                            }
+                        });
+                    }
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
     get(id: string): Promise<RetailProduct> {
         return new Promise<RetailProduct>((resolve, reject) => {
             this.sqlite3Service.execSql(`select * from ${this.tableName} where id=?`, [id], 'get').then((res) => {
@@ -171,6 +236,38 @@ export class ProductService {
                         result = null;
                     }
                     resolve(result);
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    getIsExistByBarCodeAsync(barCode: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select count(1) num from ${this.tableName} where barCode=?`, [barCode], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data.num > 0) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    getCurrentIdIsExistByBarCodeAsync(barCode: string, id: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select count(1) num,id from ${this.tableName} where barCode=?`, [barCode], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data.num > 0 && res.data.id != id) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
                 } else {
                     reject(null);
                 }
