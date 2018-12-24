@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, Category, Shop } from 'app/entities';
+import { ResultDto, Category, Shop, RetailProduct, ResultEntity } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
@@ -24,24 +24,24 @@ export class PullService {
                     reject(res);
                 } else {
                     const categoryList = Category.fromJSArray(res.data);
-                    if(categoryList.length == 0){
+                    if (categoryList.length == 0) {
                         const result = new ResultDto();
                         result.code = 0;
                         result.msg = '没有商品分类数据';
                         resolve(result);
                     } else {
                         this.sqlite3Service.connectDataBase().then((conn) => {
-                            if(conn.code != 0) {
-                                reject(res);
+                            if (conn.code != 0) {
+                                reject(conn);
                             } else {
-                                const promises = categoryList.map(function(item) {
-                                    return _self.sqlite3Service.sql(`insert into category values(${item.id}, '${item.name}', ${item.seq}, '${item.creationTimeStr}');`,[], 'run');
+                                const promises = categoryList.map(function (item) {
+                                    return _self.sqlite3Service.sql(`insert into category values(${item.id}, '${item.name}', ${item.seq}, '${item.creationTimeStr}');`, [], 'run');
                                 });
                                 Promise.all(promises).then((pro) => {
-                                        const result = new ResultDto();
-                                        result.code = 0;
-                                        result.msg = '拉取商品分类成功';
-                                        resolve(result);
+                                    const result = new ResultDto();
+                                    result.code = 0;
+                                    result.msg = '拉取商品分类成功';
+                                    resolve(result);
                                 }).catch((cat) => {
                                     const result = new ResultDto();
                                     result.code = -1;
@@ -57,17 +57,17 @@ export class PullService {
         });
     }
 
-    pullShop(licenseKey: string){
+    pullShop(licenseKey: string) {
         return new Promise<ResultDto>((resolve, reject) => {
-            this.nodeHttpClient.post('/api/services/app/Shop/SynInitShopAsync', null, { 'licenseKey': licenseKey}).then((res) => {
+            this.nodeHttpClient.post('/api/services/app/Shop/SynInitShopAsync', null, { 'licenseKey': licenseKey }).then((res) => {
                 console.log(res);
                 if (res.code != 0) {
                     reject(res);
                 } else {
                     const shop = Shop.fromJS(res.data);
-                    if(shop){
+                    if (shop) {
                         return this.sqlite3Service.execSql(`insert into shop (id,name,retailId,retailName,licenseKey,authorizationCode,aaddress,qRCode,longitude,latitude,creationTime,creatorUserId,lastModificationTime,lastModifierUserId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-                        [shop.id,shop.name,shop.retailId,shop.retailName,shop.licenseKey,shop.authorizationCode,shop.aaddress,shop.qRCode,shop.longitude,shop.latitude,shop.creationTime,shop.creatorUserId,shop.lastModificationTime,shop.lastModifierUserId,], 'run');
+                            [shop.id, shop.name, shop.retailId, shop.retailName, shop.licenseKey, shop.authorizationCode, shop.aaddress, shop.qRCode, shop.longitude, shop.latitude, shop.creationTime, shop.creatorUserId, shop.lastModificationTime, shop.lastModifierUserId,], 'run');
                     } else {
                         const result = new ResultDto();
                         result.code = 0;
@@ -79,10 +79,64 @@ export class PullService {
         });
     }
 
-    pullPoduct(skipCount: number){
-
+    getPoduct(skipCount: number) {
+        const sid = this.settingsService.user['shopId'];
+        return new Promise<ResultEntity<RetailProduct[]>>((resolve, reject) => {
+            const result = new ResultEntity<RetailProduct[]>();
+            this.nodeHttpClient.get('/api/services/app/RetailProduct/GetRetailProductSynAsync', { skipCount: skipCount, shopId: sid }).then((res) => {
+                console.log(res);
+                result.code = res.code;
+                result.msg = res.msg;
+                if (res.code != 0) {
+                    reject(result);
+                } else {
+                    result.data = RetailProduct.fromJSArray(res.data);
+                    resolve(result);
+                }
+            });
+        });
     }
 
+    pullPoduct(skipCount = 0) {
+        console.log('skipCount:' + skipCount);
+        const _self = this;
+        this.getPoduct(skipCount).then((rse) => {
+            if (rse.code != 0) {
+                console.error(rse);
+            } else {
+                if (rse.data.length > 0) {
+                    this.sqlite3Service.connectDataBase().then((conn) => {
+                        if (conn.code != 0) {
+                            console.error(conn);
+                        } else {
+                            const promises = rse.data.map(function (item) {
+                                return _self.sqlite3Service.sql(`insert into retailProduct values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`, [item.id, item.shopId, item.barCode, item.name, item.categoryId, item.grade, item.retailPrice,
+                                item.purchasePrice, item.sellPrice, item.isEnableMember, item.memberPrice, item.unit, item.pinYinCode, item.lable, item.stock, item.isEnable, item.desc, item.creationTime,
+                                item.creatorUserId, item.lastModificationTime, item.lastModifierUserId], 'run');
+                            });
+                            Promise.all(promises).then((pro) => {
+                                const result = new ResultDto();
+                                result.code = 0;
+                                result.msg = '拉取商品成功';
+                                console.log(result);
+                            }).catch((cat) => {
+                                const result = new ResultDto();
+                                result.code = -1;
+                                result.msg = '拉取商品失败';
+                                result.data = cat;
+                                console.error(result);
+                            });
+                        }
+                    });
+                }
+
+                if (rse.data.length == 2000) {
+                    skipCount = skipCount + rse.data.length;
+                    this.pullPoduct(skipCount);
+                }
+            }
+        });
+    }
 
 }
 

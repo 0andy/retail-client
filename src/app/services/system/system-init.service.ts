@@ -83,6 +83,7 @@ export class SystemInitService {
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
+    
     createWarehouseWaterTable() {
         //WarehouseWater
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
@@ -204,6 +205,11 @@ export class SystemInitService {
         });
     }
 
+    dropShopTable() {
+        const sentence = `drop table if exists shop;`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
     addShopAdmin() {
         return this.sqlite3Service.sql(`select id from shop`, [], 'get').then((res) => {
             if (res.code != 0) {
@@ -231,10 +237,19 @@ export class SystemInitService {
                     if (res.code != 0) {
                         reject(res);
                     } else {
-                        console.log('初始化数据成功');
-                        result.code = 0;
-                        result.msg = '初始化数据成功';
-                        resolve(result);
+                        try {
+                            this.pullService.pullPoduct(0);
+                            console.log('初始化数据成功');
+                            result.code = 0;
+                            result.msg = '初始化数据成功';
+                            resolve(result);
+                        } catch (exp) {
+                            result.code = -1;
+                            result.msg = '初始化数据异常';
+                            result.data = exp;
+                            reject(result);
+                        }
+
                     }
                 })
                 .catch((cat) => {
@@ -256,7 +271,6 @@ export class SystemInitService {
                 .then(() => { return this.createWarehouseWaterTable(); })
                 .then(() => { return this.createPutFormTable(); })
                 .then(() => { return this.createPutDetailTable(); })
-
                 .then((res) => {
                     if (res.code == 0) {
                         result.code = 0;
@@ -302,6 +316,7 @@ export class SystemInitService {
 
     initShop(licenseKey: string): Promise<ResultDto> {
         return this.sqlite3Service.connectDataBase()
+            .then(() => { return this.dropShopTable(); })
             .then(() => { return this.createShopTable(); })
             .then(() => { return this.pullService.pullShop(licenseKey); });
     }

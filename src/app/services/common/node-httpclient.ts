@@ -9,6 +9,7 @@ export class NodeHttpClient {
 
     private http = (<any>window).require('http');
     private querystring = (<any>window).require('querystring');
+    private iconv = (<any>window).require('iconv-lite');
     private hostname: string = 'localhost';
     private port: number = 21021;
 
@@ -30,16 +31,16 @@ export class NodeHttpClient {
         let token = this.settingsService.user['token'];
         if (!token) {
             return new Promise<ResultDto>((resolve, reject) => {
-                this.authenticate().then((res) => {
-                    if (res.code == 0) {
-                        this.settingsService.user['token'] = res.data.accessToken;
-                        this.request(url_, method, body, res.data.accessToken).then((res2) => {
-                            resolve(res2);
-                        });
-                    } else {
-                        reject(res);
-                    }
-                });
+                this.authenticate()//先获取token
+                    .then(() => {
+                        //console.log(tkres);
+                        const tk = this.settingsService.user['token'];
+                        //console.log('tk:' + tk);
+                        return this.request(url_, method, body, tk);
+                    }).then((res) => {
+                        //console.log(res);
+                        resolve(res);
+                    });
             });
         } else {
             return this.request(url_, method, body, token);
@@ -63,10 +64,39 @@ export class NodeHttpClient {
         };
 
         return new Promise<ResultDto>((resolve, reject) => {
+            const result = new ResultDto();
+            this.startRequest(this.http, options_, body)
+                .then((res) => {
+                    return this.solveResponse(res, url_);
+                })
+                .then((data) => {
+                    //console.log('data:' + data);
+                    if (data) {
+                        const resData = JSON.parse(data);
+                        if (resData.success) {
+                            console.log('获取数据成功');
+                            result.code = 0;
+                            result.data = resData.result;
+                            resolve(result);
+                        } else {
+                            result.code = 701;
+                            result.msg = resData.error;
+                            result.data = resData.result;
+                            resolve(result);
+                        }
+                    } else {
+                        result.code = 702;
+                        result.msg = '获取数据失败';
+                        reject(result);
+                    }
+                });
+        });
+
+        /*return new Promise<ResultDto>((resolve, reject) => {
             const resdto = new ResultDto();
             const req = this.http.request(options_, function (res) {
-                console.log('STATUS: ' + res.statusCode);
-                console.log('HEADERS: ' + JSON.stringify(res.headers));
+                console.log(url_ + ' status: ' + res.statusCode);
+                //console.log('HEADERS: ' + JSON.stringify(res.headers));
                 if (res.statusCode != 200) {
                     resdto.code = res.statusCode;
                     resdto.msg = '提交异常';
@@ -95,9 +125,9 @@ export class NodeHttpClient {
                     }
                 });
             }).on('error', function (e) {
-                console.error('error: ' + e.message);
+                console.error(url_ + ' error: ' + e);
                 resdto.code = -1;
-                resdto.msg = e.message;
+                resdto.msg = '服务器错误';
                 resdto.data = e;
                 reject(resdto)
             });
@@ -105,7 +135,7 @@ export class NodeHttpClient {
                 req.write(JSON.stringify(body));
             }
             req.end();
-        });
+        });*/
     }
 
     /**
@@ -133,9 +163,9 @@ export class NodeHttpClient {
         let url_ = "/api/TokenAuth/Authenticate";
         url_ = url_.replace(/[?&]$/, "");
 
-        const sId = this.settingsService.user['shopId']
-
-        const body = { userNameOrEmailAddress: 'retail', password: 'qaz_retail123!@#', rememberClient: true, shopId: sId };
+        const sid = this.settingsService.user['shopId']
+        //console.log(sid);
+        const body = { userNameOrEmailAddress: 'retail', password: 'qaz_retail123!@#', rememberClient: true, shopId: sid };
         let options_: any = {
             hostname: this.hostname,
             port: this.port,
@@ -147,10 +177,38 @@ export class NodeHttpClient {
             }
         };
         return new Promise<ResultDto>((resolve, reject) => {
+            const result = new ResultDto();
+            this.startRequest(this.http, options_, body)
+                .then((res) => {
+                    return this.solveResponse(res, url_);
+                })
+                .then((data) => {
+                    if (data) {
+                        const resData = JSON.parse(data);
+                        if (resData.success) {
+                            console.log('获取token成功');
+                            this.settingsService.user['token'] = resData.result.accessToken;
+                            result.code = 0;
+                            result.data = resData.result;
+                            resolve(result);
+                        } else {
+                            result.code = 701;
+                            result.msg = resData.error;
+                            result.data = resData.result;
+                            resolve(result);
+                        }
+                    } else {
+                        result.code = 702;
+                        result.msg = '获取token失败';
+                        reject(result);
+                    }
+                });
+        });
+        /*return new Promise<ResultDto>((resolve, reject) => {
             const resdto = new ResultDto();
             const req = this.http.request(options_, function (res) {
-                console.log('STATUS: ' + res.statusCode);
-                console.log('HEADERS: ' + JSON.stringify(res.headers));
+                console.log('authenticate status: ' + res.statusCode);
+                //console.log('HEADERS: ' + JSON.stringify(res.headers));
                 if (res.statusCode != 200) {
                     resdto.code = res.statusCode;
                     resdto.msg = '提交数据异常';
@@ -165,6 +223,7 @@ export class NodeHttpClient {
                             resdto.code = 0;
                             resdto.msg = '获取数据成功';
                             resdto.data = resData.result;
+                            this.settingsService.user['token'] = resdto.data.accessToken;
                             resolve(resdto);
                         } else {
                             resdto.code = 701;
@@ -178,9 +237,9 @@ export class NodeHttpClient {
                         reject(resdto);
                     }
                 });
-                /*res.on('end', function (chunk) {
-                    console.log("body: " + JSON.stringify(chunk));
-                });*/
+                //res.on('end', function (chunk) {
+                //    console.log("body: " + JSON.stringify(chunk));
+                //});
             }).on('error', function (e) {
                 console.error('error: ' + e.message);
                 resdto.code = -1;
@@ -190,6 +249,40 @@ export class NodeHttpClient {
             });
             req.write(JSON.stringify(body));
             req.end();
+        });*/
+    }
+
+    startRequest(http, options, body) {
+        return new Promise<any>(function (resolve, reject) {
+            const req = http.request(options, resolve);
+            req.on('error', function (e) {
+                console.log("request " + options.path + " error：" + e);
+            });
+            if (body) {
+                req.write(JSON.stringify(body));
+            }
+            req.end();
+        });
+    }
+
+    solveResponse(res, url) {
+        const _self = this;
+        console.log("request:" + url + " return status: " + res.statusCode);
+        //console.log('request headers: ' + JSON.stringify(res.headers));
+        var chunks = [];
+        return new Promise<any>(function (resolve, reject) {
+            //res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                //console.log('chunk:' + chunk);
+                chunks.push(chunk);
+            });
+            res.on('end', function () {
+                var buf = Buffer.concat(chunks);
+                // 转码
+                var text = _self.iconv.decode(buf, 'utf8');
+                resolve(text)
+            });
         });
     }
 }
+

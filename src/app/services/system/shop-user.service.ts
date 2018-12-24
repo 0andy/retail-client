@@ -30,8 +30,9 @@ export class ShopUserService {
             user.creationTime = new Date();
             user.id = this.nodeComService.guidV1();
             user.password = this.nodeComService.md5(user.password);//加密
-            return this.sqlite3Service.execSql(`insert into ${this.tableName} (id, account, password, name, role, isEnable, creationTime, creatorUserId) values(?, ?, ?, ?, ?, ?, ?, ?)`,
-                [user.id, user.account, user.password, user.name, user.role, user.isEnable, user.creationTime, user.creatorUserId], 'run');
+            user.shopId = this.settingsService.user['shopId'];
+            return this.sqlite3Service.execSql(`insert into ${this.tableName} (id, account, password, name, role, shopId, isEnable, creationTime, creatorUserId) values(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [user.id, user.account, user.password, user.name, user.role, user.shopId, user.isEnable, user.creationTime, user.creatorUserId], 'run');
         }
     }
 
