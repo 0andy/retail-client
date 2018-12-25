@@ -12,36 +12,36 @@ import { Component } from '@angular/core';
         <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'" class="app-icons">
           <div nz-col [nzSpan]="6">
             <i class="anticon anticon-calendar bg-error text-white"></i>
-            <small>Calendar</small>
+            <small>交接班</small>
           </div>
           <div nz-col [nzSpan]="6">
             <i class="anticon anticon-file bg-geekblue text-white"></i>
-            <small>Files</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-cloud bg-success text-white"></i>
-            <small>Cloud</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-star-o bg-magenta text-white"></i>
-            <small>Star</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-team bg-purple text-white"></i>
-            <small>Team</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-scan bg-warning text-white"></i>
-            <small>QR</small>
+            <small>销售流水</small>
           </div>
           <div nz-col [nzSpan]="6">
             <i class="anticon anticon-pay-circle-o bg-cyan text-white"></i>
-            <small>Pay</small>
+            <small>退款</small>
           </div>
           <div nz-col [nzSpan]="6">
             <i class="anticon anticon-printer bg-grey text-white"></i>
-            <small>Print</small>
+            <small>票据补打</small>
           </div>
+          <div nz-col [nzSpan]="6">
+            <i class="anticon anticon-team bg-purple text-white"></i>
+            <small>会员</small>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <i class="anticon anticon-cloud bg-success text-white"></i>
+            <small>入库</small>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <i class="anticon anticon-star-o bg-magenta text-white"></i>
+            <small>盘点</small>
+          </div>
+          <div nz-col [nzSpan]="6">
+            <i class="anticon anticon-scan bg-warning text-white"></i>
+            <small>二维码</small>
+          </div> 
         </div>
       </nz-spin>
     </div>
