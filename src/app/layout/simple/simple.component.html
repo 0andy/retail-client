@@ -24,13 +24,13 @@
     </div>
   </div>
   <ng-container *ngIf="!isMobile">
-    <ng-template [ngTemplateOutlet]="sideTpl"></ng-template>
+    <ng-template [ngTemplateOutlet]="sideTpl" ></ng-template>
   </ng-container>
-  <div class="ant-layout">
-    <div class="ant-layout-header">
-      <layout-simple-header [isMobile]="isMobile"></layout-simple-header>
+  <div class="ant-layout" [style.padding-left]="settings.layout.collapsed? '80px' : '256px'">
+    <div class="ant-layout-header"  >
+      <layout-simple-header [isMobile]="isMobile" [style.padding-left]="settings.layout.collapsed? '80px' : '256px'"></layout-simple-header>
     </div>
-    <div class="ant-layout-content" style="margin: 0 10px 0px; height: 100%;">
+    <div class="ant-layout-content" style="margin: 0 10px 0px; height: 100%; padding-top: 64px; ">
       <router-outlet></router-outlet>
     </div>
     <div class="ant-layout-footer"></div>

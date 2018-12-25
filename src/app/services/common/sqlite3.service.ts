@@ -5,6 +5,7 @@ import { ResultDto } from 'app/entities';
 export class Sqlite3Service {
 
     sqlite3 = (<any>window).require('sqlite3').verbose();//调试模式
+    fs = (<any>window).require("fs");
     //sqlite3 = (<any>window).require('sqlite3');
     db: any;
     databaseFile = `retail.db`;
@@ -128,6 +129,12 @@ export class Sqlite3Service {
         if (this.db) {
             this.db.close();
         }
+    }
+
+    existsDB() {
+        return new Promise<ResultDto>((resolve, reject) => {
+            this.fs.exists(this.databaseFile, resolve);
+        });
     }
 
 }

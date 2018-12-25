@@ -1,4 +1,4 @@
-<nz-modal [(nzVisible)]="isVisible" nzMaskClosable="false" nzTitle="{{title}}" [nzContent]="modalContent" (nzOnCancel)="handleCancel($event)" nzWidth="720px" [nzFooter]="modalFooter">
+<nz-modal [(nzVisible)]="isVisible" nzMaskClosable="false" nzTitle="{{title}}" [nzContent]="modalContent" (nzOnCancel)="handleCancel($event)" nzWidth="720px" [nzFooter]="isShowForm? 'modalFooter' : ''">
     <ng-template #modalContent>
         <div *ngIf="!isShowForm" nz-row class="mb-md">
             <div nz-col nzSpan="24" style="padding-right:10px;">
@@ -73,10 +73,10 @@
             </tbody>
         </nz-table>
     </ng-template>
-    <ng-template #modalFooter>
-        <button *ngIf="isShowForm" nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
+    <ng-template *ngIf="isShowForm" #modalFooter>
+        <button nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
             取消
         </button>
-        <button *ngIf="isShowForm" nz-button type="button" (click)="commit()" nzType="primary" [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">{{btnSave}}</button>
+        <button nz-button type="button" (click)="commit()" nzType="primary" [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">{{btnSave}}</button>
     </ng-template>
 </nz-modal>

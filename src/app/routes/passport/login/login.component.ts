@@ -1,4 +1,4 @@
-import { SettingsService } from '@delon/theme';
+import { SettingsService, ModalHelper } from '@delon/theme';
 import { Component, OnDestroy, Inject, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -12,6 +12,8 @@ import {
 import { ReuseTabService } from '@delon/abc';
 import { StartupService } from '@core/startup/startup.service';
 import { ShopUserService } from 'app/services/system';
+import { Sqlite3Service } from 'app/services/common';
+import { AuthenticationComponent } from '../authentication/authentication.component';
 
 @Component({
   selector: 'passport-login',
@@ -26,18 +28,20 @@ export class UserLoginComponent implements OnDestroy {
 
   constructor(
     fb: FormBuilder,
+    private modalHelper: ModalHelper,
     modalSrv: NzModalService,
     public msg: NzMessageService,
     private router: Router,
     private settingsService: SettingsService,
-    private socialService: SocialService,
+    //private socialService: SocialService,
     @Optional()
     @Inject(ReuseTabService)
     private reuseTabService: ReuseTabService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
     private startupSrv: StartupService,
     //public http: _HttpClient,
-    private shopUserService: ShopUserService
+    private shopUserService: ShopUserService,
+    private sqlite3Service: Sqlite3Service
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(5)]],
@@ -47,6 +51,7 @@ export class UserLoginComponent implements OnDestroy {
       remember: [true],
     });
     modalSrv.closeAll();
+    this.authentication();
   }
 
   loading = false;
@@ -146,5 +151,27 @@ export class UserLoginComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     if (this.interval$) clearInterval(this.interval$);
+  }
+
+  authentication() {
+    return this.sqlite3Service.existsDB().then((exists) => {
+      if (!exists) {//不存在
+        this.modalHelper
+          .open(AuthenticationComponent, {}, 'md', {
+            nzMask: true,
+            nzMaskClosable: false,
+            nzClosable: false,
+            nzTitle: '授权验证',
+          })
+          .subscribe(isSave => {
+            if (isSave) {
+              console.log('授权成功');
+              //this.refresh();
+            }
+          });
+      } else{
+        console.log('已授权');
+      }
+    });
   }
 }

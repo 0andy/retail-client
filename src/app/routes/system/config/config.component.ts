@@ -27,8 +27,7 @@ export class SystemConfigComponent extends AppComponentBase implements OnInit {
   systyemInit() {
     this.initText = '请勿关闭系统，数据初始化中...';
     this.loading = true;
-    this.systemInitService.percent = 10;
-    this.percent = this.systemInitService.percent;
+    this.percent = 10;
     this.systemInitService.initDatabase().finally(() => {
       this.initText = '开始系统初始化';
       this.loading = false;

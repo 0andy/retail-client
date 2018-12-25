@@ -40,7 +40,7 @@ export class NodeHttpClient {
                     }).then((res) => {
                         //console.log(res);
                         resolve(res);
-                    });
+                    }).catch((e) => { reject(e); });
             });
         } else {
             return this.request(url_, method, body, token);
@@ -89,6 +89,11 @@ export class NodeHttpClient {
                         result.msg = '获取数据失败';
                         reject(result);
                     }
+                }).catch((e) => {
+                    result.code = -1;
+                    result.msg = '网络异常';
+                    result.data = e;
+                    reject(e);
                 });
         });
 
@@ -202,6 +207,11 @@ export class NodeHttpClient {
                         result.msg = '获取token失败';
                         reject(result);
                     }
+                }).catch((e) => { 
+                    result.code = -1;
+                    result.msg = '网络异常';
+                    result.data = e;
+                    reject(e);
                 });
         });
         /*return new Promise<ResultDto>((resolve, reject) => {
@@ -256,7 +266,8 @@ export class NodeHttpClient {
         return new Promise<any>(function (resolve, reject) {
             const req = http.request(options, resolve);
             req.on('error', function (e) {
-                console.log("request " + options.path + " error：" + e);
+                console.error("request " + options.path + " error：" + e);
+                reject(e);
             });
             if (body) {
                 req.write(JSON.stringify(body));
