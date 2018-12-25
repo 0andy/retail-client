@@ -1,0 +1,43 @@
+<div *ngIf="!isAuthorization">
+    <form nz-form [formGroup]="validateForm">
+        <div class="padding-bottom-45">
+            <nz-form-item>
+                <nz-form-control nzHasFeedback>
+                    <input nz-input formControlName="licenseKey" [placeholder]="'卷烟专卖证号'">
+                    <nz-form-explain *ngIf="validateForm.get('licenseKey').dirty&&validateForm.get('licenseKey').errors">
+                        <ng-container *ngIf="validateForm.get('licenseKey').hasError('required')">请输入卷烟专卖证号</ng-container>
+                    </nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-control nzHasFeedback>
+                    <input nz-input formControlName="authorizationCode" [placeholder]="'授权码'">
+                    <nz-form-explain *ngIf="validateForm.get('authorizationCode').dirty&&validateForm.get('authorizationCode').errors">
+                        <ng-container *ngIf="validateForm.get('authorizationCode').hasError('required')">请输入授权码</ng-container>
+                    </nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </form>
+    <div class="ant-modal-footer">
+        <div class="custom-modal-footter-group">
+            <button nz-button [nzType]="'primary'" type="button" (click)="submit()" [nzLoading]="loading" [disabled]="!validateForm.valid">
+                验证
+            </button>
+        </div>
+    </div>
+</div>
+<div *ngIf="isAuthorization">
+    <div class="padding-bottom-45">
+        <nz-alert nzType="success" nzMessage="授权验证成功" nzDescription="授权验证成功！感谢您的使用，店铺管理员初始账号为：admin 密码为：hb1234。为了保障您的信息安全，请登录系统后进行密码修改。"
+            nzShowIcon>
+        </nz-alert>
+    </div>
+    <div class="ant-modal-footer">
+        <div class="custom-modal-footter-group">
+            <button nz-button [nzType]="'primary'" type="button" (click)="complete()" >
+                确定
+            </button>
+        </div>
+    </div>
+</div>

@@ -60,14 +60,21 @@ export class PullService {
     pullShop(licenseKey: string) {
         return new Promise<ResultDto>((resolve, reject) => {
             this.nodeHttpClient.post('/api/services/app/Shop/SynInitShopAsync', null, { 'licenseKey': licenseKey }).then((res) => {
-                console.log(res);
+                //console.log(res);
                 if (res.code != 0) {
                     reject(res);
                 } else {
                     const shop = Shop.fromJS(res.data);
                     if (shop) {
-                        return this.sqlite3Service.execSql(`insert into shop (id,name,retailId,retailName,licenseKey,authorizationCode,aaddress,qRCode,longitude,latitude,creationTime,creatorUserId,lastModificationTime,lastModifierUserId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-                            [shop.id, shop.name, shop.retailId, shop.retailName, shop.licenseKey, shop.authorizationCode, shop.aaddress, shop.qRCode, shop.longitude, shop.latitude, shop.creationTime, shop.creatorUserId, shop.lastModificationTime, shop.lastModifierUserId,], 'run');
+                        this.sqlite3Service.execSql(`insert into shop (id,name,retailId,retailName,licenseKey,authorizationCode,aaddress,qRCode,longitude,latitude,creationTime,creatorUserId,lastModificationTime,lastModifierUserId) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+                            [shop.id, shop.name, shop.retailId, shop.retailName, shop.licenseKey, shop.authorizationCode, shop.aaddress, shop.qRCode, shop.longitude, shop.latitude, shop.creationTime, shop.creatorUserId, shop.lastModificationTime, shop.lastModifierUserId,], 'run')
+                            .then((res) => {
+                                if(res.code == 0){
+                                    resolve(res);
+                                } else {
+                                    reject(res);
+                                }
+                            });
                     } else {
                         const result = new ResultDto();
                         result.code = 0;
