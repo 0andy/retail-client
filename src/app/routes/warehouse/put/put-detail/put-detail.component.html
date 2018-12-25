@@ -54,42 +54,119 @@
         </div>
     </div>
 </form>
-
+<!-- <nz-card [nzBordered]="false"> -->
 <div nz-col nzSpan="24">
-    <div nz-row class="mb-md">
-        <div nz-col nzSpan="24" style="padding-right:10px;">
-            <nz-input-group nzSearch [nzSuffix]="suffixButton">
-                <input type="text" [(ngModel)]="keyWord" nz-input placeholder="商品条码">
-            </nz-input-group>
-            <ng-template #suffixButton>
-                <button nz-button nzType="primary" nzSearch>搜索</button>
-            </ng-template>
-        </div>
+    <div style="text-align: center">
+        <nz-select [nzMaxMultipleCount]="1" style="width:480px;" (ngModelChange)="addTable($event)" nzMode="default" [(ngModel)]="keyWord" nzPlaceHolder="请输入商品条码或名称" nzAllowClear nzShowSearch [nzServerSearch]="true" (nzOnSearch)="onSearch($event)">
+            <ng-container *ngFor="let o of optionList">
+                <nz-option *ngIf="!isLoading" [nzValue]="o.id" [nzLabel]="o.text"></nz-option>
+            </ng-container>
+            <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                <i nz-icon type="loading" class="loading-icon"></i> 正在查询中...
+            </nz-option>
+        </nz-select>
     </div>
     <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
-    <nz-table #nzTable [nzFrontPagination]="false">
+    <nz-table #nzTable nzBordered [nzData]="dataList" [nzShowPagination]="false" [nzFrontPagination]="false">
         <thead>
             <tr>
+                <th nzWidth="10%">操作</th>
                 <th>商品条码</th>
                 <th>商品名称</th>
                 <th>采购价</th>
                 <th>订单数量</th>
                 <th>实收数量</th>
-                <th>备注</th>
+                <th>采购金额</th>
+                <th nzWidth="20%">备注</th>
             </tr>
         </thead>
         <tbody>
-            <!-- <tr *ngFor="let data of nzTable.data"> [nzData]="dataList"
-                    <td>{{data.formNo}}</td>
-                    <td>{{data.type}}</td>
-                    <td>{{data.deliverer}}</td>
-                    <td>{{data.putTime | _date}}</td>
-                    <td>
-                        <a (click)="goDetail(data.id)">查看详情</a>
-                    </td>
-                </tr> -->
+            <tr *ngFor="let data of nzTable.data;let i = index">
+                <td>
+                    <div class="editable-row-operations">
+                        <a *ngIf="!editCache[i].edit" (click)="deleteProduct(data.productId)" style="color:#ff4d4f">删除</a>
+                        <nz-divider *ngIf="!editCache[i].edit" nzType="vertical"></nz-divider>
+                        <!-- <ng-container *ngIf="!editCache[i].edit">
+                                    <a style="color:#ff4d4f">删除</a>
+                                </ng-container>
+                        <ng-container *ngIf="!editCache[i].edit">
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <nz-popconfirm [nzTitle]="'删除条目?'" (nzOnConfirm)="deleteProduct(data.productId)">
+                                <a nz-popconfirm>取消</a>
+                            </nz-popconfirm>
+                            <nz-divider nzType="vertical"></nz-divider>
+                        </ng-container> -->
+                        <ng-container *ngIf="!editCache[i].edit">
+                            <a (click)="startEdit(i)">编辑</a>
+                        </ng-container>
+                        <ng-container *ngIf="editCache[i].edit">
+                            <a (click)="saveEdit(i,data.productId)">保存</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <nz-popconfirm [nzTitle]="'放弃更改?'" (nzOnConfirm)="cancelEdit(i)">
+                                <a nz-popconfirm>取消</a>
+                            </nz-popconfirm>
+                        </ng-container>
+                        <!-- <nz-divider *ngIf="!editCache[i].edit" nzType="vertical"></nz-divider> -->
+                        <!-- <a *ngIf="!editCache[i].edit" (click)="deleteProduct(data.productId)" style="color:#ff4d4f">删除</a> -->
+                        <!-- <a (click)="deleteProduct(data.productId)"><i nz-icon type="delete" theme="outline"></i></a> -->
+                    </div>
+
+                </td>
+                <td>{{data.barCode}}</td>
+                <td>{{data.productName}}</td>
+                <td>
+                    <div class="editable-cell">
+                        <div class="editable-cell-text-wrapper">
+                            <ng-container *ngIf="!editCache[i].edit">
+                                {{data.purchasePrice}}
+                            </ng-container>
+                            <ng-container *ngIf="editCache[i].edit">
+                                <input type="text" nz-input [(ngModel)]="editCache[i].data.purchasePrice">
+                            </ng-container>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="editable-cell">
+                        <div class="editable-cell-text-wrapper">
+                            <ng-container *ngIf="!editCache[i].edit">
+                                {{data.orderNum}}
+                            </ng-container>
+                            <ng-container *ngIf="editCache[i].edit">
+                                <input type="text" nz-input [(ngModel)]="editCache[i].data.orderNum">
+                            </ng-container>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="editable-cell">
+                        <div class="editable-cell-text-wrapper">
+                            <ng-container *ngIf="!editCache[i].edit">
+                                {{data.num}}
+                            </ng-container>
+                            <ng-container *ngIf="editCache[i].edit">
+                                <input type="text" nz-input [(ngModel)]="editCache[i].data.num">
+                            </ng-container>
+                        </div>
+                    </div>
+                </td>
+                <td>{{data.purchasePrice * data.orderNum}}</td>
+                <td>
+                    <div class="editable-cell">
+                        <div class="editable-cell-text-wrapper">
+                            <ng-container *ngIf="!editCache[i].edit">
+                                {{data.remark}}
+                            </ng-container>
+                            <ng-container *ngIf="editCache[i].edit">
+                                <input type="text" nz-input [(ngModel)]="editCache[i].data.remark">
+                            </ng-container>
+                        </div>
+                    </div>
+                </td>
+            </tr>
         </tbody>
     </nz-table>
+
     <footer-toolbar errorCollect>
         <button nz-button [nzType]="'default'" type="button" (click)="return()">返回</button>
         <button nz-button [nzType]="'primary'" type="button" (click)="submit()" [nzLoading]="saving" [disabled]="!validateForm.valid">保存</button>

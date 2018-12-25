@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, PutForm, PagedResultDto, ResultEntity } from 'app/entities';
+import { ResultDto, PutForm, PagedResultDto, ResultEntity, PutDetail } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { NodeHttpClient } from '../common';
 import { SettingsService } from '@delon/theme';
+import { v } from '@angular/core/src/render3';
 
 @Injectable()
 export class putFormService {
@@ -83,6 +84,34 @@ export class putFormService {
             });
         });
     }
+
+
+    save(putForm: PutForm, putDetailList: PutDetail[]) {
+        console.log(putForm);
+        console.log(putDetailList);
+        putForm.id = this.nodeComService.guidV1();
+        putForm.creationTime = new Date();
+        this.sqlite3Service.execSql(`insert into putDetail 
+            (id,shopId,formNo,type,deliverer,putTime,refOrderNo
+                ,remark,userAccount,creationTime,creatorUserId
+                ) putFormalues(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [putForm.id, putForm.shopId, putForm.formNo, putForm.type, putForm.deliverer
+                , putForm.putTime, putForm.refOrderNo, putForm.remark, putForm.userAccount
+                , putForm.creationTime, putForm.creatorUserId], 'run');
+
+        putDetailList.forEach(v => {
+            v.creationTime = new Date();
+            v.id = this.nodeComService.guidV1();
+            return this.sqlite3Service.execSql(`insert into putDetail 
+                        (id,putFormId,productId,barCode
+                            ,purchasePrice,orderNum,num,remark,creationTime
+                            ) values(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [v.id, v.putFormId, v.productId, v.barCode, v.purchasePrice
+                    , v.orderNum, v.num, v.remark
+                    , v.creationTime], 'run');
+        });
+    }
+
 }
 
 

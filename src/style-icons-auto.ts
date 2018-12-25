@@ -33,6 +33,9 @@ import {
   ShopOutline,
   LaptopOutline,
   ReloadOutline,
+  EditOutline,
+  CheckOutline,
+
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -65,4 +68,6 @@ export const ICONS_AUTO = [
   ShopOutline,
   LaptopOutline,
   ReloadOutline,
+  EditOutline,
+  CheckOutline,
 ];

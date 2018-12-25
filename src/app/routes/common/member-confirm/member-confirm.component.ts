@@ -69,7 +69,7 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
         //     }
         if (this.searchPhone.length > 3) {
             this.member.phone = this.getControlVal('phone');
-            console.log('[searchPhone]' + this.searchPhone);
+            // console.log('[searchPhone]' + this.searchPhone);
             this.searchText$.next(this.searchPhone);
         }
     }

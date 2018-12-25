@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct } from 'app/entities';
+import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
@@ -157,7 +157,7 @@ export class ProductService {
         });
     }
 
-    getProductByBarCoe(barCode: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
+    getProductByBarCode(barCode: string, skipCount: number, maxResultCount: number): Promise<PagedResultDto<RetailProduct>> {
         const _self = this;
         return new Promise<PagedResultDto<RetailProduct>>((resolve, reject) => {
             _self.sqlite3Service.connectDataBase().then((dres) => {
@@ -225,7 +225,7 @@ export class ProductService {
         }
     }
 
-    getProductByBarCode(barCode: string): Promise<RetailProduct> {
+    getProductByBarCod1e(barCode: string): Promise<RetailProduct> {
         return new Promise<RetailProduct>((resolve, reject) => {
             this.sqlite3Service.execSql(`select * from ${this.tableName} where barCode=?`, [barCode], 'get').then((res) => {
                 if (res.code == 0) {
@@ -279,6 +279,50 @@ export class ProductService {
         const lasttime = new Date();
         return this.sqlite3Service.execSql(`update ${this.tableName} set isEnable=?, lastModificationTime=?, lastModifierUserId=? where id=?`, [isEnable, lasttime, userId, id], 'run');
     }
+
+    getProductSelectGroup(keyWord: string): Promise<SelectProduct[]> {
+        const _self = this;
+        if (!keyWord) {
+            keyWord = '';
+        }
+        keyWord = '%' + keyWord + '%';
+        return new Promise<SelectProduct[]>((resolve, reject) => {
+            _self.sqlite3Service.connectDataBase().then((dres) => {
+                if (dres.code == 0) {
+                    var result: SelectProduct[] = [];
+                    _self.sqlite3Service.sql(`select r.id, r.barCode, r.name from ${this.tableName} r where (r.name like ? or r.barCode like ?)  and r.isEnable = 1 limit 5`, [keyWord, keyWord], 'all').then((res) => {
+                        if (res.code == 0) {
+                            if (res.data) {
+                                result = SelectProduct.fromJSArray(res.data);
+                            } else {
+                                result = [];
+                            }
+                            resolve(result);
+                        } else {
+                            console.log(res);
+                            reject(null);
+                        }
+                    });
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    getProuductPutById(id: string): Promise<PutDetail> {
+        return new Promise<PutDetail>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select r.id productId,r.name productName,r.purchasePrice,r.barCode from ${this.tableName} r where id=?`, [id], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data) {
+                        resolve(PutDetail.fromJS(res.data));
+                    } else {
+                        reject(null);
+                    }
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
 }
-
-

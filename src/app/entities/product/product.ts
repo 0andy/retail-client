@@ -103,3 +103,48 @@ export class RetailProduct {
     //     return result;
     // }
 }
+
+
+export class SelectProduct {
+    id: string;
+    barCode: string;
+    name: string;
+    constructor(data?: any) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.barCode = data["barCode"];
+            this.name = data["name"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["barCode"] = this.barCode;
+        data["name"] = this.name;
+        return data;
+    }
+
+    static fromJSArray(dataArray: any[]): SelectProduct[] {
+        let array = [];
+        dataArray.forEach(result => {
+            let item = new SelectProduct();
+            item.init(result);
+            array.push(item);
+        });
+        return array;
+    }
+}
+
+export class SelectResultDto<T, E> {
+    entity: T[];
+    dto: E[];
+}

@@ -80,7 +80,7 @@ export class ProductConfirmComponent extends PagedListingComponentBase<RetailPro
     }
 
     protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
-        this.productService.getProductByBarCoe(this.barCode, request.skipCount, request.maxResultCount).finally(() => {
+        this.productService.getProductByBarCode(this.barCode, request.skipCount, request.maxResultCount).finally(() => {
             finishedCallback();
             this.isConfirmLoading = false;
         }).then((res) => {
