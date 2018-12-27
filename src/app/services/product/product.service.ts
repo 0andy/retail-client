@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail } from 'app/entities';
+import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail, PutFormToProduct, ResultListDto } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
@@ -216,7 +216,7 @@ export class ProductService {
                 ,sellPrice,isEnableMember,memberPrice
                 ,unit,pinYinCode,stock,isEnable
                 ,desc,creationTime,creatorUserId
-                ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
                 [product.id, product.shopId, product.barCode, product.name, product.categoryId
                     , product.grade, product.purchasePrice, product.sellPrice
                     , product.isEnableMember, product.memberPrice, product.unit
@@ -281,6 +281,7 @@ export class ProductService {
     }
 
     getProductSelectGroup(keyWord: string): Promise<SelectProduct[]> {
+        console.log('In');
         const _self = this;
         if (!keyWord) {
             keyWord = '';
@@ -323,6 +324,118 @@ export class ProductService {
                     reject(null);
                 }
             });
+        });
+    }
+
+    updateStockByFormId(putFormId: string, lastModifierUserId: string, shopId: string) {
+        return new Promise<ResultEntity<PutFormToProduct[]>>((resolve, reject) => {
+            const _self = this;
+            const result = new ResultEntity<PutFormToProduct[]>();
+            this.sqlite3Service.connectDataBase().then((conn) => {
+                if (conn.code != 0) {
+                    console.error(conn);
+                    reject(null);
+                } else {
+                    _self.sqlite3Service.sql(`begin;`, [], 'run');
+                    // putForm.id = this.nodeComService.guidV1();
+                    // putForm.creationTime = new Date();
+                    this.sqlite3Service.sql(`
+                        select pd.barCode, pd.putFormId putFormId, pd.productId productId
+                        ,pd.purchasePrice pPrice, pd.num pNum
+                        ,r.purchasePrice rPrice,r.stock rNum from putDetail pd
+                         inner join ${this.tableName} r on pd.productId = r.id
+                          where pd.putFormId = ?;`,
+                        [putFormId], 'all').then(res => {
+                            result.data = PutFormToProduct.fromJSArray(res.data);
+                            if (res.code == 0) {
+                                if (res.data) {
+                                    const promises = [];
+                                    result.data.forEach(function (item) {
+                                        item.lastModificationTime = new Date();
+                                        if (!item.pNum) {
+                                            item.pNum = 0;
+                                        }
+                                        if (!item.rNum) {
+                                            item.rNum = 0;
+                                        }
+                                        // 如果价格改变，更新商品进货价格
+                                        // if (item.pPrice && item.pPrice != item.rPrice) {
+                                        let sum = item.rNum + item.pNum;
+                                        let waterId = _self.nodeComService.guidV1();
+                                        // console.log(sum);
+
+                                        promises.push(_self.sqlite3Service.sql(`update ${_self.tableName} set purchasePrice=?,
+                                        stock=?, lastModificationTime=?, lastModifierUserId=? where id=?`,
+                                            [item.pPrice, sum, item.lastModificationTime, lastModifierUserId, item.productId], 'run'));
+
+                                        promises.push(_self.sqlite3Service.sql(`insert into warehouseWater (id,shopId,productId,barCode,type,refNo
+                                            ,initial,stock,final,desc,creationTime
+                                            ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                                            [waterId, shopId, item.productId, item.barCode, 1, putFormId, item.rNum, item.pNum, sum, '采购入库', item.lastModificationTime
+                                            ], 'run'));
+                                        // }
+                                        // 如果入库单数量和库存不等
+                                        // if (item.pNum > 0 && item.pNum != item.rNum) {
+                                        //     console.log('增加库存');
+                                        //     let sum = item.rNum + item.pNum;
+                                        //     return _self.sqlite3Service.sql(`update ${this.tableName} set stock=?
+                                        //     lastModificationTime=?, lastModifierUserId=? where id=?`,
+                                        //         [sum, item.lastModificationTime, lastModifierUserId, item.productId], 'run');
+                                        // }
+                                    });
+                                    // let lastModificationTime: Date = new Date();
+                                    // const promises2 =
+                                    //     _self.sqlite3Service.sql(`update putForm set status=?
+                                    // lastModificationTime=?, lastModifierUserId=? where id=?`,
+                                    //         [1, lastModificationTime, lastModifierUserId, putFormId], 'run');
+                                    Promise.all(promises).then((pro) => {
+                                        const result = new ResultDto();
+                                        result.code = 0;
+                                        result.msg = '入库成功';
+                                        // console.log(result);
+                                        // _self.sqlite3Service.sql(`commit;`, [], 'run');
+                                        resolve(result);
+                                    }).catch((cat) => {
+                                        _self.sqlite3Service.sql(`rollback;`, [], 'run');
+                                        const result = new ResultDto();
+                                        result.code = -1;
+                                        result.msg = '入库失败';
+                                        result.data = cat;
+                                        console.error(result);
+                                    });
+                                }
+                            }
+                            else {
+                                _self.sqlite3Service.sql(`rollback;`, [], 'run');
+                                console.error(res);
+                            }
+                        });
+                }
+            });
+        });
+    }
+
+    updatePutFormStatus(formId: string, lastModifierUserId: string, name: string) {
+        return new Promise<ResultDto>((resolve, reject) => {
+            const lasttime = new Date();
+            this.sqlite3Service.sql(`update putForm set status=?, approvalTime=?,putTime=?,approvalUserId=?, approvalName=? where id=?`, [1, lasttime, lasttime, lastModifierUserId, name, formId], 'run')
+                .then(r => {
+                    if (r.code == 0) {
+                        this.sqlite3Service.sql(`commit;`, [], 'run');
+                        const result = new ResultDto();
+                        result.code = 0;
+                        result.msg = '入库单状态修改成功';
+                        console.log(result);
+                        resolve(result);
+                    } else {
+                        this.sqlite3Service.sql(`rollback;`, [], 'run');
+                        const result = new ResultDto();
+                        result.code = -1;
+                        result.msg = '入库单状态修改失败';
+                        console.error(result);
+                        reject(null);
+                    }
+                });
         });
     }
 }

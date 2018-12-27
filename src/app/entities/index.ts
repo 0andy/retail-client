@@ -6,3 +6,4 @@ export * from './member/member';
 export * from './warehouse/put-detail';
 export * from './warehouse/put-form';
 export * from './shop/shop'
+export * from './warehouse/warehouseWater';

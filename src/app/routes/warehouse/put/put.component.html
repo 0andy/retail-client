@@ -31,6 +31,9 @@
                 <th>申请单号</th>
                 <th>入库类型</th>
                 <th>送货人</th>
+                <th>申请时间</th>
+                <th>申请人</th>
+                <th>状态</th>
                 <th>入库时间</th>
                 <th>操作</th>
             </tr>
@@ -38,11 +41,19 @@
         <tbody>
             <tr *ngFor="let data of nzTable.data">
                 <td>{{data.formNo}}</td>
-                <td>{{data.type}}</td>
+                <td>{{data.type == 1? '采购入库' : '其他'}}</td>
                 <td>{{data.deliverer}}</td>
+                <td>{{data.creationTime | _date}}</td>
+                <td>{{data.userAccount}}</td>
+                <td>
+                    <nz-badge *ngIf="data.status == 1" [nzStatus]="'success'" [nzText]="'已入库'"></nz-badge>
+                    <nz-badge *ngIf="data.status == 0" [nzStatus]="'default'" [nzText]="'未入库'"></nz-badge>
+                </td>
                 <td>{{data.putTime | _date}}</td>
                 <td>
-                    <a (click)="goDetail(data.id)">查看详情</a>
+                    <a (click)="goDetail(data.id,data.status)">{{data.status == 1?'详情' : '修改'}}</a>
+                    <nz-divider *ngIf="data.status == 0" nzType="vertical"></nz-divider>
+                    <a *ngIf="data.status == 0" (click)="approval(data)">入库</a>
                 </td>
             </tr>
         </tbody>

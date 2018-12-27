@@ -52,3 +52,26 @@ export class PagedResultDto<T> {
     totalCount: number;
     items: T[];
 }
+
+export class ResultListDto {
+    code: number;
+    msg: string;
+    data: any[];
+
+    constructor(data?: any) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.msg = data["msg"];
+            this.data = data["data"];
+        }
+    }
+}

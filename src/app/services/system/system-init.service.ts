@@ -77,7 +77,7 @@ export class SystemInitService {
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
-    
+
     createWarehouseWaterTable() {
         //WarehouseWater
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
@@ -116,6 +116,7 @@ export class SystemInitService {
             creatorUserId varchar(36),
             approvalTime DateTime,
             approvalUserId varchar(36),
+            approvalName nvarchar(50),
             status int no null
             );`;
         return this.sqlite3Service.createOrDeleteTable(sentence);

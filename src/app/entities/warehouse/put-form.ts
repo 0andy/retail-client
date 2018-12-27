@@ -13,6 +13,7 @@ export class PutForm {
     status: number;
     approvalUserId: string;
     approvalTime: Date;
+    approvalName: string;
 
     constructor(data?: any) {
         if (data) {
@@ -38,6 +39,7 @@ export class PutForm {
             this.status = data["status"];
             this.approvalUserId = data["approvalUserId"];
             this.approvalTime = data["approvalTime"];
+            this.approvalName = data["approvalName"];
         }
     }
     // toJSON(data?: any) {
@@ -84,4 +86,50 @@ export class PutForm {
 // }
 enum PutFormType {
     采购入库 = 1,
+}
+
+
+export class PutFormToProduct {
+    putFormId: string;
+    productId: string;
+    barCode: string;
+    pPrice: number;
+    pNum: number;
+    rPrice: number;
+    rNum: number;
+    lastModificationTime: Date;
+    lastModifierUserId: string;
+
+    constructor(data?: any) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+    init(data?: any) {
+        if (data) {
+            this.putFormId = data["putFormId"];
+            this.productId = data["productId"];
+            this.barCode = data["barCode"];
+            this.pPrice = data["pPrice"];
+            this.pNum = data["pNum"];
+            this.rPrice = data["rPrice"];
+            this.rNum = data["rNum"];
+            this.lastModificationTime = data["lastModificationTime"];
+            this.lastModifierUserId = data["lastModifierUserId"];
+        }
+    }
+
+    static fromJSArray(dataArray: any[]): PutFormToProduct[] {
+        console.log(dataArray);
+        let array = [];
+        dataArray.forEach(result => {
+            let item = new PutFormToProduct();
+            item.init(result);
+            array.push(item);
+        });
+        return array;
+    }
 }

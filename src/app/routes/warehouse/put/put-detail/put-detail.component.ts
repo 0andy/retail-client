@@ -1,13 +1,12 @@
 import { Component, Injector } from '@angular/core';
-import { putFormService } from 'app/services/warehouse';
+import { putFormService, putDetailService } from 'app/services/warehouse';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormComponentBase } from '@shared/component-base/form-component-base';
-import { PutForm, SelectProduct, PutDetail, RetailProduct, selectGroup, EditCache } from 'app/entities';
+import { PutForm, PutDetail, selectGroup, EditCache } from 'app/entities';
 import { Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from 'app/services/product';
-import { v } from '@angular/core/src/render3';
 
 @Component({
     selector: 'put-detail',
@@ -17,6 +16,7 @@ import { v } from '@angular/core/src/render3';
 })
 export class PutDetailComponent extends FormComponentBase<PutForm> {
     id: string;
+    status: string;
     keyWord: string;
     types: any[] = [{ text: '采购入库', value: 1 }];
     putForm: PutForm = new PutForm();
@@ -29,11 +29,14 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     constructor(
         injector: Injector
         , private putFormService: putFormService
+        , private putDetailService: putDetailService
         , private router: Router
         , private actRouter: ActivatedRoute
         , private productService: ProductService
     ) {
         super(injector);
+        this.id = this.actRouter.snapshot.params['id'];
+        this.status = this.actRouter.snapshot.params['status'];
     }
 
     ngOnInit() {
@@ -41,26 +44,34 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
             formNo: ['', [Validators.required, Validators.maxLength(50)]],
             deliverer: ['', [Validators.maxLength(50)]],
             type: [''],
-            remark: ['', [Validators.maxLength(200)]]
+            remark: ['', [Validators.maxLength(200)]],
+            userAccount: [''],
+            approvalTime: [''],
+            creationTime: [''],
+            approvalName: ['']
         });
         this.getPutForm();
         this.searchChange$.pipe(
-            debounceTime(500),
+            debounceTime(300),
             distinctUntilChanged()).subscribe(term => {
-                this.getProductSelectGroup(term);
+                if (term && term.length >= 1) {
+                    this.getProductSelectGroup(term);
+                }
             });
     }
 
     onSearch(keyWord: string): void {
-        this.isLoading = true;
+        console.log(keyWord);
         this.optionList = [];
-        this.searchChange$.next(keyWord);
+        if (keyWord && keyWord.length >= 1) {
+            this.isLoading = true;
+            this.searchChange$.next(keyWord);
+        }
     }
 
     getProductSelectGroup(term: string) {
         this.productService.getProductSelectGroup(term).then((res) => {
             this.isLoading = false;
-            this.optionList = [];
             if (res) {
                 res.forEach(v => {
                     var temp: selectGroup = new selectGroup();
@@ -99,10 +110,8 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     }
 
     existsProduct(id: string): boolean {
-        console.log('In');
         let bo = false;
         this.dataList.forEach(v => {
-            console.log(id);
             if (v.productId == id) {
                 v.orderNum++;
                 bo = true;
@@ -155,18 +164,40 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
         });
     }
 
+    getPutDetail() {
+        if (this.id) {
+            this.putDetailService.getAllNoPage(this.id).then((res) => {
+                if (res) {
+                    this.dataList = res;
+                    this.syncEditCache();
+                } else {
+                    this.message.error('没有获取到订单详情');
+                }
+            })
+        }
+    }
+
     getPutForm(): void {
         this.validateForm.get('formNo').disable();
+        this.validateForm.get('userAccount').disable();
+        this.validateForm.get('approvalTime').disable();
+        this.validateForm.get('creationTime').disable();
+        this.validateForm.get('approvalName').disable();
         if (this.id) {
-            // this.productService.get(this.id).then((res) => {
-            //     if (res) {
-            //         this.product = res;
-            //         this.tempGrade = res.grade;
-            //         this.setFormValues(this.product);
-            //     } else {
-            //         this.message.error('没有获取到商品信息');
-            //     }
-            // });
+            this.putFormService.get(this.id).then((res) => {
+                if (res) {
+                    this.putForm = res;
+                    if (res.status == 1) {
+                        this.validateForm.get('deliverer').disable();
+                        this.validateForm.get('type').disable();
+                        this.validateForm.get('remark').disable();
+                    }
+                    this.setFormValues(this.putForm);
+                } else {
+                    this.message.error('没有获取到订单信息');
+                }
+            });
+            this.getPutDetail();
         }
         else {
             var date = new Date();
@@ -193,6 +224,10 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
         this.setControlVal('deliverer', entity.deliverer);
         this.setControlVal('type', entity.type);
         this.setControlVal('remark', entity.remark);
+        this.setControlVal('userAccount', entity.userAccount);
+        this.setControlVal('approvalTime', entity.approvalTime);
+        this.setControlVal('creationTime', entity.creationTime);
+        this.setControlVal('approvalName', entity.approvalName);
     }
 
     protected getFormValues(): void {
@@ -200,12 +235,34 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
         this.putForm.deliverer = this.getControlVal('deliverer');
         this.putForm.type = this.getControlVal('type');
         this.putForm.remark = this.getControlVal('remark');
+        // this.putForm.userAccount = this.getControlVal('userAccount');
+        // this.putForm.approvalTime = this.getControlVal('approvalTime');
+        // this.putForm.creationTime = this.getControlVal('creationTime');
+        // this.putForm.approvalName = this.getControlVal('approvalName');
         if (!this.putForm.id) {
             this.putForm.creatorUserId = this.settings.user['id'];
         }
     }
 
     protected submitExecute(finisheCallback: Function): void {
+        if (this.validateForm.valid) {
+            if (!this.id) {
+                this.putForm.status = 0;
+                this.putForm.shopId = this.settings.user['shopId'];
+                this.putFormService.save(this.putForm, this.dataList, this.settings.user['name']).then((res) => {
+                    finisheCallback();
+                    if (res.code == 0) {
+                        this.message.success('保存数据成功');
+                        this.return();
+                    } else {
+                        this.message.error('保存数据失败');
+                        console.log(res.data);
+                    }
+                });
+            } else {
+
+            }
+        }
     }
 
     return() {

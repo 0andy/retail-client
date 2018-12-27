@@ -10,9 +10,10 @@ import { PutDetailComponent } from './put/put-detail/put-detail.component';
 const routes: Routes = [
   { path: 'put', component: WarehousePutComponent },
   { path: 'put-detail', component: PutDetailComponent },
-  { path: 'put-detail/:id', component: PutDetailComponent },
+  { path: 'put-detail/:id/:status', component: PutDetailComponent },
   { path: 'stock', component: WarehouseStockComponent },
   { path: 'water', component: WarehouseWaterComponent },
+  { path: 'water/:barCode', component: WarehouseWaterComponent },
   { path: 'inventory', component: WarehouseInventoryComponent },
 ];
 

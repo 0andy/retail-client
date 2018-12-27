@@ -113,6 +113,10 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
     this.router.navigate(['product/product-detail', id]);
   }
 
+  goWaterDetail(barCode: string) {
+    this.router.navigate(['warehouse/water', barCode]);
+  }
+
   /*商品类型数*/
   getTreeAsync() {
     this.categoryService.getCategoryTree().finally(() => {
