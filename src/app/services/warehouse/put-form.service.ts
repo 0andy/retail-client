@@ -75,12 +75,12 @@ export class putFormService {
     save(putForm: PutForm, putDetailList: PutDetail[], name: string) {
         return new Promise<ResultDto>((resolve, reject) => {
             const _self = this;
-            if (!putForm.id) {
-                this.sqlite3Service.connectDataBase().then((conn) => {
-                    if (conn.code != 0) {
-                        console.error(conn);
-                        reject(null);
-                    } else {
+            this.sqlite3Service.connectDataBase().then((conn) => {
+                if (conn.code != 0) {
+                    console.error(conn);
+                    reject(null);
+                } else {
+                    if (!putForm.id) {
                         _self.sqlite3Service.sql(`begin;`, [], 'run');
                         putForm.id = this.nodeComService.guidV1();
                         putForm.creationTime = new Date();
@@ -130,9 +130,58 @@ export class putFormService {
                         // result.code = 0;
                         // result.msg = '入库订单详情记录生成成功';
                         // resolve(result);
+                    } else {
+                        _self.sqlite3Service.sql(`begin;`, [], 'run');
+                        putForm.creationTime = new Date();
+                        putForm.userAccount = name;
+                        this.sqlite3Service.sql(`update ${this.tableName} set shopId =?,formNo =?,type =?,deliverer =?,putTime =?,refOrderNo =?
+                        ,remark =?,userAccount =?,creationTime =?,creatorUserId =?,status =? where id = ?`,
+                            [putForm.shopId, putForm.formNo, putForm.type, putForm.deliverer
+                                , putForm.putTime, putForm.refOrderNo, putForm.remark, putForm.userAccount
+                                , putForm.creationTime, putForm.creatorUserId, putForm.status, putForm.id], 'run').then(res => {
+                                    if (res.code == 0) {
+                                        this.sqlite3Service.sql(`delete from putDetail where putFormId=?`, [putForm.id], 'run').then(d => {
+                                            if (d.code == 0) {
+                                                const promises = putDetailList.map(function (item) {
+                                                    item.creationTime = new Date();
+                                                    item.id = _self.nodeComService.guidV1();
+                                                    return _self.sqlite3Service.sql(`insert into putDetail 
+                                                                                (id,putFormId,productId,barCode
+                                                                                    ,purchasePrice,orderNum,num,remark,creationTime
+                                                                                    ) values(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                                                        [item.id, putForm.id, item.productId, item.barCode, item.purchasePrice
+                                                            , item.orderNum, item.num, item.remark
+                                                            , item.creationTime], 'run');
+                                                });
+                                                Promise.all(promises).then((pro) => {
+                                                    const result = new ResultDto();
+                                                    result.code = 0;
+                                                    result.msg = '入库订单详情记录生成成功';
+                                                    // console.log(result);
+                                                    _self.sqlite3Service.sql(`commit;`, [], 'run');
+                                                    resolve(result);
+                                                }).catch((cat) => {
+                                                    _self.sqlite3Service.sql(`rollback;`, [], 'run');
+                                                    const result = new ResultDto();
+                                                    result.code = -1;
+                                                    result.msg = '入库订单详情记录生成失败';
+                                                    result.data = cat;
+                                                    console.error(result);
+                                                });
+                                            } else {
+                                                _self.sqlite3Service.sql(`rollback;`, [], 'run');
+                                                console.error(d);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        _self.sqlite3Service.sql(`rollback;`, [], 'run');
+                                        console.error(res);
+                                    }
+                                });
                     }
-                });
-            }
+                }
+            });
         });
         // console.log(putDetailList);
         // return new Promise<ResultDto>((resolve, reject) => {
