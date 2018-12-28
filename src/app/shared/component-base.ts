@@ -23,5 +23,4 @@ export abstract class AppComponentBase {
     this.settings = injector.get(SettingsService);
     this.modalService = injector.get(NzModalService);
   }
-
 }

@@ -47,6 +47,12 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
     this.refresh();
   }
 
+  resetSearch() {
+    this.pageNumber = 1;
+    this.keyWord = null;
+    this.refresh();
+  }
+
   protected delete(entity: Member): void {
   }
 

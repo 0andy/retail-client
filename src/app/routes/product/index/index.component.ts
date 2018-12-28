@@ -102,6 +102,12 @@ export class ProductComponent extends PagedListingComponentBase<RetailProduct>{
     this.refresh();
   }
 
+  resetSearch() {
+    this.pageNumber = 1;
+    this.keyWord = null;
+    this.refresh();
+  }
+  
   protected delete(entity: RetailProduct): void {
   }
 

@@ -47,6 +47,12 @@ export class WarehousePutComponent extends PagedListingComponentBase<PutForm>{
     this.refresh();
   }
 
+  resetSearch() {
+    this.pageNumber = 1;
+    this.keyWord = null;
+    this.refresh();
+  }
+  
   protected delete(entity: PutForm): void {
   }
 
@@ -64,7 +70,7 @@ export class WarehousePutComponent extends PagedListingComponentBase<PutForm>{
       nzTitle: '确定要入库当前订单吗?',
       nzContent: `<b>入库单号[${item.formNo}]</b>`,
       nzOnOk: () => {
-        this.productService.updateStockByFormId(item.id, lastModifierUserId, this.settings.user['shopId']).then((res) => {
+        this.productService.updateStockByFormId(item.id, lastModifierUserId, this.settings.user['shopId'], item.formNo).then((res) => {
           if (res.code == 0) {
             this.productService.updatePutFormStatus(item.id, lastModifierUserId, this.settings.user['name']).then((r) => {
               if (r.code == 0) {

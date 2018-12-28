@@ -216,6 +216,7 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
             var newFormNo = 'WP' + formNo;
             this.setControlVal('formNo', newFormNo);
             this.setControlVal('type', 1);
+            this.setControlVal('userAccount', this.settings.user['name']);
         }
     }
 
@@ -246,22 +247,18 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
 
     protected submitExecute(finisheCallback: Function): void {
         if (this.validateForm.valid) {
-            if (!this.id) {
-                this.putForm.status = 0;
-                this.putForm.shopId = this.settings.user['shopId'];
-                this.putFormService.save(this.putForm, this.dataList, this.settings.user['name']).then((res) => {
-                    finisheCallback();
-                    if (res.code == 0) {
-                        this.message.success('保存数据成功');
-                        this.return();
-                    } else {
-                        this.message.error('保存数据失败');
-                        console.log(res.data);
-                    }
-                });
-            } else {
-
-            }
+            this.putForm.status = 0;
+            this.putForm.shopId = this.settings.user['shopId'];
+            this.putFormService.save(this.putForm, this.dataList, this.settings.user['name']).then((res) => {
+                finisheCallback();
+                if (res.code == 0) {
+                    this.message.success('保存数据成功');
+                    this.return();
+                } else {
+                    this.message.error('保存数据失败');
+                    console.log(res.data);
+                }
+            });
         }
     }
 

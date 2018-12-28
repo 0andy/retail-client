@@ -43,14 +43,6 @@
     <div nz-row [nzGutter]="24">
         <div nz-col nzMd="8" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
-                <nz-form-label nz-col>申请时间</nz-form-label>
-                <nz-form-control nz-col>
-                    <input nz-input formControlName="creationTime">
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-        <div nz-col nzMd="8" nzSm="12" nzXs="24">
-            <nz-form-item nz-row>
                 <nz-form-label nz-col>申请人</nz-form-label>
                 <nz-form-control nz-col>
                     <input nz-input formControlName="userAccount">
@@ -59,9 +51,17 @@
         </div>
         <div nz-col nzMd="8" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
-                <nz-form-label nz-col>入库时间</nz-form-label>
+                <nz-form-label nz-col>申请时间</nz-form-label>
                 <nz-form-control nz-col>
-                    <input nz-input formControlName="approvalTime">
+                    <input nz-input formControlName="creationTime" [value]="validateForm.get('creationTime').value | _date">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="8" nzSm="12" nzXs="24">
+            <nz-form-item nz-row>
+                <nz-form-label nz-col>审核人</nz-form-label>
+                <nz-form-control nz-col>
+                    <input nz-input formControlName="approvalName">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -69,9 +69,9 @@
     <div nz-row [nzGutter]="24">
         <div nz-col nzMd="8" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
-                <nz-form-label nz-col>入库人</nz-form-label>
+                <nz-form-label nz-col>审核时间</nz-form-label>
                 <nz-form-control nz-col>
-                    <input nz-input formControlName="approvalName">
+                    <input nz-input formControlName="approvalTime" [value]="validateForm.get('approvalTime').value | _date">
                 </nz-form-control>
             </nz-form-item>
         </div>
@@ -92,9 +92,9 @@
 <!-- <div nz-col nzSpan="24"> -->
 <div *ngIf="status != '1'" style=" float:left;">
     <button nz-button type="button" nzType="primary">
-            <i class="anticon anticon-plus"></i>
-            <span>一键导入</span>
-        </button>
+        <i class="anticon anticon-plus"></i>
+        <span>一键导入</span>
+    </button>
 </div>
 <div *ngIf="status != '1'" style="text-align: right;">
     <nz-select [nzMaxMultipleCount]="1" style="width:480px;" (ngModelChange)="addTable($event)" nzMode="default" [(ngModel)]="keyWord" nzPlaceHolder="请输入商品条码或名称" nzAllowClear nzShowSearch [nzServerSearch]="true" (nzOnSearch)="onSearch($event)">

@@ -93,7 +93,8 @@ export class SystemInitService {
             stock decimal(18,2),
             final decimal(18,2),
             desc nvarchar(200),
-            creationTime DateTime not null
+            creationTime DateTime not null,
+            formCode nvarchar(50)
             );`;
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }

@@ -25,7 +25,7 @@ export class ProductService {
                             const result = new PagedResultDto<RetailProduct>();
                             if (cres.code == 0) {
                                 result.totalCount = cres.data.cnum;
-                                _self.sqlite3Service.sql(`select r.id, r.barCode, r.name,c.name categoryName,r.unit,r.isEnable from ${this.tableName} r inner join category c on r.categoryId = c.id where categoryId =? and (r.name like ? or r.barCode like ?) limit ${maxResultCount} offset ${skipCount}`, [key, keyWord, keyWord], 'all').then((res) => {
+                                _self.sqlite3Service.sql(`select r.id, r.barCode, r.name,c.name categoryName,r.unit,r.isEnable,r.stock from ${this.tableName} r inner join category c on r.categoryId = c.id where categoryId =? and (r.name like ? or r.barCode like ?) limit ${maxResultCount} offset ${skipCount}`, [key, keyWord, keyWord], 'all').then((res) => {
                                     if (res.code == 0) {
                                         if (res.data) {
                                             result.items = RetailProduct.fromJSArray(res.data);
@@ -49,7 +49,7 @@ export class ProductService {
                             const result = new PagedResultDto<RetailProduct>();
                             if (cres.code == 0) {
                                 result.totalCount = cres.data.cnum;
-                                _self.sqlite3Service.sql(`select r.id,r.barCode, r.name,c.name categoryName,r.unit,r.isEnable from ${this.tableName} r inner join category c on r.categoryId = c.id where r.name like ? or r.barCode like ? limit ${maxResultCount} offset ${skipCount}`, [keyWord, keyWord], 'all').then((res) => {
+                                _self.sqlite3Service.sql(`select r.id,r.barCode, r.name,c.name categoryName,r.unit,r.isEnable,r.stock from ${this.tableName} r inner join category c on r.categoryId = c.id where r.name like ? or r.barCode like ? limit ${maxResultCount} offset ${skipCount}`, [keyWord, keyWord], 'all').then((res) => {
                                     if (res.code == 0) {
                                         if (res.data) {
                                             result.items = RetailProduct.fromJSArray(res.data);
@@ -327,7 +327,7 @@ export class ProductService {
         });
     }
 
-    updateStockByFormId(putFormId: string, lastModifierUserId: string, shopId: string) {
+    updateStockByFormId(putFormId: string, lastModifierUserId: string, shopId: string, formNo: string) {
         return new Promise<ResultEntity<PutFormToProduct[]>>((resolve, reject) => {
             const _self = this;
             const result = new ResultEntity<PutFormToProduct[]>();
@@ -369,9 +369,9 @@ export class ProductService {
                                             [item.pPrice, sum, item.lastModificationTime, lastModifierUserId, item.productId], 'run'));
 
                                         promises.push(_self.sqlite3Service.sql(`insert into warehouseWater (id,shopId,productId,barCode,type,refNo
-                                            ,initial,stock,final,desc,creationTime
-                                            ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                                            [waterId, shopId, item.productId, item.barCode, 1, putFormId, item.rNum, item.pNum, sum, '采购入库', item.lastModificationTime
+                                            ,initial,stock,final,desc,creationTime,formCode
+                                            ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                                            [waterId, shopId, item.productId, item.barCode, 1, putFormId, item.rNum, item.pNum, sum, '采购入库', item.lastModificationTime, formNo
                                             ], 'run'));
                                         // }
                                         // 如果入库单数量和库存不等
@@ -424,14 +424,14 @@ export class ProductService {
                         this.sqlite3Service.sql(`commit;`, [], 'run');
                         const result = new ResultDto();
                         result.code = 0;
-                        result.msg = '入库单状态修改成功';
-                        console.log(result);
+                        result.msg = '入库单更新成功';
+                        // console.log(result);
                         resolve(result);
                     } else {
                         this.sqlite3Service.sql(`rollback;`, [], 'run');
                         const result = new ResultDto();
                         result.code = -1;
-                        result.msg = '入库单状态修改失败';
+                        result.msg = '入库单更新失败';
                         console.error(result);
                         reject(null);
                     }

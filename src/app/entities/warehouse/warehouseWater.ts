@@ -11,6 +11,7 @@ export class WarehouseWater {
     desc: string;
     creationTime: Date;
     productName: string;
+    formCode: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -33,23 +34,24 @@ export class WarehouseWater {
             this.desc = data["desc"];
             this.creationTime = data["creationTime"];
             this.productName = data["productName"];
+            this.formCode = data["formCode"];
         }
     }
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["shopId"] = this.shopId;
-        data["productId"] = this.productId;
-        data["barCode"] = this.barCode;
-        data["type"] = this.type;
-        data["refNo"] = this.refNo;
-        data["initial"] = this.initial;
-        data["stock"] = this.stock;
-        data["final"] = this.final;
-        data["desc"] = this.desc;
-        data["creationTime"] = this.creationTime;
-        return data;
-    }
+    // toJSON(data?: any) {
+    //     data = typeof data === 'object' ? data : {};
+    //     data["id"] = this.id;
+    //     data["shopId"] = this.shopId;
+    //     data["productId"] = this.productId;
+    //     data["barCode"] = this.barCode;
+    //     data["type"] = this.type;
+    //     data["refNo"] = this.refNo;
+    //     data["initial"] = this.initial;
+    //     data["stock"] = this.stock;
+    //     data["final"] = this.final;
+    //     data["desc"] = this.desc;
+    //     data["creationTime"] = this.creationTime;
+    //     return data;
+    // }
     static fromJS(data: any): WarehouseWater {
         let result = new WarehouseWater();
         result.init(data);
@@ -64,10 +66,10 @@ export class WarehouseWater {
         });
         return array;
     }
-    clone() {
-        const json = this.toJSON();
-        let result = new WarehouseWater();
-        result.init(json);
-        return result;
-    }
+    // clone() {
+    //     const json = this.toJSON();
+    //     let result = new WarehouseWater();
+    //     result.init(json);
+    //     return result;
+    // }
 }
