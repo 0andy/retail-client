@@ -140,6 +140,9 @@ export class ProductDetailComponent extends FormComponentBase<RetailProduct>{
         if (this.product.categoryId != 1) {
             this.product.grade = null;
         }
+        if (!this.product.isEnableMember) {
+            this.product.memberPrice = 0;
+        }
         this.product.shopId = this.settings.user['shopId'];
         if (this.validateForm.valid) {
             if (!this.id) {

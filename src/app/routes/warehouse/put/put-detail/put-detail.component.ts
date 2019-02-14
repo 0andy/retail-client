@@ -61,7 +61,7 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     }
 
     onSearch(keyWord: string): void {
-        console.log(keyWord);
+        // console.log(keyWord);
         this.optionList = [];
         if (keyWord && keyWord.length >= 1) {
             this.isLoading = true;
@@ -111,6 +111,7 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
 
     existsProduct(id: string): boolean {
         let bo = false;
+        this.keyWord = null;
         this.dataList.forEach(v => {
             if (v.productId == id) {
                 v.orderNum++;

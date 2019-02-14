@@ -1,0 +1,40 @@
+<nz-modal [(nzVisible)]="isVisible" nzMaskClosable="false" nzTitle="修改数量" [nzContent]="modalContent"
+    (nzOnCancel)="handleCancel($event)" style="width: 520px;" [nzFooter]="modalFooter">
+    <ng-template #modalContent>
+        <form nz-form [formGroup]="validateForm">
+            <nz-form-item nz-row style="margin-bottom: 0px;">
+                <nz-form-label nz-col [nzSm]="4" nzRequired>商品名称</nz-form-label>
+                <nz-form-control [nzSm]="20">
+                    <nz-form-text>
+                        {{orderDetail.productName}}
+                    </nz-form-text>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item nz-row style="margin-bottom: 0px;">
+                <nz-form-label nz-col [nzSm]="4" nzRequired>商品条码</nz-form-label>
+                <nz-form-control [nzSm]="20">
+                    <nz-form-text>
+                        {{orderDetail.barCode}}
+                    </nz-form-text>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item nz-row>
+                <nz-form-label nz-col [nzSm]="4" nzRequired>商品数量</nz-form-label>
+                <nz-form-control [nzSm]="20" nzHasFeedback>
+                    <input nz-input formControlName="num" [placeholder]="'请输入商品数量'">
+                    <nz-form-explain *ngIf="validateForm.get('num').dirty&&validateForm.get('num').errors">
+                        <ng-container *ngIf="validateForm.get('num').hasError('required')">数量不能为空</ng-container>
+                        <ng-container *ngIf="validateForm.get('num').hasError('pattern')">请输入正整数</ng-container>
+                    </nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #modalFooter>
+        <button nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
+            取消
+        </button>
+        <button nz-button type="button" (click)="submit()" nzType="primary" [disabled]="!validateForm.valid"
+            [nzLoading]="isConfirmLoading">确定</button>
+    </ng-template>
+</nz-modal>

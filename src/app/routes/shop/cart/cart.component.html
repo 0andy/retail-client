@@ -4,23 +4,90 @@
     <small>商品结算</small>
   </h1>
 </div>
-
-<div>
-  <h3>ts node api当前系统为：{{tssysteminfo}}</h3>
-  <button nz-button nzType="primary" (click)="opennw()">ts v8 api新窗打开小米</button>
-  <button nz-button nzType="primary" (click)="getSqlitdate()">ts 获取sqlite数据</button>
-  <nz-table #basicTable [nzData]="data">
-    <thead>
-      <tr>
-        <th>id</th>
-        <th>info</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let d of basicTable.data">
-        <td>{{d.id}}</td>
-        <td>{{d.info}}</td>
-      </tr>
-    </tbody>
-  </nz-table>
+<div nz-row class="mb-md" style="margin-top:10px;">
+  <div nz-col nzSpan="17">
+    <ng-template #noResult let-total>
+      <p style="font-size:20px;">欢迎光临</p>
+    </ng-template>
+    <nz-table #nzTable [nzData]="dataList" [nzNoResult]="noResult" [nzShowPagination]="false"
+      [nzFrontPagination]="false">
+      <thead>
+        <tr style="font-size:20px;">
+          <th style="width:8%;">序号</th>
+          <th style="width:20%;">商品条码</th>
+          <th style="width:25%;">商品名称</th>
+          <th style="width:21%;text-align: right;padding-right: 10%;">单价</th>
+          <th style="width:8%;">数量</th>
+          <th style="width:10%;text-align: right;">金额</th>
+          <th style="width:8%;">操作</th>
+        </tr>
+      </thead>
+      <tbody style="font-size:20px;">
+        <tr *ngFor="let data of nzTable.data;let i = index">
+          <td>{{i+1}}</td>
+          <td>{{data.barCode}}</td>
+          <td>{{data.productName}}</td>
+          <td *ngIf="!member.id || !data.isEnableMember" style="text-align: right;padding-right: 10%">
+            {{data.sellPrice | number:'1.2-2'}}
+          </td>
+          <td *ngIf="member.id && data.isEnableMember && data.memberPrice">
+            <div>
+              <div style="float:left;width: 50%;text-decoration:line-through;color: red; text-align: right;">
+                {{data.sellPrice | number:'1.2-2'}}</div>
+              <div style="float: right;text-align: left;width: 50%;">({{data.memberPrice | number:'1.2-2'}})</div>
+            </div>
+          </td>
+          <td *ngIf="member.id && data.isEnableMember && !data.memberPrice"
+            style="text-align: right;padding-right: 10%">
+            {{data.sellPrice | number:'1.2-2'}}
+          </td>
+          <td>
+            <a title="修改数量" style="text-decoration:underline;" (click)="altNum(i)">{{data.num}}</a>
+          </td>
+          <td style="text-align: right;" *ngIf="!member.id || !data.isEnableMember">
+            {{data.num * data.sellPrice | number:'1.2-2'}}</td>
+          <td style="text-align: right;" *ngIf="member.id && data.isEnableMember && data.memberPrice">
+            {{data.num * data.memberPrice | number:'1.2-2'}}
+          </td>
+          <td style="text-align: right;" *ngIf="member.id && data.isEnableMember && !data.memberPrice">
+            {{data.num * data.sellPrice | number:'1.2-2'}}
+          </td>
+          <td>
+            <a style="color: #ff4d4f;" (click)="delete(i)">删除</a>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  <div nz-col nzSpan="7" style="height: 720px;padding-left: 5px">
+    <div style="width:100%;height: 10%;">
+      <div>
+        <nz-select [nzMaxMultipleCount]="1" style="width:100%;" (ngModelChange)="addTable($event)" nzMode="default"
+          [(ngModel)]="keyWord" nzPlaceHolder="请输入商品条码或名称" nzAllowClear nzShowSearch [nzServerSearch]="true"
+          (nzOnSearch)="onSearch($event)">
+          <ng-container *ngFor="let o of optionList">
+            <nz-option *ngIf="!isLoading" [nzValue]="o.id" [nzLabel]="o.text"></nz-option>
+          </ng-container>
+          <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+            <i nz-icon type="loading" class="loading-icon"></i> 正在查询中...
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div (click)="createMember()" style="width:100%;background-color:rgb(72, 82, 94); height: 30%;padding-left: 30px;">
+      <div style="float: left;width: 50%;">
+        <p style="color:white;font-size: 20px;">会员: {{member.name}}</p>
+      </div>
+      <div style="float: right;width: 50%;">
+        <p style="color:white;font-size: 20px;">积分: {{member.integral}}</p>
+      </div>
+    </div>
+    <div style="width:100%;background-color:rgb(42, 42, 42); height: 50%;">
+      <p style="color:yellow;font-size: 70px;padding-left: 30px;">¥ {{totalPrice | number:'1.2-2'}}</p>
+      <button style="height:30%;font-size:50px;background-color:#9DA2BB;" (click)="accounting()"
+        (keyup)="($event.which === 13)?accounting():0" nz-button nzType="default" nzBlock>结算</button>
+    </div>
+  </div>
 </div>
+<app-member-confirm #createModal (modalSelect)="getMemberData($event)"></app-member-confirm>
+<alt-num #numModal (modalSelect)="getNumData($event)"></alt-num>

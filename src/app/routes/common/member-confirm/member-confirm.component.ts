@@ -3,7 +3,7 @@ import { PagedListingComponentBase, PagedRequestDto } from '@shared/component-ba
 import { Member } from 'app/entities';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MemberService } from 'app/services/member';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -23,6 +23,7 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
     isShowForm: boolean = false;
     member: Member = new Member();
     searchPhone: string;
+    pageType: string;
     sexTypes: any = [{ text: '男', value: 1 }, { text: '女', value: 0 }];
     private searchText$ = new Subject<string>();
     constructor(
@@ -74,7 +75,7 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
         }
     }
 
-    show() {
+    show(type?: boolean) {
         // this.validateForm.get('phone').enable();
         this.isVisible = true;
         this.setDefault();
@@ -84,6 +85,9 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
         this.title = '会员搜索';
         this.btnSave = '确定';
         this.dataList = [];
+        if (type == true) {
+            this.pageType = 'cart';
+        }
         // this.totalItems = -1;
     }
 
@@ -206,5 +210,10 @@ export class MemberConfirmComponent extends PagedListingComponentBase<Member>{
     }
 
     protected delete(entity: Member): void {
+    }
+
+    chooseMember(member: Member): void {
+        this.modalSelect.emit(member);
+        this.isVisible = false;
     }
 }

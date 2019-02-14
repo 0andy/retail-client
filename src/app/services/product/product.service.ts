@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail, PutFormToProduct, ResultListDto } from 'app/entities';
+import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail, PutFormToProduct, ResultListDto, OrderDetail } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
@@ -281,7 +281,7 @@ export class ProductService {
     }
 
     getProductSelectGroup(keyWord: string): Promise<SelectProduct[]> {
-        console.log('In');
+        // console.log('In');
         const _self = this;
         if (!keyWord) {
             keyWord = '';
@@ -317,6 +317,22 @@ export class ProductService {
                 if (res.code == 0) {
                     if (res.data) {
                         resolve(PutDetail.fromJS(res.data));
+                    } else {
+                        reject(null);
+                    }
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    getProuductCartById(id: string): Promise<OrderDetail> {
+        return new Promise<OrderDetail>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select r.id productId,r.name productName,r.sellPrice,r.barCode,r.memberPrice,r.isEnableMember from ${this.tableName} r where id=?`, [id], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data) {
+                        resolve(OrderDetail.fromJS(res.data));
                     } else {
                         reject(null);
                     }

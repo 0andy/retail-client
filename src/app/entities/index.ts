@@ -7,3 +7,4 @@ export * from './warehouse/put-detail';
 export * from './warehouse/put-form';
 export * from './shop/shop'
 export * from './warehouse/warehouseWater';
+export * from './shop/order-detail';

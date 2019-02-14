@@ -16,9 +16,12 @@ import { Exception500Component } from './exception/500.component';
 import { CartComponent } from './shop/cart/cart.component';
 import { CommonServiceModule } from 'app/services/common/common-service.module';
 import { AuthenticationComponent } from './passport/authentication/authentication.component';
+import { MemberConfirmModule } from './common/member-confirm/member-confirm.module';
+import { AltNumComponent } from './shop/alt-num/alt-num.component';
 
 const COMPONENTS = [
   CartComponent,
+  AltNumComponent,
   // passport pages
   UserLoginComponent,
   UserRegisterComponent,
@@ -36,11 +39,11 @@ const COMPONENTS_NOROUNT = [
 ];
 
 @NgModule({
-  imports: [ SharedModule, CommonServiceModule, RouteRoutingModule ],
+  imports: [SharedModule, CommonServiceModule, RouteRoutingModule, MemberConfirmModule],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
   entryComponents: COMPONENTS_NOROUNT
 })
-export class RoutesModule {}
+export class RoutesModule { }
