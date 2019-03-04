@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { RefundModalComponent } from 'app/routes/warehouse/sale-water/refund-modal/refund-modal.component';
+import { ModalHelper } from '@delon/theme';
+import { HandoverComponent } from 'app/routes/shop/handover/handover.component';
 
 @Component({
   selector: 'header-icon',
@@ -10,15 +14,15 @@ import { Component } from '@angular/core';
     <div nz-menu class="wd-xl animated jello">
       <nz-spin [nzSpinning]="loading" [nzTip]="'正在读取数据...'">
         <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'" class="app-icons">
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="6" (click)="goHandover()">
             <i class="anticon anticon-calendar bg-error text-white"></i>
             <small>交接班</small>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="6" (click)="goSale()">
             <i class="anticon anticon-file bg-geekblue text-white"></i>
             <small>销售流水</small>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="6" (click)="goRefund()">
             <i class="anticon anticon-pay-circle-o bg-cyan text-white"></i>
             <small>退款</small>
           </div>
@@ -26,13 +30,13 @@ import { Component } from '@angular/core';
             <i class="anticon anticon-printer bg-grey text-white"></i>
             <small>票据补打</small>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="6" (click)="goMember()">
             <i class="anticon anticon-team bg-purple text-white"></i>
-            <small>会员</small>
+            <small routerLink="/member/index">会员</small>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="6" (click)="goInput()">
             <i class="anticon anticon-cloud bg-success text-white"></i>
-            <small>入库</small>
+            <small routerLink="/warehouse/put">入库</small>
           </div>
           <div nz-col [nzSpan]="6">
             <i class="anticon anticon-star-o bg-magenta text-white"></i>
@@ -47,11 +51,56 @@ import { Component } from '@angular/core';
     </div>
   </nz-dropdown>
   `,
+  // 
 })
 export class HeaderIconComponent {
+  // @ViewChild('refundModal') refundModal: RefundModalComponent;
+  constructor(private router: Router
+    , private modalHelper: ModalHelper
+  ) {
+  }
   loading = true;
 
   change() {
     setTimeout(() => (this.loading = false), 500);
+  }
+  goSale() {
+    this.router.navigate(['warehouse/sale-water']);
+  }
+
+  goInput() {
+    this.router.navigate(['warehouse/put']);
+  }
+
+  goMember() {
+    this.router.navigate(['member/index']);
+  }
+
+  goRefund(): void {
+    this.modalHelper
+      .open(RefundModalComponent, {}, 950, {
+        nzMask: true,
+        nzMaskClosable: false,
+        nzClosable: true,
+        nzTitle: '退款',
+      })
+      .subscribe(isSave => {
+        if (isSave) {
+        }
+      });
+  }
+
+  goHandover(): void {
+    this.modalHelper
+      .open(HandoverComponent, {}, 'md', {
+        nzMask: true,
+        nzMaskClosable: false,
+        nzClosable: true,
+        nzTitle: '交接班',
+      })
+      .subscribe(isSave => {
+        if (isSave) {
+        }
+      });
   }
 }

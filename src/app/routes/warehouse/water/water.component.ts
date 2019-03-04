@@ -90,8 +90,15 @@ export class WarehouseWaterComponent extends PagedListingComponentBase<Warehouse
     this.refresh();
   }
 
-  goPutDetail(refNo: string) {
-    this.router.navigate(['warehouse/put-detail', refNo, '1']);
+  goPutDetail(type: number, refNo: string) {
+    if (type === 1) {
+      this.router.navigate(['warehouse/put-detail', refNo, '1']);
+    } else if (type == 2) {
+      this.router.navigate(['warehouse/inventory-detail', refNo]);
+    }
+    else if (type === 3) {
+      this.router.navigate(['warehouse/sale-detail', refNo]);
+    }
   }
 
   protected delete(entity: WarehouseWater): void {

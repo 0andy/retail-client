@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail, PutFormToProduct, ResultListDto, OrderDetail } from 'app/entities';
+import { ResultDto, PagedResultDto, ResultEntity, Category, TreeNode, RetailProduct, SelectProduct, PutDetail, PutFormToProduct, ResultListDto, OrderDetail, InventoryDetail } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { Observable } from "rxjs";
@@ -291,7 +291,7 @@ export class ProductService {
             _self.sqlite3Service.connectDataBase().then((dres) => {
                 if (dres.code == 0) {
                     var result: SelectProduct[] = [];
-                    _self.sqlite3Service.sql(`select r.id, r.barCode, r.name from ${this.tableName} r where (r.name like ? or r.barCode like ?)  and r.isEnable = 1 limit 5`, [keyWord, keyWord], 'all').then((res) => {
+                    _self.sqlite3Service.sql(`select r.id, r.barCode, r.name,r.unit,r.sellPrice from ${this.tableName} r where (r.name like ? or r.barCode like ?)  and r.isEnable = 1 limit 5`, [keyWord, keyWord], 'all').then((res) => {
                         if (res.code == 0) {
                             if (res.data) {
                                 result = SelectProduct.fromJSArray(res.data);
@@ -317,6 +317,22 @@ export class ProductService {
                 if (res.code == 0) {
                     if (res.data) {
                         resolve(PutDetail.fromJS(res.data));
+                    } else {
+                        reject(null);
+                    }
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    getProuductStockById(id: string): Promise<InventoryDetail> {
+        return new Promise<InventoryDetail>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select r.id productId,r.name productName,r.barCode,r.stock currentNum from ${this.tableName} r where id=?`, [id], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data) {
+                        resolve(InventoryDetail.fromJS(res.data));
                     } else {
                         reject(null);
                     }

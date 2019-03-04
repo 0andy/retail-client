@@ -1,27 +1,27 @@
 import { Component, Injector } from '@angular/core';
+import { FormComponentBase } from '@shared/component-base/form-component-base';
+import { InventoryDetail, Inventory, selectGroup, EditInventoryCache } from 'app/entities';
+import { BehaviorSubject } from 'rxjs';
 import { putFormService, putDetailService } from 'app/services/warehouse';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormComponentBase } from '@shared/component-base/form-component-base';
-import { PutForm, PutDetail, selectGroup, EditCache } from 'app/entities';
-import { Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductService } from 'app/services/product';
+import { Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-    selector: 'put-detail',
-    templateUrl: 'put-detail.component.html',
-    styleUrls: ['put-detail.component.less'],
+    moduleId: module.id,
+    selector: 'inventory-detail',
+    templateUrl: 'inventory-detail.component.html',
+    styleUrls: ['inventory-detail.component.less'],
     providers: [ProductService]
 })
-export class PutDetailComponent extends FormComponentBase<PutForm> {
+export class InventoryDetailComponent extends FormComponentBase<Inventory> {
     id: string;
     status: string;
     keyWord: string;
-    types: any[] = [{ text: '采购入库', value: 1 }];
-    putForm: PutForm = new PutForm();
-    dataList: PutDetail[] = [];
-    editCache: EditCache[] = [];
+    inventory: Inventory = new Inventory();
+    dataList: InventoryDetail[] = [];
+    editCache: EditInventoryCache[] = [];
     searchChange$ = new BehaviorSubject('');
     optionList: selectGroup[] = [];
     isLoading = false;
@@ -36,21 +36,16 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     ) {
         super(injector);
         this.id = this.actRouter.snapshot.params['id'];
-        this.status = this.actRouter.snapshot.params['status'];
     }
 
     ngOnInit() {
         this.validateForm = this.formBuilder.group({
             formNo: ['', [Validators.required, Validators.maxLength(50)]],
-            deliverer: ['', [Validators.maxLength(50)]],
-            type: [''],
             remark: ['', [Validators.maxLength(200)]],
             userAccount: [''],
-            approvalTime: [''],
             creationTime: [''],
-            approvalName: ['']
         });
-        this.getPutForm();
+        this.getInventory();
         this.searchChange$.pipe(
             debounceTime(300),
             distinctUntilChanged()).subscribe(term => {
@@ -61,7 +56,6 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     }
 
     onSearch(keyWord: string): void {
-        // console.log(keyWord);
         this.optionList = [];
         if (keyWord && keyWord.length >= 1) {
             this.isLoading = true;
@@ -87,21 +81,16 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
 
     addTable(id: any) {
         if (id) {
-            this.productService.getProuductPutById(id).then((res) => {
+            this.productService.getProuductStockById(id).then((res) => {
                 if (res) {
                     if (!this.existsProduct(id)) {
-                        if (!res.orderNum || res.orderNum === 0) {
-                            res.orderNum = 1;
+                        if (!res.num) {
+                            res.num = 0;
                         }
-                        if (!res.purchasePrice) {
-                            res.purchasePrice = 0;
-                        }
-                        if (!res.num || res.num === 0) {
-                            res.num = res.orderNum;
-                        }
+                        res.num = res.currentNum;
                         this.dataList.push(res);
+                        this.syncEditCache();
                     }
-                    this.syncEditCache();
                 } else {
                     this.message.error('没有获取到商品信息');
                 }
@@ -114,8 +103,6 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
         this.keyWord = null;
         this.dataList.forEach(v => {
             if (v.productId == id) {
-                v.orderNum++;
-                v.num++;
                 bo = true;
                 return;
             }
@@ -136,18 +123,16 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     }
 
     startEdit(key: any): void {
-        // console.log('Edit:' + JSON.stringify(this.editCache));
-        // console.log('Entity:' + JSON.stringify(this.dataList));
         this.editCache[key].edit = true
     }
 
     cancelEdit(key: string): void {
-        // console.log('cancelEdit:' + JSON.stringify(this.editCache));
-        // console.log('cancelEntity:' + JSON.stringify(this.dataList));
         this.editCache[key].edit = false;
     }
 
     saveEdit(key: any, id: string): void {
+        console.log(this.editCache[key].data);
+        console.log(this.dataList[key]);
         Object.assign(this.dataList[key], this.editCache[key].data);
         this.editCache[key].edit = false;
     }
@@ -155,20 +140,16 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
     syncEditCache() {
         this.editCache = [];
         this.dataList.forEach(v => {
-            var temp: EditCache = new EditCache();
+            var temp: EditInventoryCache = new EditInventoryCache();
             temp.edit = false;
             temp.data = v.clone();
             this.editCache.push(temp);
-            // this.editCache = {
-            //     edit: false,
-            //     data: { ...v.clone() }
-            // };
         });
     }
 
-    getPutDetail() {
+    getInventoryDetail() {
         if (this.id) {
-            this.putDetailService.getAllNoPage(this.id).then((res) => {
+            this.putDetailService.getInventoryDetailNoPage(this.id).then((res) => {
                 if (res) {
                     this.dataList = res;
                     this.syncEditCache();
@@ -179,27 +160,21 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
         }
     }
 
-    getPutForm(): void {
+    getInventory(): void {
         this.validateForm.get('formNo').disable();
         this.validateForm.get('userAccount').disable();
-        this.validateForm.get('approvalTime').disable();
         this.validateForm.get('creationTime').disable();
-        this.validateForm.get('approvalName').disable();
         if (this.id) {
-            this.putFormService.get(this.id).then((res) => {
+            this.putFormService.getInventory(this.id).then((res) => {
                 if (res) {
-                    this.putForm = res;
-                    if (res.status == 1) {
-                        this.validateForm.get('deliverer').disable();
-                        this.validateForm.get('type').disable();
-                        this.validateForm.get('remark').disable();
-                    }
-                    this.setFormValues(this.putForm);
+                    this.inventory = res;
+                    this.validateForm.get('remark').disable();
+                    this.setFormValues(this.inventory);
                 } else {
                     this.message.error('没有获取到订单信息');
                 }
             });
-            this.getPutDetail();
+            this.getInventoryDetail();
         }
         else {
             var date = new Date();
@@ -215,57 +190,58 @@ export class PutDetailComponent extends FormComponentBase<PutForm> {
                 + (h > 9 ? h : '0' + h).toString()
                 + (m > 9 ? m : '0' + m).toString()
                 + (s > 9 ? s : '0' + s).toString();
-            var newFormNo = 'WP' + formNo;
+            var newFormNo = 'PD' + formNo;
             this.setControlVal('formNo', newFormNo);
-            this.setControlVal('type', 1);
             this.setControlVal('userAccount', this.settings.user['name']);
         }
     }
 
-    protected setFormValues(entity: PutForm): void {
+    protected setFormValues(entity: Inventory): void {
         this.setControlVal('formNo', entity.formNo);
-        this.setControlVal('deliverer', entity.deliverer);
-        this.setControlVal('type', entity.type);
         this.setControlVal('remark', entity.remark);
-        this.setControlVal('userAccount', entity.userAccount);
-        this.setControlVal('approvalTime', entity.approvalTime);
-        this.setControlVal('creationTime', entity.creationTime);
-        this.setControlVal('approvalName', entity.approvalName);
     }
 
     protected getFormValues(): void {
-        this.putForm.formNo = this.getControlVal('formNo');
-        this.putForm.deliverer = this.getControlVal('deliverer');
-        this.putForm.type = this.getControlVal('type');
-        this.putForm.remark = this.getControlVal('remark');
-        // this.putForm.userAccount = this.getControlVal('userAccount');
-        // this.putForm.approvalTime = this.getControlVal('approvalTime');
-        // this.putForm.creationTime = this.getControlVal('creationTime');
-        // this.putForm.approvalName = this.getControlVal('approvalName');
-        if (!this.putForm.id) {
-            this.putForm.creatorUserId = this.settings.user['id'];
-        }
+        this.inventory.formNo = this.getControlVal('formNo');
+        this.inventory.remark = this.getControlVal('remark');
     }
 
     protected submitExecute(finisheCallback: Function): void {
         if (this.validateForm.valid) {
-            this.putForm.status = 0;
-            this.putForm.shopId = this.settings.user['shopId'];
-            this.putFormService.save(this.putForm, this.dataList, this.settings.user['name']).then((res) => {
-                finisheCallback();
-                if (res.code == 0) {
-                    this.message.success('保存数据成功');
-                    this.return();
-                } else {
-                    this.message.error('保存数据失败');
-                    console.log(res.data);
+            let otherInfo: any = {};
+            otherInfo.userId = this.settings.user['id'];
+            otherInfo.account = this.settings.user['account'];
+            otherInfo.shopId = this.settings.user['shopId'];
+            this.modalService.confirm({
+                nzTitle: '确定要盘点当前订单吗?',
+                nzContent: `<b>盘点单号[${this.inventory.formNo}]</b>`,
+                nzOnOk: () => {
+                    this.putFormService.saveInventory(this.inventory, this.dataList, otherInfo).then((res) => {
+                        finisheCallback();
+                        if (res.code == 0) {
+                            this.message.success('商品库存修改成功');
+                            this.return();
+                        } else {
+                            this.message.error('商品库存修改失败');
+                        }
+                    });
                 }
             });
+            // this.putFormService.saveInventory(this.inventory, this.dataList, otherInfo).then((res) => {
+            //     finisheCallback();
+            //     if (res.code == 0) {
+            //         this.message.success('保存数据成功');
+            //         this.return();
+            //     } else {
+            //         this.message.error('保存数据失败');
+            //         console.log(res.data);
+            //     }
+            // });
         }
     }
 
     return() {
-        this.router.navigate(['warehouse/put']);
+        this.router.navigate(['warehouse/inventory']);
     }
 
 }

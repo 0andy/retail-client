@@ -1,7 +1,60 @@
 <div class="alain-default__content-title">
     <h1>
-      库存盘点
-      <small>仓库商品库存盘点</small>
+        盘点
+        <small>商品库存盘点</small>
     </h1>
-  </div>
-  
+</div>
+<div nz-col nzSpan="24">
+    <div nz-row class="mb-md">
+        <div nz-col nzSpan="18" style="padding-right:10px;">
+            <nz-input-group nzSearch [nzSuffix]="suffixButton">
+                <input type="text" [(ngModel)]="keyWord" nz-input placeholder="盘点单号">
+            </nz-input-group>
+            <ng-template #suffixButton>
+                <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData()"
+                    nzSearch>搜索</button>
+            </ng-template>
+        </div>
+        <div nz-col nzSpan="6" style="text-align:right;">
+            <button nz-button (click)="resetSearch()" nzShape="circle" nz-tooltip nzPlacement="top" nzTitle="刷新">
+                <i class="anticon anticon-reload"></i>
+            </button>
+            <button nz-button (click)="createInventory()" nzShape="circle" nzType="primary" nz-tooltip nzPlacement="top"
+                nzTitle="新增">
+                <i class="anticon anticon-plus"></i>
+            </button>
+        </div>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzTotal]="totalItems"
+        [nzShowTotal]="totalTemplate" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize"
+        [nzLoading]="isTableLoading" [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()"
+        (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th>盘点单号</th>
+                <th>盘点人员</th>
+                <th>盘点时间</th>
+                <!-- <th>操作</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of nzTable.data">
+                <td>
+                    <a (click)="goDetail(data.id,data.status)">{{data.formNo}}</a>
+                </td>
+                <td>{{data.userName}}</td>
+                <td>{{data.creationTime | _date}}</td>
+                <!-- <td>
+                    <nz-badge *ngIf="data.status == 1" [nzStatus]="'success'" [nzText]="'已入库'"></nz-badge>
+                    <nz-badge *ngIf="data.status == 0" [nzStatus]="'default'" [nzText]="'未入库'"></nz-badge>
+                </td>
+                <td>
+                    <a (click)="goDetail(data.id,data.status)">{{data.status == 1?'详情' : '修改'}}</a>
+                    <nz-divider *ngIf="data.status == 0" nzType="vertical"></nz-divider>
+                    <a *ngIf="data.status == 0" (click)="approval(data)">入库</a>
+                </td> -->
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResultDto, PutForm, PagedResultDto, ResultEntity, PutDetail } from 'app/entities';
+import { ResultDto, PutForm, PagedResultDto, ResultEntity, PutDetail, InventoryDetail } from 'app/entities';
 import { NodeCommonService } from '../common/node-common.service';
 import { Sqlite3Service } from '../common/sqlite3.service';
 import { NodeHttpClient } from '../common';
@@ -21,6 +21,23 @@ export class putDetailService {
                 if (res.code == 0) {
                     if (res.data) {
                         resolve(PutDetail.fromJSArray(res.data));
+                    } else {
+                        reject(null);
+                    };
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    getInventoryDetailNoPage(id: string): Promise<InventoryDetail[]> {
+        return new Promise<InventoryDetail[]>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select i.productId,r.name productName,i.barCode,i.currentNum,i.num,i.remark from inventoryDetail
+             i inner join retailProduct r on i.productId = r.id where i.inventoryId =?`, [id], 'all').then((res) => {
+                if (res.code == 0) {
+                    if (res.data) {
+                        resolve(InventoryDetail.fromJSArray(res.data));
                     } else {
                         reject(null);
                     };

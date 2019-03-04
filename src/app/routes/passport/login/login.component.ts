@@ -25,6 +25,7 @@ export class UserLoginComponent implements OnDestroy {
   form: FormGroup;
   error = '';
   type = 0;
+  isHandover: boolean = false;
 
   constructor(
     fb: FormBuilder,
@@ -132,13 +133,30 @@ export class UserLoginComponent implements OnDestroy {
               this.tokenService.set(tokenModel);
           }
       });*/
-        this.tokenService.set({ token: '1234567!@#$%^&qwertyu' });
-        this.settingsService.setUser(user);
-        // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
-        this.startupSrv.load().then(() => {
-          //开启全屏
-          //nw.Window.get().enterFullscreen();
-          this.router.navigate(['/']);
+
+        //交接班第一次登陆处理
+        let otherInfo: any = {};
+        otherInfo.userId = res.data.id
+        otherInfo.shopId = res.data.shopId;
+        otherInfo.loginTime = new Date();
+        this.shopUserService.getIsHandovered(otherInfo).then((res) => {
+          this.isHandover = res;
+        }).then(() => {
+          if (!this.isHandover) {
+            this.shopUserService.saveHandover(otherInfo).then((res) => {
+              if (res.code == 0) {
+                console.log('登陆信息记录成功');
+              }
+            });
+          }
+          this.tokenService.set({ token: '1234567!@#$%^&qwertyu' });
+          this.settingsService.setUser(user);
+          // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+          this.startupSrv.load().then(() => {
+            //开启全屏
+            //nw.Window.get().enterFullscreen();
+            this.router.navigate(['/']);
+          });
         });
       } else {
         this.loading = false;
@@ -169,7 +187,7 @@ export class UserLoginComponent implements OnDestroy {
               //this.refresh();
             }
           });
-      } else{
+      } else {
         console.log('已授权');
       }
     });

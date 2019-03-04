@@ -12,6 +12,20 @@ export class WarehouseWater {
     creationTime: Date;
     productName: string;
     formCode: string;
+
+    get typeName() {
+        if (this.type === 1) {
+            return '采购入库';
+        } else if (this.type === 2) {
+            return '库存盘点';
+        } else if (this.type === 3) {
+            return '订单出库';
+        } else if (this.type === 4) {
+            return '订单回退';
+        } else {
+            return '其他';
+        }
+    }
     constructor(data?: any) {
         if (data) {
             for (var property in data) {

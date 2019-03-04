@@ -13,9 +13,9 @@ export class ShopUserService {
     //private _sqlite3Service: Sqlite3Service;
     tableName = 'shopUsers';
 
-    constructor(private nodeComService: NodeCommonService, 
-        private sqlite3Service: Sqlite3Service, 
-        private nodeHttpClient: NodeHttpClient, 
+    constructor(private nodeComService: NodeCommonService,
+        private sqlite3Service: Sqlite3Service,
+        private nodeHttpClient: NodeHttpClient,
         private settingsService: SettingsService) {
         //this._nodeComService = nodeComService;
         //this._sqlite3Service = sqlite3Service;
@@ -136,6 +136,31 @@ export class ShopUserService {
 
     getAccessToken(): Promise<ResultDto> {
         return this.nodeHttpClient.authenticate();
+    }
+
+    getIsHandovered(otherInfo: any): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this.sqlite3Service.execSql(`select * from handover where userId = ? and loginTime <= ? and handoverTime is null`, [otherInfo.userId, otherInfo.loginTime], 'get').then((res) => {
+                if (res.code == 0) {
+                    if (res.data) {
+                        console.log(res.data);
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    };
+                } else {
+                    reject(null);
+                }
+            });
+        });
+    }
+
+    saveHandover(otherInfo: any): Promise<ResultDto> {
+        const id = this.nodeComService.guidV1();
+        const curTime = new Date();
+        return this.sqlite3Service.execSql(`insert into handover 
+        (id,shopId,userId,loginTime) values(?, ?, ?, ?);`,
+            [id, otherInfo.shopId, otherInfo.userId, curTime], 'run');
     }
 }
 

@@ -1,6 +1,6 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { RetailProduct, selectGroup, OrderDetail, Member } from 'app/entities';
+import { RetailProduct, selectGroup, OrderDetail, Member, CommPrice } from 'app/entities';
 import { ProductService } from 'app/services/product';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
@@ -9,6 +9,7 @@ import { MemberConfirmComponent } from 'app/routes/common/member-confirm/member-
 import { MemberService } from 'app/services/member';
 import { AltNumComponent } from '../alt-num/alt-num.component';
 import { NzMessageService } from 'ng-zorro-antd';
+import { BillComponent } from '../bill/bill.component';
 
 @Component({
   selector: 'shop-cart',
@@ -19,14 +20,18 @@ import { NzMessageService } from 'ng-zorro-antd';
 export class CartComponent {
   @ViewChild('createModal') createModal: MemberConfirmComponent;
   @ViewChild('numModal') numModal: AltNumComponent;
+  @ViewChild('billModal') billModal: BillComponent;
 
   keyWord: string;
   dataList: OrderDetail[] = [];
   searchChange$ = new BehaviorSubject('');
   optionList: selectGroup[] = [];
   member: Member = new Member();
+  memberInfo: string;
   isLoading = false;
-  totalPrice: number = 0;
+  totalPrice: number = 0;//实收金额
+  orderPrice: number = 0; //订单金额
+  offerPrice: number = 0; //优惠金额
   pageType: string = 'cart';
   constructor(
     injector: Injector
@@ -88,7 +93,7 @@ export class CartComponent {
         res.forEach(v => {
           var temp: selectGroup = new selectGroup();
           temp.id = v.id;
-          temp.text = `${v.name}(${v.barCode})`;
+          temp.text = `${v.name}(${v.barCode})(${v.sellPrice}元/${v.unit})`;
           this.optionList.push(temp);
         });
       } else {
@@ -125,14 +130,19 @@ export class CartComponent {
 
   calculationPrice() {
     this.totalPrice = 0;
+    this.orderPrice = 0;
+    this.offerPrice = 0;
     if (this.member.id) {
       this.dataList.forEach(v => {
         this.totalPrice += v.num * (v.isEnableMember == true ? (v.memberPrice == 0 ? v.sellPrice : v.memberPrice) : v.sellPrice);
+        this.orderPrice += v.num * v.sellPrice;
       });
+      this.offerPrice = this.orderPrice - this.totalPrice;
     } else {
       this.dataList.forEach(v => {
         this.totalPrice += v.num * v.sellPrice;
       });
+      this.orderPrice = this.totalPrice;
     }
   }
 
@@ -142,10 +152,10 @@ export class CartComponent {
 
   getMemberData = (data?: Member) => {
     if (data) {
-      // this.member.id = 
       // this.member.name = data.name;
       // this.member.integral = data.integral;
       this.member = data;
+      this.memberInfo = data.name + `(${data.integral == null ? 0 : data.integral}积分)`;
       this.calculationPrice();
     }
   }
@@ -157,10 +167,33 @@ export class CartComponent {
           v.num = data.num;
         }
       });
+      this.calculationPrice();
     }
+  }
+  getBillData = () => {
+    this.dataList = [];
+    this.totalPrice = 0;
+    this.offerPrice = 0;
+    this.orderPrice = 0;
+    this.member.id = null;
+    this.member.phone = null;
+    this.memberInfo = '';
   }
 
   accounting() {
-    alert('结账');
+    if (this.dataList && this.dataList.length > 0) {
+      var commPrice = new CommPrice();
+      commPrice.totalPrice = this.totalPrice;
+      commPrice.orderPrice = this.orderPrice;
+      commPrice.offerPrice = this.offerPrice;
+      this.dataList.forEach(v => {
+        if (this.member.id) {
+          v.price = (v.isEnableMember == true ? (v.memberPrice == 0 ? v.sellPrice : v.memberPrice) : v.sellPrice)
+        } else {
+          v.price = v.sellPrice;
+        }
+      })
+      this.billModal.show(commPrice, this.dataList, this.member);
+    }
   }
 }

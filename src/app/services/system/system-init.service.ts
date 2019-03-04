@@ -140,6 +140,25 @@ export class SystemInitService {
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
+    createOrderDetailTable() {
+        // OrderDetail
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists orderDetail(
+            id varchar(36) PRIMARY KEY not null,
+            orderId varchar(36) not null,
+            productId varchar(36) not null,
+            barCode nvarchar(50) not null,
+            isRefund int not null,
+            sellPrice decimal(18,2),
+            memberPrice decimal(18,2),
+            price decimal(18,2),
+            num decimal(18,2),
+            creationTime DateTime
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
     createShopTable() {
         // Shop
         // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
@@ -163,6 +182,86 @@ export class SystemInitService {
         return this.sqlite3Service.createOrDeleteTable(sentence);
     }
 
+    createOrderTable() {
+        // Order
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists orders (
+            id varchar(36) PRIMARY KEY not null,
+            shopId varchar(36) not null,
+            number nvarchar(20) not null,
+            memberId varchar(36),
+            phone nvarchar(20),
+            amount decimal(18,2),
+            discountAmount decimal(18,2),
+            payAmount decimal(18,2),
+            status int,
+            orderId varchar(500),
+            paymentType int,
+            isPrint int,
+            remark nvarchar(50),
+            submitTime DateTime,
+            submitUserId varchar(36),
+            submitUserAccount nvarchar(50),
+            creationTime DateTime,
+            creatorUserId varchar(36)
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
+    createHandoverTable() {
+        // Handover
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists handover(
+            id varchar(36) PRIMARY KEY not null,
+            shopId varchar(36) not null,
+            userId varchar(36) not null,
+            loginTime DateTime,
+            handoverTime DateTime,
+            orderCount int,
+            orderAmount decimal(18,2),
+            refundCount int,
+            refundAmount decimal(18,2),
+            bottomGold decimal(18,2),
+            creationTime DateTime,
+            creatorUserId varchar(36)
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
+    createInventoryDetailTable() {
+        // InventoryDetail
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `
+        create table if not exists inventoryDetail (
+            id varchar(36) PRIMARY KEY not null,
+            inventoryId varchar(36) not null,
+            productId varchar(36) not null,
+            barCode nvarchar(50) not null,
+            currentNum decimal(18,2),
+            num decimal(18,2),
+            remark nvarchar(200),
+            creationTime DateTime
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
+    createInventoryTable() {
+        // Inventory
+        // 创建表(如果不存在的话,则创建,存在的话, 不会创建的,但是还是会执行回调)
+        const sentence = `create table if not exists inventory(
+            id varchar(36) PRIMARY KEY not null,
+            shopId varchar(36) not null,
+            formNo nvarchar(50) not null,
+            remark nvarchar(200),
+            userAccount nvarchar(50),
+            creationTime DateTime not null,
+            creatorUserId varchar(36)
+            );`;
+        return this.sqlite3Service.createOrDeleteTable(sentence);
+    }
+
     dropAllTables() {
         return new Promise<ResultDto>((resolve, reject) => {
             this.fs.exists(this.sqlite3Service.databaseFile, (exis) => {
@@ -177,6 +276,11 @@ export class SystemInitService {
                             drop table if exists warehouseWater;
                             drop table if exists putForm;
                             drop table if exists putDetail;
+                            drop table if exists orderDetail;
+                            drop table if exists orders;
+                            drop table if exists handover;
+                            drop table if exists inventory;
+                            drop table if exists inventoryDetail;
                             `;
                             this.sqlite3Service.createOrDeleteTable(sentence).then((res) => {
                                 if (res.code != 0) {
@@ -266,6 +370,11 @@ export class SystemInitService {
                 .then(() => { return this.createWarehouseWaterTable(); })
                 .then(() => { return this.createPutFormTable(); })
                 .then(() => { return this.createPutDetailTable(); })
+                .then(() => { return this.createOrderTable(); })
+                .then(() => { return this.createOrderDetailTable(); })
+                .then(() => { return this.createHandoverTable(); })
+                .then(() => { return this.createInventoryTable(); })
+                .then(() => { return this.createInventoryDetailTable(); })
                 .then((res) => {
                     if (res.code == 0) {
                         result.code = 0;

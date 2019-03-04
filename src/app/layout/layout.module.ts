@@ -19,6 +19,8 @@ import { SettingDrawerItemComponent } from './default/setting-drawer/setting-dra
 const SETTINGDRAWER = [SettingDrawerComponent
   , SettingDrawerItemComponent
   , ChangePasswordComponent
+  , RefundModalComponent
+  , HandoverComponent
   , HeaderUserComponent];
 
 const COMPONENTS = [
@@ -57,6 +59,8 @@ const SIMPLE = [
 
 // passport
 import { LayoutPassportComponent } from './passport/passport.component';
+import { RefundModalComponent } from 'app/routes/warehouse/sale-water/refund-modal/refund-modal.component';
+import { HandoverComponent } from 'app/routes/shop/handover/handover.component';
 const PASSPORT = [
   LayoutPassportComponent
 ];

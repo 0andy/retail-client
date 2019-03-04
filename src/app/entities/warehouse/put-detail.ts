@@ -1,3 +1,5 @@
+import { InventoryDetail } from "./inventory-detail";
+
 export class PutDetail {
     id: string;
     putFormId: string;
@@ -71,6 +73,26 @@ export class PutDetail {
 
 export class EditCache {
     data: PutDetail;
+    edit: boolean = false;
+
+    constructor(data?: any) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+    init(data?: any) {
+        if (data) {
+            this.data = data["data"];
+            this.edit = data["edit"];
+        }
+    }
+}
+
+export class EditInventoryCache {
+    data: InventoryDetail;
     edit: boolean = false;
 
     constructor(data?: any) {

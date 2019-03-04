@@ -1,7 +1,7 @@
 <div class="alain-default__content-title">
     <h1>
-        出入库流水
-        <small>仓库商品出入库流水</small>
+        销售流水
+        <small>订单销售流水</small>
     </h1>
 </div>
 <div nz-col nzSpan="24">
@@ -12,7 +12,7 @@
         </div>
         <div nz-col nzSpan="10" style="padding-right:10px;">
             <nz-input-group nzSearch [nzSuffix]="suffixButton">
-                <input type="text" [(ngModel)]="keyWord" nz-input placeholder="商品名称或条码">
+                <input type="text" [(ngModel)]="keyWord" nz-input placeholder="订单编号">
             </nz-input-group>
             <ng-template #suffixButton>
                 <button nz-button nzType="primary" [nzLoading]="isTableLoading" (click)="refreshData()"
@@ -32,31 +32,32 @@
         (nzPageSizeChange)="refresh()">
         <thead>
             <tr>
-                <th>单号</th>
-                <th>商品条码</th>
-                <th>商品名称</th>
-                <th>流水类型</th>
-                <th>初始库存</th>
-                <th>发生库存</th>
-                <th>最终库存</th>
-                <th>描述</th>
+                <th>订单编号</th>
+                <th>会员手机号</th>
+                <th>订单总金额</th>
+                <th>优惠金额</th>
+                <th>实收金额</th>
+                <th>支付方式</th>
+                <th>订单状态</th>
                 <th>时间</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let data of nzTable.data">
-                <td>
-                    <a title="出入库详情" style="text-decoration:underline;"
-                        (click)="goPutDetail(data.type,data.refNo)">{{data.formCode}}</a>
-                </td>
-                <td>{{data.barCode}}</td>
-                <td>{{data.productName}}</td>
-                <td>{{data.typeName}}</td>
-                <td>{{data.initial}}</td>
-                <td>{{data.stock}}</td>
-                <td>{{data.final}}</td>
-                <td>{{data.desc}}</td>
+                <td>{{data.number}}</td>
+                <td>{{data.phone}}</td>
+                <td>¥ {{data.amount| number:'1.2-2'}}</td>
+                <td>¥ {{data.discountAmount| number:'1.2-2'}}</td>
+                <td>¥ {{data.payAmount| number:'1.2-2'}}</td>
+                <td>{{data.paymentTypeName}}</td>
+                <td>{{data.statusType}}</td>
                 <td>{{data.creationTime | _date}}</td>
+                <td>
+                    <a (click)="goDetail(data.id)">详情</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a style="color: #ff4d4f;" (click)="goDetail(data.id)">重打小票</a>
+                </td>
             </tr>
         </tbody>
     </nz-table>

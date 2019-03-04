@@ -109,6 +109,8 @@ export class SelectProduct {
     id: string;
     barCode: string;
     name: string;
+    sellPrice: number;
+    unit: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -122,6 +124,8 @@ export class SelectProduct {
             this.id = data["id"];
             this.barCode = data["barCode"];
             this.name = data["name"];
+            this.sellPrice = data["sellPrice"];
+            this.unit = data["unit"];
         }
     }
 

@@ -1,14 +1,14 @@
 <div class="alain-default__content-title" style="margin-bottom:0px;">
     <h1>
-        入库详情
+        盘点详情
     </h1>
 </div>
 <form nz-form [formGroup]="validateForm" style="background-color: white;padding-top: 24px;margin-bottom: 6px;"
-    *ngIf="putForm">
+    *ngIf="inventory">
     <div nz-row [nzGutter]="24">
         <div nz-col nzMd="8" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
-                <nz-form-label nz-col nzRequired>申请单号</nz-form-label>
+                <nz-form-label nz-col nzRequired>盘点单号</nz-form-label>
                 <nz-form-control nz-col>
                     <input nz-input style="color:gray;" formControlName="formNo" [placeholder]="'请输入申请单号'">
                     <nz-form-explain *ngIf="validateForm.get('formNo').dirty&&validateForm.get('formNo').errors">
@@ -20,31 +20,6 @@
         </div>
         <div nz-col nzMd="8" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
-                <nz-form-label nz-col>入库类型</nz-form-label>
-                <nz-form-control nz-col>
-                    <nz-select formControlName="type" [nzPlaceHolder]="'请选择入库类型'">
-                        <nz-option *ngFor="let i of types" [nzLabel]="i.text" [nzValue]="i.value">
-                        </nz-option>
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-        <div nz-col nzMd="8" nzSm="12" nzXs="24">
-            <nz-form-item nz-row>
-                <nz-form-label nz-col>送货人</nz-form-label>
-                <nz-form-control nz-col>
-                    <input nz-input formControlName="deliverer" [placeholder]="'请输入送货人'">
-                    <nz-form-explain *ngIf="validateForm.get('deliverer').dirty&&validateForm.get('deliverer').errors">
-                        <ng-container *ngIf="validateForm.get('deliverer').hasError('maxlength')">字符长度小于等于50
-                        </ng-container>
-                    </nz-form-explain>
-                </nz-form-control>
-            </nz-form-item>
-        </div>
-    </div>
-    <div nz-row [nzGutter]="24">
-        <div nz-col nzMd="8" nzSm="12" nzXs="24">
-            <nz-form-item nz-row>
                 <nz-form-label nz-col>申请人</nz-form-label>
                 <nz-form-control nz-col>
                     <input nz-input formControlName="userAccount">
@@ -53,32 +28,15 @@
         </div>
         <div nz-col nzMd="8" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
-                <nz-form-label nz-col>申请时间</nz-form-label>
+                <nz-form-label nz-col>盘点时间</nz-form-label>
                 <nz-form-control nz-col>
                     <input nz-input formControlName="creationTime"
                         [value]="validateForm.get('creationTime').value | _date">
                 </nz-form-control>
             </nz-form-item>
         </div>
-        <div nz-col nzMd="8" nzSm="12" nzXs="24">
-            <nz-form-item nz-row>
-                <nz-form-label nz-col>审核人</nz-form-label>
-                <nz-form-control nz-col>
-                    <input nz-input formControlName="approvalName">
-                </nz-form-control>
-            </nz-form-item>
-        </div>
     </div>
     <div nz-row [nzGutter]="24">
-        <div nz-col nzMd="8" nzSm="12" nzXs="24">
-            <nz-form-item nz-row>
-                <nz-form-label nz-col>审核时间</nz-form-label>
-                <nz-form-control nz-col>
-                    <input nz-input formControlName="approvalTime"
-                        [value]="validateForm.get('approvalTime').value | _date">
-                </nz-form-control>
-            </nz-form-item>
-        </div>
         <div nz-col nzMd="16" nzSm="12" nzXs="24">
             <nz-form-item nz-row>
                 <nz-form-label nz-col>备注</nz-form-label>
@@ -93,15 +51,8 @@
         </div>
     </div>
 </form>
-<!-- <nz-card [nzBordered]="false"> -->
-<!-- <div nz-col nzSpan="24"> -->
-<div *ngIf="status != '1'" style=" float:left;">
-    <button nz-button type="button" nzType="default">
-        <i class="anticon anticon-plus"></i>
-        <span>一键导入</span>
-    </button>
-</div>
-<div *ngIf="status != '1'" style="text-align: right;">
+
+<div *ngIf="!id" style="text-align: right;">
     <nz-select [nzMaxMultipleCount]="1" style="width:480px;" (ngModelChange)="addTable($event)" nzMode="default"
         [(ngModel)]="keyWord" nzPlaceHolder="请输入商品条码或名称" nzAllowClear nzShowSearch [nzServerSearch]="true"
         (nzOnSearch)="onSearch($event)">
@@ -119,42 +70,17 @@
         <tr>
             <th>商品条码</th>
             <th>商品名称</th>
-            <th>采购价</th>
-            <th>订单数量</th>
-            <th>实收数量</th>
-            <th>采购金额</th>
+            <th>当前库存</th>
+            <th>实际库存</th>
             <th nzWidth="20%">备注</th>
-            <th nzWidth="10%" *ngIf="status != '1'">操作</th>
+            <th nzWidth="10%" *ngIf="!id">操作</th>
         </tr>
     </thead>
-    <tbody *ngIf="status != '1'">
+    <tbody *ngIf="!id">
         <tr *ngFor="let data of nzTable.data;let i = index">
             <td>{{data.barCode}}</td>
             <td>{{data.productName}}</td>
-            <td>
-                <div class="editable-cell">
-                    <div class="editable-cell-text-wrapper">
-                        <ng-container *ngIf="!editCache[i].edit">
-                            {{data.purchasePrice}}
-                        </ng-container>
-                        <ng-container *ngIf="editCache[i].edit">
-                            <input type="text" nz-input [(ngModel)]="editCache[i].data.purchasePrice">
-                        </ng-container>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <div class="editable-cell">
-                    <div class="editable-cell-text-wrapper">
-                        <ng-container *ngIf="!editCache[i].edit">
-                            {{data.orderNum}}
-                        </ng-container>
-                        <ng-container *ngIf="editCache[i].edit">
-                            <input type="text" nz-input [(ngModel)]="editCache[i].data.orderNum">
-                        </ng-container>
-                    </div>
-                </div>
-            </td>
+            <td>{{data.currentNum}}</td>
             <td>
                 <div class="editable-cell">
                     <div class="editable-cell-text-wrapper">
@@ -167,7 +93,6 @@
                     </div>
                 </div>
             </td>
-            <td>{{data.purchasePrice * data.orderNum}}</td>
             <td>
                 <div class="editable-cell">
                     <div class="editable-cell-text-wrapper">
@@ -182,16 +107,6 @@
             </td>
             <td>
                 <div class="editable-row-operations">
-                    <!-- <ng-container *ngIf="!editCache[i].edit">
-                                    <a style="color:#ff4d4f">删除</a>
-                                </ng-container>
-                        <ng-container *ngIf="!editCache[i].edit">
-                            <nz-divider nzType="vertical"></nz-divider>
-                            <nz-popconfirm [nzTitle]="'删除条目?'" (nzOnConfirm)="deleteProduct(data.productId)">
-                                <a nz-popconfirm>取消</a>
-                            </nz-popconfirm>
-                            <nz-divider nzType="vertical"></nz-divider>
-                        </ng-container> -->
                     <ng-container *ngIf="!editCache[i].edit">
                         <a (click)="startEdit(i)">编辑</a>
                     </ng-container>
@@ -204,21 +119,16 @@
                     </ng-container>
                     <nz-divider *ngIf="!editCache[i].edit" nzType="vertical"></nz-divider>
                     <a *ngIf="!editCache[i].edit" (click)="deleteProduct(data.productId)" style="color:#ff4d4f">删除</a>
-                    <!-- <nz-divider *ngIf="!editCache[i].edit" nzType="vertical"></nz-divider> -->
-                    <!-- <a *ngIf="!editCache[i].edit" (click)="deleteProduct(data.productId)" style="color:#ff4d4f">删除</a> -->
-                    <!-- <a (click)="deleteProduct(data.productId)"><i nz-icon type="delete" theme="outline"></i></a> -->
                 </div>
             </td>
         </tr>
     </tbody>
-    <tbody *ngIf="status == '1'">
+    <tbody *ngIf="id">
         <tr *ngFor="let data of nzTable.data;let i = index">
             <td>{{data.barCode}}</td>
             <td>{{data.productName}}</td>
-            <td>{{data.purchasePrice}}</td>
-            <td>{{data.orderNum}}</td>
+            <td>{{data.currentNum}}</td>
             <td>{{data.num}}</td>
-            <td>{{data.purchasePrice * data.orderNum}}</td>
             <td>{{data.remark}}</td>
         </tr>
     </tbody>
@@ -228,6 +138,6 @@
 </div>
 <footer-toolbar errorCollect>
     <button nz-button [nzType]="'default'" type="button" (click)="return()">返回</button>
-    <button *ngIf="status != '1'" nz-button [nzType]="'primary'" type="button" (click)="submit()" [nzLoading]="saving"
+    <button *ngIf="!id" nz-button [nzType]="'primary'" type="button" (click)="submit()" [nzLoading]="saving"
         [disabled]="!validateForm.valid">保存</button>
 </footer-toolbar>

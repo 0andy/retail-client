@@ -1,0 +1,68 @@
+<nz-modal [(nzVisible)]="isVisible" nzMaskClosable="false" nzTitle="结账" (nzOnCancel)="handleCancel($event)"
+    style="width: 520px;" [nzFooter]="modalFooter">
+    <!-- <ng-template #modalContent> -->
+    <nz-tabset [(nzSelectedIndex)]="selectedIndex">
+        <nz-tab nzTitle="现金">
+            <div class="padding-bottom-45">
+                <form nz-form [formGroup]="validateForm">
+                    <nz-form-item nz-row style="margin-bottom: 0px;">
+                        <nz-form-label nz-col [nzSm]="4">应收金额</nz-form-label>
+                        <nz-form-control [nzSm]="20">
+                            <input nz-input formControlName="income" style="font-weight:bolder;font-size:18px;"
+                                readonly>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item nz-row style="margin-bottom: 0px;">
+                        <nz-form-label nz-col [nzSm]="4">收取现金</nz-form-label>
+                        <nz-form-control [nzSm]="20">
+                            <input nz-input formControlName="actuallyPaid" (ngModelChange)="changeBill()"
+                                [placeholder]="'请输入本次收取金额'" style="font-weight:bolder;font-size:18px;">
+                            <nz-form-explain
+                                *ngIf="validateForm.get('actuallyPaid').dirty&&validateForm.get('actuallyPaid').errors">
+                                <ng-container *ngIf="validateForm.get('actuallyPaid').hasError('pattern')">请输入正确的金额
+                                </ng-container>
+                            </nz-form-explain>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item nz-row style="margin-bottom: 0px;">
+                        <nz-form-label nz-col [nzSm]="4">本次找零</nz-form-label>
+                        <nz-form-control [nzSm]="20">
+                            <nz-form-text style="font-weight:bolder;font-size:18px;">
+                                ¥ {{change | number:'1.2-2'}}
+                            </nz-form-text>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item nz-row>
+                        <nz-form-label nz-col [nzSm]="4">打印小票</nz-form-label>
+                        <nz-form-control [nzSm]="20">
+                            <nz-switch formControlName="isPrint" nzCheckedChildren="是" nzUnCheckedChildren="否">
+                            </nz-switch>
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+                <!-- <div class="custom-modal-footer">
+                    <div class="custom-modal-footter-group">
+                        <button nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
+                            取消
+                        </button>
+                        <button nz-button type="button" (click)="submit()" nzType="primary"
+                            [disabled]="!validateForm.valid" [nzLoading]="isConfirmLoading">
+                            确定
+                        </button>
+                    </div>
+                </div> -->
+                <ng-template #modalFooter>
+                    <button nz-button [nzType]="'default'" type="button" (click)="handleCancel($event)">
+                        取消
+                    </button>
+                    <button nz-button type="button" (click)="submit()" nzType="primary" [disabled]="!validateForm.valid"
+                        [nzLoading]="isConfirmLoading">确定</button>
+                </ng-template>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="其他">
+
+
+        </nz-tab>
+    </nz-tabset>
+</nz-modal>

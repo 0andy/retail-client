@@ -179,6 +179,11 @@ export class StartupService {
                 text: '仓库流水',
                 link: '/warehouse/water'
               }
+              ,
+              {
+                text: '盘点',
+                link: '/warehouse/inventory'
+              }
             ]
           },
           {

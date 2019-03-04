@@ -18,10 +18,13 @@ import { CommonServiceModule } from 'app/services/common/common-service.module';
 import { AuthenticationComponent } from './passport/authentication/authentication.component';
 import { MemberConfirmModule } from './common/member-confirm/member-confirm.module';
 import { AltNumComponent } from './shop/alt-num/alt-num.component';
+import { BillComponent } from './shop/bill/bill.component';
+import { CartService } from 'app/services/shop';
 
 const COMPONENTS = [
   CartComponent,
   AltNumComponent,
+  BillComponent,
   // passport pages
   UserLoginComponent,
   UserRegisterComponent,
@@ -44,6 +47,7 @@ const COMPONENTS_NOROUNT = [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
+  providers: [CartService],
   entryComponents: COMPONENTS_NOROUNT
 })
 export class RoutesModule { }

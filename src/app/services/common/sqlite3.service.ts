@@ -87,6 +87,8 @@ export class Sqlite3Service {
     sql(sql: any, param: any, mode: 'all' | 'get' | 'run') {
         let _self = this;
         mode = mode == 'all' ? 'all' : mode == 'get' ? 'get' : 'run';
+        console.log(sql);
+        console.log(JSON.stringify(param));
         return new Promise<ResultDto>((resolve, reject) => {
             _self.db[mode](sql, param,
                 function (err, data) {    // data: Array, Object

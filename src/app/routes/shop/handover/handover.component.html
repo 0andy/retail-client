@@ -1,0 +1,25 @@
+<div nz-row class="mb-md">
+    <div nz-row nzGutter="16" style="margin-bottom:0px;">
+        <div nz-col nzXs="24" nzSm="24">
+            <sv-container class="mb-lg" col="2">
+                <sv label="收银人">{{curUserName}}</sv>
+                <sv label="登陆时间">{{handover.loginTime | _date}}</sv>
+                <sv label="交易单数">{{handover.orderCount}}</sv>
+                <sv label="交易金额">¥ {{handover.orderAmount==null?0.00: handover.orderAmount| number:'1.2-2'}}</sv>
+                <sv label="退款单数">{{handover.refundCount}}</sv>
+                <sv label="退款金额">¥ {{handover.refundAmount==null?0.00:handover.refundAmount | number:'1.2-2'}}</sv>
+            </sv-container>
+        </div>
+    </div>
+</div>
+<!-- 功能按钮 -->
+<div class="ant-modal-footer">
+    <div class="custom-modal-footter-group">
+        <button nz-button [nzType]="'primary'" [nzLoading]="handoverLoading" type="button" (click)="save()">
+            交接班并退出登陆
+        </button>
+        <button nz-button type="button" (click)="close()">
+            取消
+        </button>
+    </div>
+</div>
