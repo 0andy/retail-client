@@ -24,7 +24,7 @@ export class MemberComponent extends PagedListingComponentBase<Member>{
 
   protected fetchData(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.memberService.getAll(this.keyWord, request.skipCount, request.maxResultCount).finally(() => {
-      console.log('首页数据刷新1');
+      console.log('首页数据刷新2');
       finishedCallback();
     }).then((res) => {
       if (res) {
