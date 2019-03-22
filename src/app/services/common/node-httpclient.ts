@@ -10,8 +10,10 @@ export class NodeHttpClient {
     private http = (<any>window).require('http');
     private querystring = (<any>window).require('querystring');
     private iconv = (<any>window).require('iconv-lite');
-    private hostname: string = 'localhost';
-    private port: number = 21021;
+    // private hostname: string = 'localhost';
+    // private port: number = 21021;
+    private hostname: string = 'hcwx.sayequ.me';
+    private port: number = 80;
 
     constructor(private settingsService: SettingsService) {
     }
@@ -207,7 +209,7 @@ export class NodeHttpClient {
                         result.msg = '获取token失败';
                         reject(result);
                     }
-                }).catch((e) => { 
+                }).catch((e) => {
                     result.code = -1;
                     result.msg = '网络异常';
                     result.data = e;

@@ -38,7 +38,7 @@ import { HandoverComponent } from 'app/routes/shop/handover/handover.component';
             <i class="anticon anticon-cloud bg-success text-white"></i>
             <small routerLink="/warehouse/put">入库</small>
           </div>
-          <div nz-col [nzSpan]="6">
+          <div nz-col [nzSpan]="6" (click)="goInventory()">
             <i class="anticon anticon-star-o bg-magenta text-white"></i>
             <small>盘点</small>
           </div>
@@ -70,6 +70,10 @@ export class HeaderIconComponent {
 
   goInput() {
     this.router.navigate(['warehouse/put']);
+  }
+
+  goInventory() {
+    this.router.navigate(['warehouse/inventory']);
   }
 
   goMember() {
